@@ -1,15 +1,56 @@
 import django_filters.rest_framework
+import codecs
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from .models import Question, QuestionOption, Voting
+from .models import Question, QuestionOption, Voting, CandidatesGroup, Candidate
 from .serializers import SimpleVotingSerializer, VotingSerializer
 from base.perms import UserIsStaff
 from base.models import Auth
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from .forms import UploadFileForm
 
+import csv
+import os
+dirspot = os.getcwd()
+print(dirspot)
+def candidates_load(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/admin/')
+    else:
+        form = UploadFileForm()
+    return render(request, dirspot+'/voting/templates/upload.html', {'form': form})
+
+def handle_uploaded_file(f):
+    reader = csv.DictReader(codecs.iterdecode(f, 'utf-8'), delimiter="#")
+    for row in reader:
+        print(row)
+        name = dict(row).__getitem__('name')
+        _type = dict(row).__getitem__('type')
+        born_area = dict(row).__getitem__('born_area')
+        current_area = dict(row).__getitem__('current_area')
+        primaries = dict(row).__getitem__('primaries')
+        sex = dict(row).__getitem__('sex')
+        candidatesGroupName = dict(row).__getitem__('candidatesGroup')
+        
+        if primaries == 'FALSE':
+            primaries = False
+        else:
+            primaries = True
+
+        try:
+            candidatesGroup_Search = CandidatesGroup.objects.get(name=candidatesGroupName)
+        except:
+            candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
+        
+        Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()

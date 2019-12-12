@@ -8,7 +8,7 @@ class CandidateSerializer(serializers.HyperlinkedModelSerializer):
         model = Candidate
         fields = ('name', 'type','born_area', 'current_area', 'primaries', 'sex', 'candidatesGroup')
 
-class CandidateSerializer(serializers.HyperlinkedModelSerializer):
+class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CandidatesGroup
         fields = ('name')
