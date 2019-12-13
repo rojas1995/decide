@@ -3,8 +3,9 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render
-
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.status import (HTTP_200_OK, HTTP_404_NOT_FOUND)
 from base import mods
 
 
@@ -35,3 +36,14 @@ class BoothView(TemplateView):
 
     def llamarIndex(request):
         return render(request, 'booth/index.html')
+
+class GetVoting(APIView):
+    def post(self, request):
+        vid = request.data.get('voting', '')
+        try:
+            r = mods.get('voting', params={'id': vid})
+            for k, v in r[0]['pub_key'].items():
+                r[0]['pub_key'][k] = str(v)
+            return Response(r[0], status=HTTP_200_OK)
+        except:
+            return Response({}, status=HTTP_404_NOT_FOUND)
