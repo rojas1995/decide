@@ -22,9 +22,10 @@ deploy:
   strategy: git
   api_key:
     secure: OELjEYx3GZAxq6C9OHPVOr3jTPugnMosfcyRzdRuiOjR4eMDsE9p5q5LBibzB+a3IFta/iIllbYirc1FI61vXjHe9Fgd9U7yQpUImX07Cr8dlhaeXrKLmWn96xRlcs7+sMHR1ppskWA4X8YpcqiIQ6OAHFlLvFVbQVClxJ3rY4yAfR6npAS/NCsA3hiNYGeEkRxtsMmmQ6oSfmCGSmYwMRbc0YAvuSCVRkJE5zVemYDDU2vGAMS31WXYxUyQBmteCKFQmGBAAhbzCWVZWrMCmsBqNomNk04BgdiWylnUhp4UdmVV9naX25sBO7x5ioJ3aVZ48KMCgV1fk50m19XLyZtiFTMtEV/QelEs+OHIsYsxZS38EyKjzghGfHhhrYdRw1qvYsNI2yrFsTxy0+lSFgifvf5No7sa+un+47pqYZJULst6FN8fba0RWy+N8iV5IsT+mn5RrR5FnVxLZn7nGehIxBGiylnLcmuysm0jqrOZWi4oqQDBoM284NdGPk2Tc6rs0ghHMXJPKp87I0E14KR4YSKxTIU5qlr1tGFuOvUbAX5VzQ6r2yZlpuJ7ySqeGcGEYwCyYqlz0js81VoGsXzabiliIyV8+5yWdgs7ZhuMdMjnSj59yTgep9G+YAAy9c39CmENUfI5XDUAqjgA0pliXyUstrb3e82Y/L1Y/ds=
-
-  branches:
-    only:
-    - master
-    - voting-principal
-    - voting-feature/candidatos
+  on:
+    repo: Decide-Palkia/decide
+    branches:
+      only:
+      - master
+      - voting-principal
+      - voting-feature/candidatos
