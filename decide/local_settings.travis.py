@@ -1,5 +1,5 @@
 import os
-import django_heroku
+import django-heroku
 
 ALLOWED_HOSTS = ["*"]
 
