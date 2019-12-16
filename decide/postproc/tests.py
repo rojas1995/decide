@@ -59,8 +59,8 @@ class PostProcTestCase(APITestCase):
 
         expected_result = [
             { 'option': 'Partido 6', 'number': 6, 'votes': 170, 'postproc': 6 },
-            { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 2 },
             { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 2 },
+            { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 2 },
             { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 1 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 1 },
             { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'postproc': 0 },
@@ -88,11 +88,11 @@ class PostProcTestCase(APITestCase):
 
         expected_result = [
             { 'option': 'Partido 6', 'number': 6, 'votes': 1000000, 'postproc': 17 },
+            { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 0 },
             { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 0 },
             { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'postproc': 0 },
             { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 0 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 0 },
-            { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 0 },
         ]
 
         response = self.client.post('/postproc/', data, format='json')
