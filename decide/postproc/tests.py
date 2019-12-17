@@ -130,7 +130,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-def test_dhondt4(self):
+    def test_dhondt4(self):
         data = {
             'type': 'DHONDT',
             'seats': 12,
@@ -159,7 +159,7 @@ def test_dhondt4(self):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-def test_dhondt5(self):
+    def test_dhondt5(self):
         data = {
             'type': 'DHONDT',
             'seats': 21,
