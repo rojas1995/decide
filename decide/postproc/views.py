@@ -16,6 +16,38 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
 
+ def paridad(self, options):
+        out = options;
+        
+        i= 0;
+
+        paridad = True;
+        for opt in options:
+
+            out.append({
+                **opt,
+                'paridad': [],
+            })
+            
+        while i < len(out):
+        	escanos = out['postproc'];
+        	candidatos = out['candidatos'];
+        	hombres = filter(lambda hombre: candidatos['sexo'] == 'hombre', candidatos)
+        	mujeres = filter(lambda mujer: candidatos['sexo'] == 'mujer', candidatos)
+        	e=0;
+        	while escanos > 0:
+        		if paridad :
+        			out['paridad'].append(mujeres[e])
+        			paridad = False;
+        		else:
+        			out['paridad'].append(hombres[e])
+        			paridad = True;
+        			e = e+1;
+
+        return Response(out)
+
+
+
     def post(self, request):
         """
          * type: IDENTITY | EQUALITY | WEIGHT
@@ -34,5 +66,7 @@ class PostProcView(APIView):
 
         if t == 'IDENTITY':
             return self.identity(opts)
+        elif t == 'PARIDAD':
+            return self.paridad(opts, s)
 
         return Response({})
