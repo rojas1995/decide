@@ -191,7 +191,7 @@ class PostProcTestCase(APITestCase):
     def test_dhondt6(self):
         data = {
             'type': 'DHONDT',
-            'seats': 20,
+            'seats': 21,
             'options': [
                 { 'option': 'Partido 1', 'number': 1, 'votes': 5500 },
                 { 'option': 'Partido 2', 'number': 2, 'votes': 5500 },
@@ -214,7 +214,7 @@ class PostProcTestCase(APITestCase):
         }
 
         expected_result = [
-            { 'option': 'Partido 3', 'number': 3, 'votes': 10000, 'postproc': 2 },
+            { 'option': 'Partido 3', 'number': 3, 'votes': 10000, 'postproc': 3 },
             { 'option': 'Partido 1', 'number': 1, 'votes': 5500, 'postproc': 2 },
             { 'option': 'Partido 2', 'number': 2, 'votes': 5500, 'postproc': 2 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 5000, 'postproc': 1 },
