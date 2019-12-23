@@ -67,6 +67,6 @@ class PostProcView(APIView):
         if t == 'IDENTITY':
             return self.identity(opts)
         elif t == 'PARIDAD':
-            return self.paridad(opts, s)
+            return self.paridad(opts)
 
         return Response({})
