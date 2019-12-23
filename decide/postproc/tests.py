@@ -187,3 +187,79 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+
+    def test_dhondt6(self):
+        data = {
+            'type': 'DHONDT',
+            'seats': 20,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 5500 },
+                { 'option': 'Partido 2', 'number': 2, 'votes': 5500 },
+                { 'option': 'Partido 3', 'number': 3, 'votes': 10000 },
+                { 'option': 'Partido 4', 'number': 4, 'votes': 5000 },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 5000 },
+                { 'option': 'Partido 6', 'number': 6, 'votes': 5000 },
+                { 'option': 'Partido 7', 'number': 7, 'votes': 5000 },
+                { 'option': 'Partido 8', 'number': 8, 'votes': 5000 },
+                { 'option': 'Partido 9', 'number': 9, 'votes': 5000 },
+                { 'option': 'Partido 10', 'number': 10, 'votes': 5000 },
+                { 'option': 'Partido 11', 'number': 11, 'votes': 5000 },
+                { 'option': 'Partido 12', 'number': 12, 'votes': 5000 },
+                { 'option': 'Partido 13', 'number': 13, 'votes': 5000 },
+                { 'option': 'Partido 14', 'number': 14, 'votes': 5000 },
+                { 'option': 'Partido 15', 'number': 15, 'votes': 5000 },
+                { 'option': 'Partido 16', 'number': 16, 'votes': 5000 },
+                { 'option': 'Partido 17', 'number': 17, 'votes': 5000 },
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Partido 3', 'number': 3, 'votes': 10000, 'postproc': 2 },
+            { 'option': 'Partido 1', 'number': 1, 'votes': 5500, 'postproc': 2 },
+            { 'option': 'Partido 2', 'number': 2, 'votes': 5500, 'postproc': 2 },
+            { 'option': 'Partido 4', 'number': 4, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 5', 'number': 5, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 6', 'number': 6, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 7', 'number': 7, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 8', 'number': 8, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 9', 'number': 9, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 10', 'number': 10, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 11', 'number': 11, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 12', 'number': 12, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 13', 'number': 13, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 14', 'number': 14, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 15', 'number': 15, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 16', 'number': 16, 'votes': 5000, 'postproc': 1 },
+            { 'option': 'Partido 17', 'number': 17, 'votes': 5000, 'postproc': 1 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_dhondt6(self):
+        data = {
+            'type': 'DHONDT',
+            'seats': 20,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 1 },
+                { 'option': 'Partido 2', 'number': 2, 'votes': 0 },
+                { 'option': 'Partido 3', 'number': 3, 'votes': 0 },
+                { 'option': 'Partido 4', 'number': 4, 'votes': 0 },
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Partido 1', 'number': 1, 'votes': 1, 'postproc': 20 },
+            { 'option': 'Partido 2', 'number': 2, 'votes': 0, 'postproc': 0 },
+            { 'option': 'Partido 3', 'number': 3, 'votes': 0, 'postproc': 0 },
+            { 'option': 'Partido 4', 'number': 4, 'votes': 0, 'postproc': 0 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
