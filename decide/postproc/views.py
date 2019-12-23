@@ -16,7 +16,7 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
 
- def paridad(self, options):
+    def paridad(self, options):
         out = options;
         
         i= 0;
