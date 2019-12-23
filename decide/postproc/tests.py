@@ -239,7 +239,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-    def test_dhondt6(self):
+    def test_dhondt7(self):
         data = {
             'type': 'DHONDT',
             'seats': 20,
@@ -256,6 +256,26 @@ class PostProcTestCase(APITestCase):
             { 'option': 'Partido 2', 'number': 2, 'votes': 0, 'postproc': 0 },
             { 'option': 'Partido 3', 'number': 3, 'votes': 0, 'postproc': 0 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 0, 'postproc': 0 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_dhondt8(self):
+        data = {
+            'type': 'DHONDT',
+            'seats': 7,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 1000 },
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Partido 1', 'number': 1, 'votes': 1000, 'postproc': 7 },
+            
         ]
 
         response = self.client.post('/postproc/', data, format='json')
