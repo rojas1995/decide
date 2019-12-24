@@ -1,8 +1,17 @@
 from rest_framework import serializers
 
-from .models import Question, QuestionOption, Voting
+from .models import Question, QuestionOption, Voting, Candidate, CandidatesGroup
 from base.serializers import KeySerializer, AuthSerializer
 
+class CandidateSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Candidate
+        fields = ('name', 'type','born_area', 'current_area', 'primaries', 'sex', 'candidatesGroup')
+
+class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CandidatesGroup
+        fields = ('name')
 
 class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

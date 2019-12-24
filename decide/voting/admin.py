@@ -4,7 +4,8 @@ from django.utils import timezone
 from .models import QuestionOption
 from .models import Question
 from .models import Voting
-
+from .models import Candidate
+from .models import CandidatesGroup
 from .filters import StartedFilter
 
 
@@ -45,6 +46,13 @@ class VotingAdmin(admin.ModelAdmin):
 
     actions = [ start, stop, tally ]
 
+class CandidateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'type', 'born_area', 'current_area', 'primaries', 'sex', 'candidatesGroup',)
 
+class CandidateGroupAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+admin.site.register(Candidate, CandidateAdmin)
+admin.site.register(CandidatesGroup, CandidateGroupAdmin)
 admin.site.register(Voting, VotingAdmin)
 admin.site.register(Question, QuestionAdmin)
