@@ -6,6 +6,20 @@ from django.dispatch import receiver
 from base import mods
 from base.models import Auth, Key
 
+class CandidatesGroup(models.Model):
+    name = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+
+class Candidate(models.Model):
+    name = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True, choices=[('PRESIDENCIA', 'PRESIDENCIA'),('CANDIDATO', 'CANDIDATO'),])
+    born_area = models.TextField(blank=True, null=True)
+    current_area = models.TextField(blank=True, null=True)
+    primaries = models.BooleanField(default=False)
+    sex = models.TextField(blank=True, null=True,choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),])
+    candidatesGroup = models.ForeignKey(CandidatesGroup, on_delete=models.CASCADE)
 
 class Question(models.Model):
     desc = models.TextField()
