@@ -11,44 +11,43 @@ class PostProcView(APIView):
             out.append({
                 **opt,
                 'postproc': opt['votes'],
-            });
+            })
 
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
 
     def paridad(self, options):
-		out = [];
+        out = []
+        paridad = True
+        for opt in options:
 
-		    paridad = True;
-		    for opt in options:
-
-		        out.append({
-		            **opt,
-		            'paridad': [],
-		        })
-		        
-		    for i in out:
-		        escanos = i['postproc'];
-		        candidatos = i['candidatos'];
-		        hombres = []
-		        mujeres = []
-		        for cand in candidatos:
-		            if cand['sexo'] == 'hombre':
-		                hombres.append(cand)
-		            elif cand['sexo'] == 'mujer':
-		                mujeres.append(cand)
-		        e=0;
-		        while escanos > 0:
-		            if paridad :
-		                i['paridad'].append(mujeres[e])
-		                paridad = False;
-		            else:
-		                i['paridad'].append(hombres[e])
-		                paridad = True;
-		                e = e+1;
-		            escanos -= 1
-
+            out.append({
+                **opt,
+                'postproc': 0,
+            })
+                    
+        for i in out:
+            escanos = i['postproc']
+            candidatos = i['candidatos']
+            hombres = []
+            mujeres = []
+            for cand in candidatos:
+                if cand['sexo'] == 'hombre':
+                    hombres.append(cand)
+                elif cand['sexo'] == 'mujer':
+                    mujeres.append(cand)
+            e=0
+            while escanos > 0:
+                if paridad:
+                    i['paridad'].append(mujeres[e])
+                    paridad = False
+                else:
+                    i['paridad'].append(hombres[e])
+                    paridad = True
+                    e = e+1
+                escanos -= 1
         return Response(out)
+
 
 
 
