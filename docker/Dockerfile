@@ -10,8 +10,8 @@ RUN pip install ipython
 
 WORKDIR /app
 
-RUN git clone -b postproc-feature/paridad --single-branch https://github.com/Decide-Palkia/decide.git
-RUN pip install -r ./requirements.txt
+RUN git clone -b postproc-feature/paridad --single-branch https://github.com/Decide-Palkia/decide.git .
+RUN pip install -r requirements.txt
 
 WORKDIR /app/decide
 
