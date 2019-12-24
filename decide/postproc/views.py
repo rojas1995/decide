@@ -17,32 +17,36 @@ class PostProcView(APIView):
         return Response(out)
 
     def paridad(self, options):
-        out = options;
-        
-        i= 0;
+        out = [];
 
-        paridad = True;
-        for opt in options:
+	    paridad = True;
+	    for opt in options:
 
-            out.append({
-                **opt,
-                'paridad': [],
-            })
-            
-        while i < len(out):
-        	escanos = out['postproc'];
-        	candidatos = out['candidatos'];
-        	hombres = filter(lambda hombre: candidatos['sexo'] == 'hombre', candidatos)
-        	mujeres = filter(lambda mujer: candidatos['sexo'] == 'mujer', candidatos)
-        	e=0;
-        	while escanos > 0:
-        		if paridad :
-        			out['paridad'].append(mujeres[e])
-        			paridad = False;
-        		else:
-        			out['paridad'].append(hombres[e])
-        			paridad = True;
-        			e = e+1;
+	        out.append({
+	            **opt,
+	            'paridad': [],
+	        })
+	        
+	    for i in out:
+	        escanos = i['postproc'];
+	        candidatos = i['candidatos'];
+	        hombres = []
+	        mujeres = []
+	        for cand in candidatos:
+	            if cand['sexo'] == 'hombre':
+	                hombres.append(i)
+	            elif cand['sexo'] == 'mujer':
+	                mujeres.append(i)
+	        e=0;
+	        while escanos > 0:
+	            if paridad :
+	                i['paridad'].append(mujeres[e])
+	                paridad = False;
+	            else:
+	                i['paridad'].append(hombres[e])
+	                paridad = True;
+	                e = e+1;
+	            escanos =- 1
 
         return Response(out)
 
