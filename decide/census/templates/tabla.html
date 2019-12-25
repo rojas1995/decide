@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% block contenido %} 
+<table>
+    <tr>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Votacion</th>
+    </tr>
+    {% for dato in datos %}
+    <tr>
+      <td>{{dato.0.first_name}}</td>
+      <td>{{dato.0.last_name}}</td>
+      <td><a href="/census/{{dato.1.pk}}">{{dato.1}}</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div class="border-top my-3"></div>
+  <button type="button" class="btn btn-success float-right">Exportar CSV</button>
+{% endblock %}
