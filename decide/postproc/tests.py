@@ -285,9 +285,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
-                ],'paridad': [
-                {'sexo':'mujer','id':'2'},
-                {'sexo':'hombre','id':'1'}]},
+                ],'paridad': []},
                 { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 2, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
@@ -295,9 +293,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
-                ],'paridad':[
-                {'sexo':'mujer','id':'2'},
-                {'sexo':'hombre','id':'1'}]},
+                ],'paridad':[]},
                 { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 1, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
@@ -305,8 +301,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
-                ], 'paridad':[
-                {'sexo':'mujer','id':'2'}]},
+                ], 'paridad':[]},
                 { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 1, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
@@ -314,8 +309,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
-                ], 'paridad':[
-                {'sexo':'mujer','id':'2'}]},
+                ], 'paridad':[]},
                 { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'postproc': 0, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
