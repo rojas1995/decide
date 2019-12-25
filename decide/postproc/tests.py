@@ -278,7 +278,7 @@ class PostProcTestCase(APITestCase):
                 {'sexo':'mujer','id':'18'},
                 ]
                 },
-                { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 2, 'candidatos': [
+                { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 0, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -286,7 +286,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ],'paridad': []},
-                { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 2, 'candidatos': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 0, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -294,7 +294,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ],'paridad':[]},
-                { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 1, 'candidatos': [
+                { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 0, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -302,7 +302,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ], 'paridad':[]},
-                { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 1, 'candidatos': [
+                { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 0, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
