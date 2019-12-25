@@ -18,7 +18,6 @@ class PostProcView(APIView):
 
     def paridad(self, options):
         out = []
-        paridad = True
         for opt in options:
 
             out.append({
@@ -37,6 +36,7 @@ class PostProcView(APIView):
                 elif cand['sexo'] == 'mujer':
                     mujeres.append(cand)
             e=0
+            paridad = True
             while escanos > 0:
                 if paridad:
                     i['paridad'].append(mujeres[e])
