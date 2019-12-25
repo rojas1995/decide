@@ -8,7 +8,7 @@ before_script:
   - cp decide/local_settings.travis.py decide/local_settings.py
   - psql -U postgres -c "create user decide password 'decide'"
   - psql -U postgres -c "create database test_decide owner decide"
-  - python manage.py migrate
+  - python decide/manage.py migrate
 language: python
 python:
   - "3.6"
