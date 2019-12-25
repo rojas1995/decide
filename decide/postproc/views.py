@@ -22,7 +22,7 @@ class PostProcView(APIView):
 
             out.append({
                 **opt,
-                'postproc': 0,
+                'paridad': [],
             })
                     
         for i in out:
@@ -64,7 +64,7 @@ class PostProcView(APIView):
            ]
         """
 
-        t = request.data.get('type', 'IDENTITY')
+        t = request.data.get('type')
         opts = request.data.get('options', [])
 
         if t == 'IDENTITY':
