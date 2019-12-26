@@ -109,7 +109,6 @@ class PostProcView(APIView):
             })
 
         for i in out:
-            escanos = i['postproc']
             candidatos = i['candidatos']
             hombres = []
             mujeres = []
