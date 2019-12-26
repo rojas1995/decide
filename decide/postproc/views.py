@@ -96,11 +96,7 @@ class PostProcView(APIView):
                     paridad = True
                     e = e+1
                 escanos -= 1
-        return Response(out)
-
-
-
-
+        return out
 
     def post(self, request):
         """
