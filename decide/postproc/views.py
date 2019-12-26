@@ -117,11 +117,18 @@ class PostProcView(APIView):
                     hombres.append(cand)
                 elif cand['sexo'] == 'mujer':
                     mujeres.append(cand)
-            if len(hombres) == len(mujeres) :
-                check = True
+           
+            check = self.porcentajes_mujeres_homnres(hombres, mujeres)
         return check
 
-
+    def porcentajes_mujeres_homnres(self, hombres, mujeres):
+        total = len(hombres)+len(mujeres)
+        por_hombres = len(hombres)/total
+        por_mujeres = len(mujeres)/total
+        if (por_mujeres < 0.4) | (por_hombres < 0.4):
+            return False
+        else:
+            return True
 
     def post(self, request):
         """
@@ -149,7 +156,7 @@ class PostProcView(APIView):
             if check:
                 return self.dhondt(opts, s, True)  
             else:
-                return Response({})
+                return Response({'message' : 'la diferencia del numero de hombresy mujeres es de más de un 60% - 40%'})
               
         elif t == 'DHONDT':
             return self.dhondt(opts, s, False)
