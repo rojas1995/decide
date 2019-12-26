@@ -283,3 +283,85 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+
+    def test_dhondt9(self):
+        data = {
+            'type': 'DHONDT',
+            'seats': 14,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 450 },
+                { 'option': 'Partido 2', 'number': 2, 'votes': 171 },
+                { 'option': 'Partido 3', 'number': 3, 'votes': 82 },
+                { 'option': 'Partido 4', 'number': 4, 'votes': 345 },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 12 },
+                { 'option': 'Partido 6', 'number': 6, 'votes': 190 },
+                { 'option': 'Partido 7', 'number': 7, 'votes': 434 },
+                { 'option': 'Partido 8', 'number': 8, 'votes': 451 },
+              
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Partido 8', 'number': 8, 'votes': 451, 'postproc': 4 },
+            { 'option': 'Partido 1', 'number': 1, 'votes': 450, 'postproc': 3 },
+            { 'option': 'Partido 7', 'number': 7, 'votes': 434, 'postproc': 3 },
+            { 'option': 'Partido 4', 'number': 4, 'votes': 345, 'postproc': 2 },
+            { 'option': 'Partido 6', 'number': 6, 'votes': 190, 'postproc': 1 },
+            { 'option': 'Partido 2', 'number': 2, 'votes': 171, 'postproc': 1 },
+            { 'option': 'Partido 3', 'number': 3, 'votes': 82, 'postproc': 0 },
+            { 'option': 'Partido 5', 'number': 5, 'votes': 12, 'postproc': 0 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_dhondt10(self):
+        data = {
+            'type': 'DHONDT',
+            'seats': 9,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 76565 },
+                { 'option': 'Partido 2', 'number': 2, 'votes': 579957 },
+                { 'option': 'Partido 3', 'number': 3, 'votes': 636475 },
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Partido 3', 'number': 3, 'votes': 636475, 'postproc': 5 },
+            { 'option': 'Partido 2', 'number': 2, 'votes': 579957, 'postproc': 4 },
+            { 'option': 'Partido 1', 'number': 1, 'votes': 76565, 'postproc': 0 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_dhondt11(self):
+        data = {
+            'type': 'DHONDT',
+            'seats': 9,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 76565 },
+                { 'option': 'Partido 2', 'number': 2, 'votes': 579957 },
+                { 'option': 'Partido 3', 'number': 3, 'votes': 636475 },
+                { 'option': 'Partido 4', 'number': 4, 'votes': 670989 },
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Partido 4', 'number': 4, 'votes': 670989, 'postproc': 3 },
+            { 'option': 'Partido 3', 'number': 3, 'votes': 636475, 'postproc': 3 },
+            { 'option': 'Partido 2', 'number': 2, 'votes': 579957, 'postproc': 3 },
+            { 'option': 'Partido 1', 'number': 1, 'votes': 76565, 'postproc': 0 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
