@@ -102,7 +102,7 @@ class PostProcView(APIView):
     def check_json(self, opts):
         out = []
         check = False
-        for opt in options:
+        for opt in opts:
 
             out.append({
                 **opt
