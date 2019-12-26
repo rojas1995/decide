@@ -204,10 +204,10 @@ class PostProcTestCase(APITestCase):
 
     def test_paridad2(self):
         data = {
-            'type': 'PARIDAD',
+            'type': 'DHONDTP',
             'seats': 17,
             'options': [
-                { 'option': 'Partido 6', 'number': 6, 'votes': 1000000, 'postproc': 17, 'candidatos': [
+                { 'option': 'Partido 6', 'number': 6, 'votes': 1000000, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -227,7 +227,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'17'}
                 ,{'sexo':'mujer','id':'18'}
                 ]},
-                { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 0, 'candidatos': [
+                { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -235,7 +235,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ]},
-                { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 0, 'candidatos': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -243,7 +243,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ]},
-                { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 0, 'candidatos': [
+                { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -251,7 +251,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ] },
-                { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 0, 'candidatos': [
+                { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
@@ -259,7 +259,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ]},
-                { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'postproc': 0, 'candidatos': [
+                { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}

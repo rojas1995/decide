@@ -60,8 +60,7 @@ class PostProcView(APIView):
             ne = ne - 1;
         
         if paridad:
-            res = []
-            res = self.paridad(out)
+            out = self.paridad(out)
         return Response(res)
 
 
