@@ -119,6 +119,8 @@ class PostProcView(APIView):
                     mujeres.append(cand)
            
             check = self.porcentajes_mujeres_homnres(hombres, mujeres)
+            if ~check:
+                break
         return check
 
     def porcentajes_mujeres_homnres(self, hombres, mujeres):
