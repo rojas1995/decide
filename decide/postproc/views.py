@@ -61,7 +61,7 @@ class PostProcView(APIView):
         
         if paridad:
             out = self.paridad(out)
-        return Response(res)
+        return Response(out)
 
 
     def paridad(self, options):
