@@ -17,7 +17,7 @@ class PostProcView(APIView):
         return Response(out)
 
 
-    def dhondt(self, options, seats):
+    def dhondt(self, options, seats, paridad):
 
         out = []
 
@@ -59,7 +59,10 @@ class PostProcView(APIView):
 
             ne = ne - 1;
         
-        return Response(out)
+        if paridad:
+            res = []
+            res = self.paridad(out)
+        return Response(res)
 
 
     def paridad(self, options):
@@ -121,10 +124,10 @@ class PostProcView(APIView):
         if t == 'IDENTITY':
             return self.identity(opts)
 
-        elif t == 'PARIDAD':
-            return self.paridad(opts)
+        elif t == 'DHONDTP':
+            return self.dhondt(opts, s, True)
 
         elif t == 'DHONDT':
-            return self.dhondt(opts, s)
+            return self.dhondt(opts, s, False)
 
         return Response({})
