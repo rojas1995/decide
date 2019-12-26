@@ -98,6 +98,32 @@ class PostProcView(APIView):
                 escanos -= 1
         return out
 
+
+    def check_json(self, opts):
+        out = []
+        check = False
+        for opt in options:
+
+            out.append({
+                **opt
+            })
+
+        for i in out:
+            escanos = i['postproc']
+            candidatos = i['candidatos']
+            hombres = []
+            mujeres = []
+            for cand in candidatos:
+                if cand['sexo'] == 'hombre':
+                    hombres.append(cand)
+                elif cand['sexo'] == 'mujer':
+                    mujeres.append(cand)
+            if len(hombres) == len(mujeres) :
+                check = True
+        return check
+
+
+
     def post(self, request):
         """
          * type: IDENTITY | EQUALITY | WEIGHT
@@ -120,8 +146,12 @@ class PostProcView(APIView):
             return self.identity(opts)
 
         elif t == 'DHONDTP':
-            return self.dhondt(opts, s, True)
-
+            check = self.check_json(opts)
+            if check:
+                return self.dhondt(opts, s, True)  
+            else:
+                return Response({})
+              
         elif t == 'DHONDT':
             return self.dhondt(opts, s, False)
 
