@@ -8,6 +8,7 @@ from django.contrib.auth import login as do_login
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from base import mods
+from booth.form import registerForm
 
 # TODO: check permissions and census
 class BoothView(TemplateView):
@@ -35,41 +36,33 @@ class BoothView(TemplateView):
 
 
     def register(request):
-        # Creamos el formulario de autenticación vacío
-        form = UserCreationForm()
         if request.method == "POST":
-            # Añadimos los datos recibidos al formulario
-            form = UserCreationForm(data=request.POST)
+            form = registerForm(request.POST)
             if form.is_valid():
-                # Creamos la nueva cuenta de usuario
                 user = form.save()
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+            # Si el usuario se crea correctamente 
+            if user is not None:
+                return redirect('/login')
 
-                # Si el usuario se crea correctamente 
-                if user is not None:
-                    do_login(request, user)
-                    return redirect('/')
-
-        return render(request, "booth/register.html", {'form': form})
+        return render(request, "booth/register.html")
 
     def login(request):
-        form = AuthenticationForm()
         if request.method == "POST":
-            # Añadimos los datos recibidos al formulario
-            form = AuthenticationForm(request=request, data=request.POST)
-            if form.is_valid():
-                # Recuperamos las credenciales validadas
-                username = form.cleaned_data['username']
-                password = form.cleaned_data['password']
+            # Recuperamos las credenciales validadas
+            username = request.POST.get('username')
+            password = request.POST.get('password')
 
-                # Verificamos las credenciales del usuario
-                user = authenticate(request, username=username, password=password)
-                print(user)
-                # Si existe un usuario con ese nombre y contraseña
-                if user is not None:
-                    do_login(request, user)
-                    return redirect('/')
+            # Verificamos las credenciales del usuario
+            user = authenticate(request, username=username, password=password)
+            print(user)
+            # Si existe un usuario con ese nombre y contraseña
+            if user is not None:
+                do_login(request, user)
+                return redirect('/')
 
-        return render(request, "booth/login.html", {'form': form})
+        return render(request, "booth/login.html")
 
     def logout(request):
         do_logout(request)
