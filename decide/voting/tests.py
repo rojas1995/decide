@@ -1,5 +1,7 @@
 import random
 import itertools
+import re
+import os
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +15,8 @@ from census.models import Census
 from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
-from voting.models import Voting, Question, QuestionOption
+from voting.models import Voting, Question, QuestionOption, Candidate
+from voting.views import handle_uploaded_file
 
 
 class VotingTestCase(BaseTestCase):
@@ -208,3 +211,17 @@ class VotingTestCase(BaseTestCase):
         response = self.client.put('/voting/{}/'.format(voting.pk), data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Voting already tallied')
+
+    def csv_validation_primaries_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-primarias.csv"
+        file = open(path, 'rb')
+        errores_validacion = handle_uploaded_file(file)
+        lista_comprobacion = list(filter(re.compile(r'no ha pasado el proceso de primarias').search, errores_validacion))
+        print(lista_comprobacion)
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
+
+
+

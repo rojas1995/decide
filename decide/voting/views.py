@@ -13,6 +13,7 @@ from base.models import Auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadFileForm
+from django.db import transaction
 
 import csv
 import os
@@ -22,16 +23,21 @@ def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            return HttpResponseRedirect('/admin/')
+            validation_errors = handle_uploaded_file(request.FILES['file'])
+            if len(validation_errors) > 0:
+                return render(request, dirspot+'/voting/templates/upload.html', {'form': form, 'validation_errors': validation_errors})
+            else:
+                return HttpResponseRedirect('/admin/')
     else:
         form = UploadFileForm()
     return render(request, dirspot+'/voting/templates/upload.html', {'form': form})
 
+@transaction.atomic
 def handle_uploaded_file(f):
+    validation_errors = []
     reader = csv.DictReader(codecs.iterdecode(f, 'utf-8'), delimiter="#")
+    row_line = 2
     for row in reader:
-        print(row)
         name = dict(row).__getitem__('name')
         _type = dict(row).__getitem__('type')
         born_area = dict(row).__getitem__('born_area')
@@ -42,6 +48,7 @@ def handle_uploaded_file(f):
         
         if primaries == 'FALSE':
             primaries = False
+            validation_errors.append("Error en la línea " + str(row_line) + ": El candidato " + str(name) + " no ha pasado el proceso de primarias")
         else:
             primaries = True
 
@@ -50,7 +57,16 @@ def handle_uploaded_file(f):
         except:
             candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
         
+        row_line = row_line + 1
+
         Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+
+    if len(validation_errors) > 0:
+        transaction.set_rollback(True)
+    
+    return validation_errors
+
+
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()
