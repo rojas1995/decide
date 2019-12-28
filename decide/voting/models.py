@@ -50,6 +50,8 @@ class Voting(models.Model):
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
+    candidaturas = models.ManyToOneRel(Candidate, related_name='candidate', on_delete=models.CASCADE, to=CandidatesGroup, field_name='candidate')
+
     pub_key = models.OneToOneField(Key, related_name='voting', blank=True, null=True, on_delete=models.SET_NULL)
     auths = models.ManyToManyField(Auth, related_name='votings')
 
