@@ -238,6 +238,23 @@ class VotingTestCase(BaseTestCase):
         self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
          and len(list_received_candidates_group) == len(list_expected_candidates_group)
           and num_candidatos_inicial == num_candidatos_final)
+    
+    def csv_validation_maximum_candidates_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-maximo.csv"
+        file = open(path, 'rb')
+        errores_validacion = list(filter(re.compile(r'supera el máximo de candidatos permitidos')
+        .search, handle_uploaded_file(file)))
+        list_expected_candidates_group = ["SEVILLA", "BETIS"]
+        list_received_candidates_group = []
+        for error in errores_validacion:
+            candidatura = error.split(" supera el")[0].split("candidatura ")[1]
+            list_received_candidates_group.append(str(candidatura))
+        num_candidatos_final = len(Candidate.objects.all())
+        print(errores_validacion)
+        self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
+         and len(list_received_candidates_group) == len(list_expected_candidates_group)
+          and num_candidatos_inicial == num_candidatos_final)
 
 
 

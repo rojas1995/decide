@@ -70,8 +70,9 @@ def handle_uploaded_file(f):
         malePercentage = (candidatesGroupSex[key][0]*100)/(candidatesGroupSex[key][0]+candidatesGroupSex[key][1])
         if  malePercentage > 60 or malePercentage < 40:
             validation_errors.append("La candidatura " + str(key) + " no cumple un balance 60-40 entre hombres y mujeres")
+        if candidatesGroupSex[key][0] + candidatesGroupSex[key][1] > 350:
+            validation_errors.append("La candidatura " + str(key) + " supera el máximo de candidatos permitidos (350)")
 
-    
     if len(validation_errors) > 0:
         transaction.set_rollback(True)
     
