@@ -36,19 +36,26 @@ class BoothView(TemplateView):
 
 
     def register(request):
+        if request.user.is_authenticated:
+            return redirect('/index')
+
         if request.method == "POST":
             form = registerForm(request.POST)
             if form.is_valid():
                 user = form.save()
                 user.set_password(form.cleaned_data['password'])
                 user.save()
-            # Si el usuario se crea correctamente 
-            if user is not None:
-                return redirect('/login')
 
-        return render(request, "booth/register.html")
+                # Si el usuario se crea correctamente 
+                if user is not None:
+                    return redirect('/login')
+
+        return render(request, "booth/register.html", {'form': form})
 
     def login(request):
+        if request.user.is_authenticated:
+            return redirect('/index')
+
         if request.method == "POST":
             # Recuperamos las credenciales validadas
             username = request.POST.get('username')
