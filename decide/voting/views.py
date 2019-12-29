@@ -14,6 +14,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadFileForm
 from django.db import transaction
+from django.core.exceptions import ValidationError
 
 import csv
 import os
@@ -34,8 +35,13 @@ def candidates_load(request):
 
 @transaction.atomic
 def handle_uploaded_file(f):
-    validation_errors = []
     reader = csv.DictReader(codecs.iterdecode(f, 'utf-8'), delimiter="#")
+    
+    validation_errors = []
+    provincias = ['VI', 'AB', 'A', 'AL', 'AV', 'BA', 'PM', 'B', 'BU', 'CC', 'CA', 'CS', 'CR', 'CO', 'C', 'CU', 'GI', 'GR', 'GU', 'SS', 'H', 'HU', 'J', 'LE', 
+        'L', 'LO', 'LU', 'M', 'MA', 'MU', 'NA', 'OR', 'O', 'P', 'GC', 'PO', 'SA', 'TF', 'S', 'SG', 'SE', 'SO', 'T', 'TE', 'TO', 'V', 'VA', 'BI', 'ZA', 'Z', 'CE', 'ML']
+    count_provincias = dict((prov, 0) for prov in provincias)
+    
     row_line = 2
     for row in reader:
         name = dict(row).__getitem__('name')
@@ -56,10 +62,31 @@ def handle_uploaded_file(f):
             candidatesGroup_Search = CandidatesGroup.objects.get(name=candidatesGroupName)
         except:
             candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
+
+        if _type == 'CANDIDATO':
+            if born_area in count_provincias:
+                count_provincias[born_area] = count_provincias[born_area] + 1
+
+            if current_area in count_provincias:
+                count_provincias[current_area] = count_provincias[current_area] + 1
+
+
+        try:
+            candidato = Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName))
+            candidato.full_clean()
+        except ValidationError:
+            validation_errors.append("Error en la línea " + str(row_line) + ": Hay errores de formato/validación")
+        else:
+            candidato.save()
         
         row_line = row_line + 1
 
-        Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+    
+    provincias_validacion = [prov for prov in provincias if count_provincias[prov] < 2]
+
+    for prov in provincias_validacion:
+        validation_errors.append("Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código " + prov) 
+
 
     if len(validation_errors) > 0:
         transaction.set_rollback(True)
