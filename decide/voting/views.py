@@ -52,6 +52,12 @@ def handle_uploaded_file(f):
         
         Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
 
+class VotingsView():
+    def voting_list(request):
+        votings = Voting.objects.all()
+        return render(request, "votings.html", {'votings':votings, 'STATIC_URL':settings.STATIC_URL})
+
+
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()
     serializer_class = VotingSerializer
