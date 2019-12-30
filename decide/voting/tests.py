@@ -223,5 +223,17 @@ class VotingTestCase(BaseTestCase):
         num_candidatos_final = len(Candidate.objects.all())
         self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
 
+    
+    def csv_validation_provincias_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-provincias.csv"
+        file = open(path, 'rb')
+        errores_validacion = handle_uploaded_file(file)
+        lista_comprobacion = list(filter(re.compile(r'Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código ML').search, errores_validacion))
+        print(lista_comprobacion)
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
+
 
 
