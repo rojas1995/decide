@@ -43,6 +43,7 @@ def handle_uploaded_file(f):
     count_provincias = dict((prov, 0) for prov in provincias)
     
     row_line = 2
+    candidatesGroupSex = {}
     for row in reader:
         name = dict(row).__getitem__('name')
         _type = dict(row).__getitem__('type')
@@ -51,7 +52,11 @@ def handle_uploaded_file(f):
         primaries = dict(row).__getitem__('primaries')
         sex = dict(row).__getitem__('sex')
         candidatesGroupName = dict(row).__getitem__('candidatesGroup')
-        
+        if sex == "HOMBRE":
+            candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0] + 1, candidatesGroupSex.get(candidatesGroupName, [0,0])[1]]
+        else:
+            candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0], candidatesGroupSex.get(candidatesGroupName, [0,0])[1] + 1]
+       
         if primaries == 'FALSE':
             primaries = False
             validation_errors.append("Error en la línea " + str(row_line) + ": El candidato " + str(name) + " no ha pasado el proceso de primarias")
@@ -81,6 +86,14 @@ def handle_uploaded_file(f):
         
         row_line = row_line + 1
 
+        Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+    
+    for key in candidatesGroupSex.keys():
+        malePercentage = (candidatesGroupSex[key][0]*100)/(candidatesGroupSex[key][0]+candidatesGroupSex[key][1])
+        if  malePercentage > 60 or malePercentage < 40:
+            validation_errors.append("La candidatura " + str(key) + " no cumple un balance 60-40 entre hombres y mujeres")
+        if candidatesGroupSex[key][0] + candidatesGroupSex[key][1] > 350:
+            validation_errors.append("La candidatura " + str(key) + " supera el máximo de candidatos permitidos (350)")
     
     provincias_validacion = [prov for prov in provincias if count_provincias[prov] < 2]
 
