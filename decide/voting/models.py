@@ -13,12 +13,65 @@ class CandidatesGroup(models.Model):
         return self.name
 
 class Candidate(models.Model):
-    name = models.TextField(blank=True, null=True)
-    type = models.TextField(blank=True, null=True, choices=[('PRESIDENCIA', 'PRESIDENCIA'),('CANDIDATO', 'CANDIDATO'),])
-    born_area = models.TextField(blank=True, null=True)
-    current_area = models.TextField(blank=True, null=True)
+    PROVINCIAS = (('VI', 'Álava'),        
+        ('AB', 'Albacete'),     
+        ('A', 'Alacant'),       
+        ('AL', 'Almería'),      
+        ('AV', 'Ávila'),        
+        ('BA', 'Badajoz'),      
+        ('PM', 'Illes Balears'),
+        ('B', 'Barcelona'),     
+        ('BU', 'Burgos'),       
+        ('CC', 'Cáceres'),
+        ('CA', 'Cádiz'),
+        ('CS', 'Castelló'),
+        ('CR', 'Ciudad Real'),
+        ('CO', 'Córdoba'),
+        ('C', 'A Coruña'),
+        ('CU', 'Cuenca'),
+        ('GI', 'Girona'),
+        ('GR', 'Granada'),
+        ('GU', 'Guadalajara'),
+        ('SS', 'Gipuzkoa'),
+        ('H', 'Huelva'),
+        ('HU', 'Huesca'),
+        ('J', 'Jaén'),
+        ('LE', 'León'),
+        ('L', 'Lleida'),
+        ('LO', 'La Rioja'),
+        ('LU', 'Lugo'),
+        ('M', 'Madrid'),
+        ('MA', 'Málaga'),
+        ('MU', 'Murcia'),
+        ('NA', 'Nafarroa'),
+        ('OR', 'Ourense'),
+        ('O', 'Asturias'),
+        ('P', 'Palencia'),
+        ('GC', 'Las Palmas'),
+        ('PO', 'Pontevedra'),
+        ('SA', 'Salamanca'),
+        ('TF', 'Sta. Cruz de Tenerife'),
+        ('S', 'Cantabria'),
+        ('SG', 'Segovia'),
+        ('SE', 'Sevilla'),
+        ('SO', 'Soria'),
+        ('T', 'Tarragona'),
+        ('TE', 'Teruel'),
+        ('TO', 'Toledo'),
+        ('V', 'Valéncia'),
+        ('VA', 'Valladolid'),
+        ('BI', 'Bizkaia'),
+        ('ZA', 'Zamora'),
+        ('Z', 'Zaragoza'),
+        ('CE', 'Ceuta'),
+        ('ML', 'Melilla'))
+
+    name = models.TextField(default="CANDIDATO")
+    type = models.TextField(default="CANDIDATO", choices=[('PRESIDENCIA', 'PRESIDENCIA'),('CANDIDATO', 'CANDIDATO'),])
+    born_area = models.TextField(choices=PROVINCIAS, default='AB')
+    current_area = models.TextField(choices=PROVINCIAS, default='AB')
     primaries = models.BooleanField(default=False)
-    sex = models.TextField(blank=True, null=True,choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),])
+    sex = models.TextField(choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),], default="HOMBRE")
     candidatesGroup = models.ForeignKey(CandidatesGroup, on_delete=models.CASCADE)
 
 class Question(models.Model):
