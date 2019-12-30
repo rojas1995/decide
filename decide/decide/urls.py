@@ -26,8 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('doc/', schema_view),
     path('gateway/', include('gateway.urls')),
-    path('', views.BoothView.llamarIndex),
-    path('index/', views.BoothView.llamarIndex)
+    path('', include('booth.urls'))
 ]
 
 for module in settings.MODULES:

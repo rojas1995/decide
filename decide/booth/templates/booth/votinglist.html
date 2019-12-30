@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/vendor/bootstrap/css/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/vendor/animate/animate.css">
+
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/vendor/select2/select2.min.css">
+
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/vendor/perfect-scrollbar/perfect-scrollbar.css">
+
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/css/util.css">
+    <link rel="stylesheet" type="text/css" href="https://colorlib.com/etc/tb/Table_Fixed_Header/css/main.css">
+
+  </head>
+
+  <body>
+    <div class="limiter">
+    <div class="container-table100">
+    <div class="wrap-table100">
+    <div class="table100 ver1 m-b-110">
+    <div class="table100-head">
+    <table>
+      <thead>
+      <tr class="row100 head">
+      <th class="cell100 column1">Nombre</th>
+      <th class="cell100 column2">ID</th>
+      <th class="cell100 column3">Fecha inicio</th>
+      <th class="cell100 column4">Fecha finalizacion</th>
+      <th class="cell100 column5">Votar</th>
+      </tr>
+      </thead>
+    </table>
+    </div>
+    <div class="table100-body js-pscroll">
+    <table>
+      <tbody>
+      <tr class="row100 body">
+        {% for x in res %}
+          <td class="cell100 column1">{{x.name}}</td>
+          <td class="cell100 column2">{{x.id}}</td>
+          <td class="cell100 column3">{{x.start_date}}</td>
+          <td class="cell100 column4">{{x.end_date}}</td>
+          <td class="cell100 column5"><button type="button" class="btn btn-secondary">Votar</button></td>
+        {% endfor %}
+      </tr>
+      </tbody>
+    </table>
+    </div>
+    </div>
+  </body
