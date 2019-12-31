@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+{% load i18n static %}
+
+{% block extrahead %}
+<head>
+    <link rel="shortcut-icon" href="#">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "visualizer/estilos.css" %}" />
+
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <header>
+        <h1 class="text-center text-light">Tutorial</h1>
+        <h2 class="text-center text-light">Como usar <span class="badge badge-success">HIGHCHARTS JS</span></h2>
+    </header>
+
+    <div id="app-visualizer" class="text-center">
+        <h2 v-if="!voting.start_date">Votación no comenzada</h2>
+        <h2 v-else-if="!voting.end_date">Votación en curso</h2>
+        <div v-else>
+            <div class="btn-group" role="group" aria-label="">
+
+                <button id="btnSemiCircleDonut" type="button" class="btn btn-secondary">Semi Circle Donut</button>
+                <button id="btnPie" type="button" class="btn btn-primary">Pie</button>
+                <button id="btnDualAxe" type="button" class="btn btn-info">Dual Axe</button>
+                <button id="btnPrueba" type="button" class="btn btn-danger">Grafico de Prueba</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="contenedor" style="min-width: 320px; height: 400px; margin: 0 auto"></div>
+
+    <div id="modal-1" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Aqui se mostrarán los gráficos -->
+                    <div id="contenedor-modal" style="min-width: 320px; height: 400px; margin: 0 auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+{% block extrabody %}
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="{% static "crypto/Bootstrap_4/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "crypto/codigoJS.js" %}"></script>
+
+    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/highcharts.js" %}"></script>
+    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/modules/exporting.js" %}"></script>
+    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/modules/export-data.js" %}"></script>
+    
+
+<script>
+    $("#btnPie").click(function () {
+    $(".modal-header").css("background-color", "#343a40");
+    $(".modal-header").css("color", "white");
+    $(".modal-title").text("Gráfico Ejemplo");
+    $("#modal-1").modal("show");
+    pie();
+});
+
+function pie() {
+    Highcharts.chart('contenedor-modal', {
+        chart: {
+            type: 'pie',
+            plotBackgroundColor: '#f8f9fa',
+            plotBorderwidth: 1,
+            plotShadow: false
+        },
+        title: {
+            text: '<h1>[[ voting.id ]] - [[ voting.name ]]</h1>'
+        },
+        tooltip: {
+            pointFormart: '<b>{series.name}:</b>{point.percentage:.2f}%',
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}:</b>{point.percentage:.2f}%'
+                }
+            }
+        },
+        series: [{
+            name: 'Marcas',
+            colorByPoint: true,
+            data: [{
+                name:'Chrome',
+                y: 61.41,
+            }, {
+                name:'IE',
+                y: 15.87,
+            }, {
+                name:'Edge',
+                y: 8.21,
+            }, {
+                name:'Safari',
+                y: 3.98,
+            }, {
+                name:'Opera',
+                y: 7.53,
+            }]
+        }]
+
+    });
+}
+</script>
+
+<script>
+    var voting = {{voting|safe}};
+    var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app-visualizer',
+        data: {
+            voting: voting
+        }
+    })
+</script>
+
+</body>
+{% endblock %}
+
+</html>

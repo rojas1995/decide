@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+{% endblock %}
+
+{% block content %}
+    <div id="app-visualizer">
+        <!-- Navbar -->
+        <b-navbar type="dark" variant="secondary">
+            <b-navbar-brand tag="h1">Decide</b-navbar-brand>
+        </b-navbar>
+
+        <div class="voting container">
+            <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
+
+            <h2 v-if="!voting.start_date">Votación no comenzada</h2>
+            <h2 v-else-if="!voting.end_date">Votación en curso</h2>
+            <div v-else>
+
+                <button id="btnSemiCircleDonut" type="button" class="btn btn-secondary">Semi Circle Donut</button>
+                <button id="btnPie" type="button" class="btn btn-primary">Pie</button>
+                <button id="btnDualAxe" type="button" class="btn btn-info">Dual Axe</button>
+                <button id="btnPrueba" type="button" class="btn btn-danger">Grafico de Prueba</button>
+                
+                <canvas id="myChart" width="400" height="400"></canvas>
+
+                <div id="modal-1" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Aqui se mostrarán los gráficos -->
+                                <div id="contenedor-modal" style="min-width: 320px; height: 400px; margin: 0 auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="heading">Resultados:</h2>
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Opción</th>
+                            <th>Puntuación</th>
+                            <th>Votos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="opt in voting.postproc" :key="opt.number">
+                            <th>[[opt.option]]</th>
+                            <td>[[opt.postproc]]</td>
+                            <td class="text-muted">[[opt.votes]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrabody %}
+    <!-- Vuejs -->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <!--
+            <script src="{% static "crypto/Bootstrap_4/js/bootstrap.min.js" %}"></script>
+
+        <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/highcharts.js" %}"></script>
+    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/modules/exporting.js" %}"></script>
+    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/modules/export-data.js" %}"></script>
+            <script src="{% static "crypto/codigoJS.js" %}"></script>
+
+    -->
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
+    <script>
+        var voting = {{voting|safe}};
+        var app = new Vue({
+            delimiters: ['[[', ']]'],
+            el: '#app-visualizer',
+            data: {
+                voting: voting
+            }
+        })
+    </script>
+
+    <script>
+    
+    var ctx= document.getElementById("myChart").getContext("2d");
+        var myChart= new Chart(ctx,{
+            type:"pie",
+            data:{
+                labels:opciones(),
+                datasets:[{
+                        label:'Num datos',
+                        data:votos(),
+                        backgroundColor:[
+                            'rgb(66, 134, 244,0.5)',
+                            'rgb(74, 135, 72,0.5)',
+                            'rgb(229, 89, 50,0.5)'
+                        ]
+                }]
+            }
+        });
+    
+
+    $("#btnSemiCircleDonut").click(function() {
+        $(".modal-header").css("background-color", "#343a40");
+        $(".modal-header").css("color", "white");
+        $(".modal-title").text("Gráfico Ejemplo");
+        $("#modal-1").modal("show");
+        prueba();
+});
+
+
+
+function opciones() {
+    var datos = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    console.log(postproc.length);
+
+    console.log(postproc[2].option);
+//    for (var opt in postproc) {
+//        datos.push(opt.option);
+//        console.log(opt.option);
+//    }
+
+    for(var i = 0; i < postproc.length; i++) {
+        console.log(postproc[i].option);
+        datos.push(postproc[i].option);
+    }
+
+    return datos;
+}
+
+function votos() {
+    var datos = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+//    console.log(postproc.length);
+
+//    console.log(postproc[2].option);
+
+    for(var i = 0; i < postproc.length; i++) {
+//        console.log(postproc[i].option);
+        datos.push(postproc[i].votes);
+    }
+
+    return datos;
+}
+
+function prueba() {
+    console.log(opciones());
+    Highcharts.chart('contenedor-modal', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    title: {
+        text: 'Browser<br>shares<br>2017',
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 60
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '75%'],
+            size: '110%'
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Browser share',
+        innerSize: '50%',
+        data: [
+            ['Chrome', 58.9],
+            ['Firefox', 13.29],
+            ['Internet Explorer', 13],
+            ['Edge', 3.78],
+            ['Safari', 3.42],
+            {
+                name: 'Other',
+                y: 7.61,
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        ]
+    }]
+});
+}
+
+
+    </script>
+</body>
+{% endblock %}
