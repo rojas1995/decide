@@ -251,7 +251,6 @@ class VotingTestCase(BaseTestCase):
             candidatura = error.split(" supera el")[0].split("candidatura ")[1]
             list_received_candidates_group.append(str(candidatura))
         num_candidatos_final = len(Candidate.objects.all())
-        print(errores_validacion)
         self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
          and len(list_received_candidates_group) == len(list_expected_candidates_group)
           and num_candidatos_inicial == num_candidatos_final)
@@ -267,5 +266,19 @@ class VotingTestCase(BaseTestCase):
         num_candidatos_final = len(Candidate.objects.all())
         self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
 
-
+    def csv_validation_presidents_test(self):
+            num_candidatos_inicial = len(Candidate.objects.all())
+            path = str(os.getcwd()) + "/voting/files/candidatos-test-presidents.csv"
+            file = open(path, 'rb')
+            errores_validacion = list(filter(re.compile(r'tiene más de un candidato a presidente')
+            .search, handle_uploaded_file(file)))
+            list_expected_candidates_group = ["MALAGA"]
+            list_received_candidates_group = []
+            for error in errores_validacion:
+                candidatura = error.split(" tiene más")[0].split("candidatura ")[1]
+                list_received_candidates_group.append(str(candidatura))
+            num_candidatos_final = len(Candidate.objects.all())
+            self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
+            and len(list_received_candidates_group) == len(list_expected_candidates_group)
+            and num_candidatos_inicial == num_candidatos_final)
 

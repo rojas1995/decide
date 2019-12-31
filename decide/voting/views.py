@@ -44,6 +44,7 @@ def handle_uploaded_file(f):
     
     row_line = 2
     candidatesGroupSex = {}
+    count_presidents = {}
     for row in reader:
         name = dict(row).__getitem__('name')
         _type = dict(row).__getitem__('type')
@@ -62,6 +63,11 @@ def handle_uploaded_file(f):
             validation_errors.append("Error en la línea " + str(row_line) + ": El candidato " + str(name) + " no ha pasado el proceso de primarias")
         else:
             primaries = True
+
+        if _type == "PRESIDENCIA":
+            count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0) + 1
+        else:
+            count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0)
 
         try:
             candidatesGroup_Search = CandidatesGroup.objects.get(name=candidatesGroupName)
@@ -87,6 +93,10 @@ def handle_uploaded_file(f):
         row_line = row_line + 1
 
         Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+    
+    for key in count_presidents.keys():
+        if count_presidents[key] > 1:
+                validation_errors.append("La candidatura " + str(key) + " tiene más de un candidato a presidente")
     
     for key in candidatesGroupSex.keys():
         malePercentage = (candidatesGroupSex[key][0]*100)/(candidatesGroupSex[key][0]+candidatesGroupSex[key][1])
