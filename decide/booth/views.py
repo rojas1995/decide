@@ -68,7 +68,6 @@ class BoothView(TemplateView):
 
             # Verificamos las credenciales del usuario
             user = authenticate(request, username=username, password=password)
-            print(user)
             # Si existe un usuario con ese nombre y contraseña
             if user is not None:
                 do_login(request, user)
