@@ -43,6 +43,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
+
         //Codigo Pablo Reneses para los tests de Mayoria SIMPLE sin paridad
 
       def test_simple(self):
