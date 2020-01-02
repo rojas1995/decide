@@ -1,23 +1,17 @@
 {% extends 'main.html' %}
 
 {% block contenido %} 
-<table>
+<table style = "background-color: #fff">
     <tr>
       <th>Nombre</th>
       <th>Apellido</th>
-      <th>Edad</th>
-      <th>Sexo</th>
-      <th>Municipio</th>
       <th>Votacion</th>
     </tr>
     {% for dato in datos %}
     <tr>
       <td>{{dato.0.first_name}}</td>
       <td>{{dato.0.last_name}}</td>
-      <td>{{dato.0.perfil.edad}}</td>
-      <td>{{dato.0.perfil.sexo}}</td>
-      <td>{{dato.0.perfil.municipio}}</td>
-      <td><a href="/census/web/{{dato.1.pk}}">{{dato.1}}</a></td>
+      <td><a href="/census/{{dato.1.pk}}">{{dato.1}}</a></td>
     </tr>
     {% endfor %}
   </table>
