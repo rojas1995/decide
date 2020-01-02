@@ -43,7 +43,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-          //Codigo Pablo Reneses para los tests de Mayoria SIMPLE sin paridad
+        //Codigo Pablo Reneses para los tests de Mayoria SIMPLE sin paridad
 
       def test_simple(self):
         data = {
@@ -188,63 +188,5 @@ class PostProcTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         values = response.json()
-        self.assertEqual(values, expected_result)
-
-        def test_simple6(self):
-        data = {
-            'type': 'SIMPLE',
-            'seats': 100,
-            'options': [
-                { 'option': 'Partido 1', 'number': 1, 'votes': 100 },
-                { 'option': 'Partido 2', 'number': 2, 'votes': 50 },
-                { 'option': 'Partido 3', 'number': 3, 'votes': 9 },
-                { 'option': 'Partido 4', 'number': 4, 'votes':  20},
-                { 'option': 'Partido 5', 'number': 5, 'votes': 40 },
-                { 'option': 'Partido 6', 'number': 6, 'votes': 81 },
-            ]
-        }
-
-        expected_result = [
-            { 'option': 'Partido 1', 'number': 1, 'votes': 100, 'postproc': 33 },
-            { 'option': 'Partido 6', 'number': 6, 'votes': 81, 'postproc': 27 },
-            { 'option': 'Partido 2', 'number': 2, 'votes': 50, 'postproc': 16 },
-            { 'option': 'Partido 5', 'number': 5, 'votes': 40, 'postproc': 13 },
-            { 'option': 'Partido 4', 'number': 4, 'votes': 20, 'postproc': 6 },
-            { 'option': 'Partido 3', 'number': 3, 'votes': 9, 'postproc': 3 },
-        ]
-
-        response = self.client.post('/postproc/', data, format='json')
-        self.assertEqual(response.status_code, 200)
-
-        values = response.json()
-        self.assertEqual(values, expected_result)
-
-        def test_simple7(self):
-        data = {
-            'type': 'SIMPLE',
-            'seats': 500,
-            'options': [
-                { 'option': 'Partido 1', 'number': 1, 'votes': 10000 },
-                { 'option': 'Partido 2', 'number': 2, 'votes': 20000 },
-                { 'option': 'Partido 3', 'number': 3, 'votes': 500 },
-                { 'option': 'Partido 4', 'number': 4, 'votes':  400},
-                { 'option': 'Partido 5', 'number': 5, 'votes': 15000 },
-                { 'option': 'Partido 6', 'number': 6, 'votes': 4100 },
-            ]
-        }
-
-        expected_result = [
-            { 'option': 'Partido 2', 'number': 2, 'votes': 20000, 'postproc': 200 },
-            { 'option': 'Partido 6', 'number': 6, 'votes': 15000, 'postproc': 150 },
-            { 'option': 'Partido 2', 'number': 2, 'votes': 10000, 'postproc':  100},
-            { 'option': 'Partido 5', 'number': 5, 'votes': 4100, 'postproc': 41 },
-            { 'option': 'Partido 4', 'number': 4, 'votes': 500, 'postproc': 5 },
-            { 'option': 'Partido 3', 'number': 3, 'votes': 400, 'postproc': 4 },
-        ]
-
-        response = self.client.post('/postproc/', data, format='json')
-        self.assertEqual(response.status_code, 200)
-
-        values = response.json()
-        self.assertEqual(values, expected_result)
+        self.assertEqual(values, expected_result)        
 
