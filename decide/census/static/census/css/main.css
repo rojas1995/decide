@@ -60,5 +60,17 @@ tr:nth-child(even) {
   }
   
   /* Other styles for the page not related to the animated dropdown */
+
+  body{
+    background-color: rgb(171, 185, 197)!important;
+  }
+  nav{
+    box-shadow: 0 0.5px 0 #fff;
+  }
+  nav a.navbar-brand, nav a.nav-link {
+    color:white !important;
+    text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5)!important;
+  }
+
   
 
