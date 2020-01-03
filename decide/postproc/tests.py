@@ -15,6 +15,7 @@ class PostProcTestCase(APITestCase):
     def tearDown(self):
         self.client = None
 
+    
     def test_identity(self):
         data = {
             'type': 'IDENTITY',
@@ -144,16 +145,19 @@ class PostProcTestCase(APITestCase):
                 { 'option': 'Partido 4', 'number': 4, 'votes': 2000 },
                 { 'option': 'Partido 5', 'number': 5, 'votes': 500 },
                 { 'option': 'Partido 6', 'number': 6, 'votes': 500 },
+
             ]
         }
 
         expected_result = [
+
             { 'option': 'Partido 1', 'number': 1, 'votes': 10000, 'postproc': 125 },
             { 'option': 'Partido 2', 'number': 2, 'votes': 6000, 'postproc': 75 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 2000, 'postproc': 25 },
             { 'option': 'Partido 3', 'number': 3, 'votes': 1000, 'postproc': 13 },
             { 'option': 'Partido 5', 'number': 5, 'votes': 500, 'postproc': 6 },
             { 'option': 'Partido 6', 'number': 6, 'votes': 500, 'postproc': 6 },
+
         ]
 
         response = self.client.post('/postproc/', data, format='json')
@@ -161,6 +165,7 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+
 
     def test_simple5(self):
         data = {
@@ -173,10 +178,12 @@ class PostProcTestCase(APITestCase):
                 { 'option': 'Partido 4', 'number': 4, 'votes': 10 },
                 { 'option': 'Partido 5', 'number': 5, 'votes': 3 },
                 { 'option': 'Partido 6', 'number': 6, 'votes': 2 },
+    
             ]
         }
 
         expected_result = [
+
             { 'option': 'Partido 3', 'number': 3, 'votes': 60, 'postproc': 12 },
             { 'option': 'Partido 2', 'number': 2, 'votes': 20, 'postproc': 4 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 10, 'postproc': 2 },
@@ -212,6 +219,14 @@ class PostProcTestCase(APITestCase):
             { 'option': 'Partido 5', 'number': 5, 'votes': 40, 'postproc': 13 },
             { 'option': 'Partido 4', 'number': 4, 'votes': 20, 'postproc': 6 },
             { 'option': 'Partido 3', 'number': 3, 'votes': 9, 'postproc': 3 },
+
+            { 'option': 'Option 1', 'number': 1, 'votes': 5, 'postproc': 2 },
+            { 'option': 'Option 5', 'number': 5, 'votes': 5, 'postproc': 2 },
+            { 'option': 'Option 3', 'number': 3, 'votes': 3, 'postproc': 1 },
+            { 'option': 'Option 4', 'number': 4, 'votes': 2, 'postproc': 1 },
+            { 'option': 'Option 6', 'number': 6, 'votes': 1, 'postproc': 0 },
+            { 'option': 'Option 2', 'number': 2, 'votes': 0, 'postproc': 0 },
+
         ]
 
         response = self.client.post('/postproc/', data, format='json')
@@ -286,3 +301,4 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+
