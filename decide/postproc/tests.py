@@ -48,7 +48,7 @@ class PostProcTestCase(APITestCase):
     def test_simple(self):
         data = {
             'type': 'SIMPLE',
-            'seats':7
+            'seats':7,
             'options': [
                 { 'option': 'Option 1', 'number': 1, 'votes': 5 },
                 { 'option': 'Option 2', 'number': 2, 'votes': 0 },
@@ -77,7 +77,7 @@ class PostProcTestCase(APITestCase):
     def test_simple1(self):
         data = {
             'type': 'SIMPLE',
-            'seats':40
+            'seats':40,
             'options': [
                 { 'option': 'Option 1', 'number': 1, 'votes': 5 },
                 { 'option': 'Option 2', 'number': 2, 'votes': 0 },
