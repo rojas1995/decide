@@ -44,7 +44,7 @@
           <td class="cell100 column2">{{x.id}}</td>
           <td class="cell100 column3">{{x.start_date}}</td>
           <td class="cell100 column4">{{x.end_date}}</td>
-          <td class="cell100 column5"><button type="button" class="btn btn-secondary">Votar</button></td>
+          <td class="cell100 column5"><button type="button" class="btn btn-secondary" onclick="window.location.href = '/booth/{{x.id}}';">Votar</button></td>
         {% endfor %}
       </tr>
       </tbody>

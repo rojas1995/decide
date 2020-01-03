@@ -1,4 +1,5 @@
 import json
+import requests
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.http import Http404
@@ -8,34 +9,71 @@ from rest_framework.status import (HTTP_200_OK, HTTP_404_NOT_FOUND)
 from base import mods
 from django.contrib import auth
 from census.models import Census
-from voting.models import Voting
+from voting.models import Voting, Question, QuestionOption
 from django.shortcuts import render, redirect
-
+from Crypto.Random import random
 
 # TODO: check permissions and census
-class BoothView(TemplateView):
-    template_name = 'booth/booth.html'
+class VotingProcess(TemplateView):
+    def booth(request, **kwargs):
+        if request.method == 'GET':
+            try:
+                voting_id = kwargs.get('voting_id')
+                voting = Voting.objects.get(pk = voting_id)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        vid = kwargs.get('voting_id', 0)
+                return render(request, 'booth/booth.html', {'voting': voting})
+            except:
+                raise Http404
+        if request.method == 'POST':
+            try:
+                voting_id = kwargs.get('voting_id')
+                voting = Voting.objects.get(pk = voting_id)
+                option = int(request.POST['option'])
+                user_id = request.user.id
+                token = request.auth #Necesitamos que en el request este el auth
 
-        try:
-            r = mods.get('voting', params={'id': vid})
+                bigpk = {
+                        'p': str(voting.pub_key.p),
+                        'g': str(voting.pub_key.g),
+                        'y': str(voting.pub_key.y),
+                    }
 
-            # Casting numbers to string to manage in javascript with BigInt
-            # and avoid problems with js and big number conversion
-            for k, v in r[0]['pub_key'].items():
-                r[0]['pub_key'][k] = str(v)
+                vote = encrypt(bigpk, option)
 
-            context['voting'] = json.dumps(r[0])
-        except:
-            raise Http404
+                send_data(user_id, token, voting_id, vote)
 
-        context['KEYBITS'] = settings.KEYBITS
+                return render(request, 'booth/success.html')
+            except:
+                raise Http404
 
-        return context
-    
+
+    def send_data(user, token, voting, vote):
+        data = {
+                'user': user,
+                'token': token,
+                'voting': voting,
+                'vote': {'a': str(vote[0]), 'b': str(vote[1])}
+            }
+
+        fdata = {
+            
+            'body': json.dumps(data),
+            'headers' : {
+                    'content-type': 'application/json',
+                    'Authorization': 'Token' + token
+                    }
+        }
+        r = requests.post(url = 'http://localhost:8000/gateway/store/', data = fdata)
+        print()
+        return r
+        
+
+    def encrypt(pk, M):
+        k = random.StrongRandom().randint(1, int(pk["p"]) - 1)
+        a = pow(int(pk["g"]), k, int(pk["p"]))
+        b = (pow(int(pk["y"]), k, int(pk["p"])) * M) % int(pk["p"])
+        return a, b
+
 def votinglist(request):
     user_id = request.user.id
 
@@ -53,7 +91,7 @@ def votinglist(request):
 
 class PageView(TemplateView):
 
-    def index(request):
+    def index(self, request):
         return render(request, 'booth/index.html')
 
 class GetVoting(APIView):
