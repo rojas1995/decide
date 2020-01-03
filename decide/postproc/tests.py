@@ -46,67 +46,9 @@ class PostProcTestCase(APITestCase):
 
 
     
-    def test_simple(self):
-        data = {
-            'type': 'SIMPLE',
-            'seats':7
-            'options': [
-                { 'option': 'Option 1', 'number': 1, 'votes': 5 },
-                { 'option': 'Option 2', 'number': 2, 'votes': 0 },
-                { 'option': 'Option 3', 'number': 3, 'votes': 3 },
-                { 'option': 'Option 4', 'number': 4, 'votes': 2 },
-                { 'option': 'Option 5', 'number': 5, 'votes': 5 },
-                { 'option': 'Option 6', 'number': 6, 'votes': 1 },
-            ]
-        }
+      //Codigo Pablo Reneses
 
-        expected_result = [
-            { 'option': 'Option 1', 'number': 1, 'votes': 5, 'postproc': 2 },
-            { 'option': 'Option 5', 'number': 5, 'votes': 5, 'postproc': 2 },
-            { 'option': 'Option 3', 'number': 3, 'votes': 3, 'postproc': 1 },
-            { 'option': 'Option 4', 'number': 4, 'votes': 2, 'postproc': 1 },
-            { 'option': 'Option 6', 'number': 6, 'votes': 1, 'postproc': 0 },
-            { 'option': 'Option 2', 'number': 2, 'votes': 0, 'postproc': 0 },
-        ]
-
-        response = self.client.post('/postproc/', data, format='json')
-        self.assertEqual(response.status_code, 200)
-
-        values = response.json()
-        self.assertEqual(values, expected_result)
-
-    def test_simple1(self):
-        data = {
-            'type': 'SIMPLE',
-            'seats':40
-            'options': [
-                { 'option': 'Option 1', 'number': 1, 'votes': 5 },
-                { 'option': 'Option 2', 'number': 2, 'votes': 0 },
-                { 'option': 'Option 3', 'number': 3, 'votes': 3 },
-                { 'option': 'Option 4', 'number': 4, 'votes': 2 },
-                { 'option': 'Option 5', 'number': 5, 'votes': 5 },
-                { 'option': 'Option 6', 'number': 6, 'votes': 1 },
-            ]
-        }
-
-        expected_result = [
-            { 'option': 'Option 1', 'number': 1, 'votes': 5, 'postproc': 2 },
-            { 'option': 'Option 5', 'number': 5, 'votes': 5, 'postproc': 2 },
-            { 'option': 'Option 3', 'number': 3, 'votes': 3, 'postproc': 1 },
-            { 'option': 'Option 4', 'number': 4, 'votes': 2, 'postproc': 1 },
-            { 'option': 'Option 6', 'number': 6, 'votes': 1, 'postproc': 0 },
-            { 'option': 'Option 2', 'number': 2, 'votes': 0, 'postproc': 0 },
-        ]
-
-        response = self.client.post('/postproc/', data, format='json')
-        self.assertEqual(response.status_code, 200)
-
-        values = response.json()
-        self.assertEqual(values, expected_result)
-
-          //Codigo Pablo Reneses
-
-      def test_simple2(self):
+      def test_simple(self):
         data = {
             'type': 'SIMPLE',
             'seats': 50,
@@ -135,7 +77,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-    def test_simple3(self):
+    def test_simple2(self):
         data = {
             'type': 'SIMPLE',
             'seats': 100,
@@ -164,7 +106,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-    def test_simple4(self):
+    def test_simple3(self):
         data = {
             'type': 'SIMPLE',
             'seats': 200,
@@ -193,7 +135,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-    def test_simple5(self):
+    def test_simple4(self):
         data = {
             'type': 'SIMPLE',
             'seats': 250,
@@ -222,7 +164,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-    def test_simple6(self):
+    def test_simple5(self):
         data = {
             'type': 'SIMPLE',
             'seats': 20,
@@ -250,8 +192,8 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
-
-    def test_simple7(self):
+        
+    def test_simple6(self):
         data = {
             'type': 'SIMPLE',
             'seats': 100,
@@ -280,7 +222,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-        def test_simple8(self):
+        def test_simple7(self):
         data = {
             'type': 'SIMPLE',
             'seats': 500,
@@ -309,7 +251,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-        def test_simple9(self):
+        def test_simple8(self):
         data = {
             'type': 'SIMPLE',
             'seats': 2000,
@@ -346,3 +288,4 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+    
