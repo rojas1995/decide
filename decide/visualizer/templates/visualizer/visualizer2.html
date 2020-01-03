@@ -26,9 +26,11 @@
                 <button id="btnSemiCircleDonut" type="button" class="btn btn-secondary">Semi Circle Donut</button>
                 <button id="btnPie" type="button" class="btn btn-primary">Pie</button>
                 <button id="btnDualAxe" type="button" class="btn btn-info">Dual Axe</button>
-                <button id="btnPrueba" type="button" class="btn btn-danger">Grafico de Prueba</button>
-                
-                <canvas id="myChart" width="400" height="400"></canvas>
+                <button id="btnPrueba" onclick="grafica()" type="button" class="btn btn-danger">Grafico</button>
+
+                <div id="grafica">
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                </div>
 
                 <div id="modal-1" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -41,7 +43,7 @@
                             </div>
                             <div class="modal-body">
                                 <!-- Aqui se mostrarán los gráficos -->
-                                <div id="contenedor-modal" style="min-width: 320px; height: 400px; margin: 0 auto"></div>
+                                <canvas id="myChart" width="400" height="400"></canvas>
                             </div>
                         </div>
                     </div>
@@ -106,10 +108,12 @@
     </script>
 
     <script>
-    
+
+function grafica() {
+
     var ctx= document.getElementById("myChart").getContext("2d");
         var myChart= new Chart(ctx,{
-            type:"pie",
+            type:"doughnut",
             data:{
                 labels:opciones(),
                 datasets:[{
@@ -121,9 +125,15 @@
                             'rgb(229, 89, 50,0.5)'
                         ]
                 }]
+            },
+            options: {
+                rotation: 1 * Math.PI,
+                circumference: 1 * Math.PI
             }
         });
-    
+
+}
+
 
     $("#btnSemiCircleDonut").click(function() {
         $(".modal-header").css("background-color", "#343a40");

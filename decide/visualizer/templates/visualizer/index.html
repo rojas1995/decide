@@ -16,117 +16,61 @@
 
 {% block content %}
 <body>
-    <header>
-        <h1 class="text-center text-light">Tutorial</h1>
-        <h2 class="text-center text-light">Como usar <span class="badge badge-success">HIGHCHARTS JS</span></h2>
-    </header>
-
     <div id="app-visualizer" class="text-center">
+
+        <header>
+            <h1 class="text-center text-light">Decide</h1>
+            <h2 class="text-center text-light">[[voting.id]] - <span class="badge badge-success">[[voting.name]]</span></h2>
+        </header>
+
         <h2 v-if="!voting.start_date">Votación no comenzada</h2>
         <h2 v-else-if="!voting.end_date">Votación en curso</h2>
         <div v-else>
             <div class="btn-group" role="group" aria-label="">
-
+                <!--
                 <button id="btnSemiCircleDonut" type="button" class="btn btn-secondary">Semi Circle Donut</button>
                 <button id="btnPie" type="button" class="btn btn-primary">Pie</button>
                 <button id="btnDualAxe" type="button" class="btn btn-info">Dual Axe</button>
-                <button id="btnPrueba" type="button" class="btn btn-danger">Grafico de Prueba</button>
+                -->
+                <button id="btnPrueba" onclick="grafica()" type="button" class="btn btn-danger">Grafico de Prueba</button>
             </div>
         </div>
-    </div>
 
-    <div id="contenedor" style="min-width: 320px; height: 400px; margin: 0 auto"></div>
-
-    <div id="modal-1" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Aqui se mostrarán los gráficos -->
-                    <div id="contenedor-modal" style="min-width: 320px; height: 400px; margin: 0 auto"></div>
-                </div>
-            </div>
+        <div id="grafica">
+            <canvas id="myChart" width="400" height="400"></canvas>
         </div>
+
     </div>
+
+    
 
     {% endblock %}
 
 {% block extrabody %}
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="{% static "crypto/Bootstrap_4/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "crypto/codigoJS.js" %}"></script>
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
 
-    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/highcharts.js" %}"></script>
-    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/modules/exporting.js" %}"></script>
-    <script src="{% static "crypto/pluggins/Highcharts-8.0.0/code/modules/export-data.js" %}"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
     
 
 <script>
-    $("#btnPie").click(function () {
-    $(".modal-header").css("background-color", "#343a40");
-    $(".modal-header").css("color", "white");
-    $(".modal-title").text("Gráfico Ejemplo");
-    $("#modal-1").modal("show");
-    pie();
-});
 
-function pie() {
-    Highcharts.chart('contenedor-modal', {
-        chart: {
-            type: 'pie',
-            plotBackgroundColor: '#f8f9fa',
-            plotBorderwidth: 1,
-            plotShadow: false
-        },
-        title: {
-            text: '<h1>[[ voting.id ]] - [[ voting.name ]]</h1>'
-        },
-        tooltip: {
-            pointFormart: '<b>{series.name}:</b>{point.percentage:.2f}%',
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}:</b>{point.percentage:.2f}%'
-                }
-            }
-        },
-        series: [{
-            name: 'Marcas',
-            colorByPoint: true,
-            data: [{
-                name:'Chrome',
-                y: 61.41,
-            }, {
-                name:'IE',
-                y: 15.87,
-            }, {
-                name:'Edge',
-                y: 8.21,
-            }, {
-                name:'Safari',
-                y: 3.98,
-            }, {
-                name:'Opera',
-                y: 7.53,
-            }]
-        }]
-
-    });
-}
-</script>
-
-<script>
+//    $("#btnPie").click(function () {
+//    $(".modal-header").css("background-color", "#343a40");
+//    $(".modal-header").css("color", "white");
+//    $(".modal-title").text("Gráfico Ejemplo");
+//   $("#modal-1").modal("show");
+//    pie();
+//});
+//['rgb(66, 134, 244,0.5)',
+//   'rgb(74, 135, 72,0.5)',
+//   'rgb(229, 89, 50,0.5)'
+//    ]
     var voting = {{voting|safe}};
     var app = new Vue({
         delimiters: ['[[', ']]'],
@@ -135,6 +79,80 @@ function pie() {
             voting: voting
         }
     })
+
+function grafica() {
+
+    var ctx= document.getElementById("myChart").getContext("2d");
+        var myChart= new Chart(ctx,{
+            type:"doughnut",
+            data:{
+                labels:opciones(),
+                datasets:[{
+                        label:'Num datos',
+                        data:votos(),
+                        backgroundColor: color_por_opcion()
+                }]
+            },
+            options: {
+                rotation: 1 * Math.PI,
+                circumference: 1 * Math.PI
+            }
+        });
+
+}
+
+function opciones() {
+    var datos = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    for(var i = 0; i < postproc.length; i++) {
+        datos.push(postproc[i].option);
+    }
+
+    return datos;
+}
+
+function votos() {
+    var datos = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    for(var i = 0; i < postproc.length; i++) {
+        datos.push(postproc[i].votes);
+    }
+
+    return datos;
+}
+
+function aleatorio(inferior,superior){
+   numPosibilidades = superior - inferior
+   aleat = Math.random() * numPosibilidades
+   aleat = Math.floor(aleat)
+   return parseInt(inferior) + aleat
+} 
+
+function dame_color_aleatorio(){
+   hexadecimal = new Array("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
+   color_aleatorio = "#";
+   for (i=0;i<6;i++){
+      posarray = aleatorio(0,hexadecimal.length)
+      color_aleatorio += hexadecimal[posarray]
+   }
+   return color_aleatorio
+} 
+
+function color_por_opcion(){
+    var colores = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+        colores.push(dame_color_aleatorio());
+    }
+
+    return colores;
+}
+
 </script>
 
 </body>
