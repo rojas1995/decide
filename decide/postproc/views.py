@@ -33,7 +33,7 @@ class PostProcView(APIView):
         nv = 0;
 
         for votes in out:
-            nv= nv+ out['votes'];
+            nv= nv+ votes['votes'];
 
         perc = 0;
         
