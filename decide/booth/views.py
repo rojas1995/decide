@@ -61,6 +61,7 @@ class BoothView(TemplateView):
         if request.user.is_authenticated:
             return redirect('/')
 
+        errors = 0
         if request.method == "POST":
             # Recuperamos las credenciales validadas
             username = request.POST.get('username')
@@ -72,8 +73,10 @@ class BoothView(TemplateView):
             if user is not None:
                 do_login(request, user)
                 return redirect('/')
+            else:
+                errors = 1
 
-        return render(request, "booth/login.html")
+        return render(request, "booth/login.html", {'errors': errors})
 
     def logout(request):
         do_logout(request)
