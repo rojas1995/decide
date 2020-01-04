@@ -7,10 +7,11 @@ RUN pip install gunicorn
 RUN pip install psycopg2
 RUN pip install ipdb
 RUN pip install ipython
+RUN pip install httplib2
 
 WORKDIR /app
 
-RUN git clone https://github.com/wadobo/decide.git .
+RUN git clone https://github.com/Decide-Palkia/decide.git .
 RUN pip install -r requirements.txt
 
 WORKDIR /app/decide
