@@ -50,7 +50,7 @@ def booth(request, **kwargs):
             send_data(request, user_id, token, voting_id, vote)
             
 
-            return render(request, 'booth/success.html')
+            return render(request, 'booth/success.html', {'user': request.username})
         except:
             raise Http404
 

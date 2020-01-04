@@ -1,9 +1,19 @@
-<h1>{{voting.name}}</h1>
+{% extends 'booth/block.html' %}
+
+{% block content %}
+
+<h1 class=text-center text-white pt-5>{{voting.name}}</h1>
+<h3>{{voting.desc}}</h3>
 <form action = '/booth/{{voting.id}}/' method = 'POST'>
         {%csrf_token%}
 
+        <label for="option" class="text-white">Options</label><br>
         {% for opt in voting.question.options.all %}
-            <input name = 'option' type="radio" value = "{{opt.number}}" />{{opt.option}}
+        <div class="form-group">
+            <input name = 'option' type="radio" value = "{{opt.number}}" class = "form-check-input"/>{{opt.option}}
+        </div>
         {% endfor %}
-    <button type="submit">Submit</button>
+    <button type="submit" class = "btn btn-info btn-md" >Submit</button>
 </form>
+
+{% endblock %}
