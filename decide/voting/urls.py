@@ -7,9 +7,6 @@ urlpatterns = [
     path('<int:voting_id>/', views.VotingUpdate.as_view(), name='voting'),
     path('load/', views.candidates_load, name='voting'),
     path('votings/', views.voting_list, name='votings'),
-    path('votings/delete/', views.voting_list_delete, name='voting_delete'),
-    path('votings/start/', views.voting_list_start, name='voting_start'),
-    path('votings/stop/', views.voting_list_stop, name='voting_stop'),
-    path('votings/tally/', views.voting_list_tally, name='voting_tally'),
     path('votings/update/', views.voting_list_update, name='voting_update'),
+    path('votings/update_selection/', views.voting_list_update_multiple, name='voting_update_multiple'),
 ]

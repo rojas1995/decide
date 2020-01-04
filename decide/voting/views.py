@@ -55,68 +55,47 @@ def voting_list(request):
     votings = Voting.objects.all()
     return render(request, "votings.html", {'votings':votings, 'STATIC_URL':settings.STATIC_URL})
 
-def voting_list_start(request):
-    voting_id = request.POST['voting_id']
-    voting = get_object_or_404(Voting, pk=voting_id)
-    action = request.POST['action']
-    if action == 'start':
-        if voting.start_date:
-            msg = "None"
-        else:
-            voting.start_date = timezone.now()
-            voting.save()
-
-    return HttpResponseRedirect('/voting/votings/')
-
-def voting_list_stop(request):
-    voting_id = request.POST['voting_id']
-    voting = get_object_or_404(Voting, pk=voting_id)
-    action = request.POST['action']
-    if action == 'start':
-        if voting.start_date:
-            msg = 'Voting already started'
-            st = status.HTTP_400_BAD_REQUEST
-        else:
-            voting.start_date = timezone.now()
-            voting.save()
-            msg = 'Voting started'
-            st = status.HTTP_200_OK
-
-    return HttpResponseRedirect('/admin/')
-
-def voting_list_tally(request):
-    voting_id = request.POST['voting_id']
-    voting = get_object_or_404(Voting, pk=voting_id)
-    action = request.POST['action']
-    if action == 'start':
-        if voting.start_date:
-            msg = 'Voting already started'
-            st = status.HTTP_400_BAD_REQUEST
-        else:
-            voting.start_date = timezone.now()
-            voting.save()
-            msg = 'Voting started'
-            st = status.HTTP_200_OK
-
-    return HttpResponseRedirect('/admin/')
-
-def voting_list_delete(request):
-    voting_id = request.POST['voting_id']
-    voting = get_object_or_404(Voting, pk=voting_id)
-    action = request.POST['action']
-    if action == 'start':
-        if voting.start_date:
-            msg = 'Voting already started'
-            st = status.HTTP_400_BAD_REQUEST
-        else:
-            voting.start_date = timezone.now()
-            voting.save()
-            msg = 'Voting started'
-            st = status.HTTP_200_OK
-
-    return HttpResponseRedirect('/admin/')
-
 def voting_list_update(request):
+    voting_id = request.POST['voting_id']
+    voting = get_object_or_404(Voting, pk=voting_id)
+    action = request.POST['action']
+    if action == 'start':
+        if voting.start_date:
+            url = "/admin/"
+            # TODO Cuando seleccionas algunas que estan empezadas o no
+        else:
+            voting.start_date = timezone.now()
+            voting.save()
+            url = "/voting/votings/"
+    elif action == 'stop':
+        if not voting.start_date:
+            url = "/admin/"
+        elif voting.end_date:
+            url = "/admin/"
+        else:
+            voting.end_date = timezone.now()
+            voting.save()
+            url = "/voting/votings/"
+    elif action == 'tally':
+        if not voting.start_date:
+            url = "/admin/"
+        elif not voting.end_date:
+            url = "/admin/"
+        elif voting.tally:
+            url = "/admin/"
+        else:
+            voting.tally_votes(request.auth.key)
+            url = "/voting/votings/"
+    elif action == 'delete':
+        #TODO 
+        url = "/voting/votings/"
+    else:
+        #TODO 
+        url = "/voting/votings/"
+
+    return HttpResponseRedirect(url)
+
+def voting_list_update_multiple(request):
     array_voting_id = request.POST['array_voting_id[]'].split(",")
     for voting_id in array_voting_id:
         voting = get_object_or_404(Voting, pk=voting_id)
@@ -129,9 +108,33 @@ def voting_list_update(request):
                 voting.start_date = timezone.now()
                 voting.save()
                 url = "/voting/votings/"
+        elif action == 'stop':
+            if not voting.start_date:
+                url = "/admin/"
+            elif voting.end_date:
+                url = "/admin/"
+            else:
+                voting.end_date = timezone.now()
+                voting.save()
+                url = "/voting/votings/"
+        elif action == 'tally':
+            if not voting.start_date:
+                url = "/admin/"
+            elif not voting.end_date:
+                url = "/admin/"
+            elif voting.tally:
+                url = "/admin/"
+            else:
+                voting.tally_votes(request.auth.key)
+                url = "/voting/votings/"
+        elif action == 'delete':
+            #TODO 
+            url = "/voting/votings/"
+        else:
+            #TODO 
+            url = "/voting/votings/"
 
     return HttpResponseRedirect(url)
-
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()
