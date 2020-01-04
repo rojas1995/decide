@@ -178,7 +178,7 @@ class PostProcTestCase(APITestCase):
             ]
         }
 
-         expected_result = [
+        expected_result = [
             { 'option': 'Option 1', 'number': 1, 'votes': 5000, 'postproc': 100 },
             { 'option': 'Option 2', 'number': 2, 'votes': 2000, 'postproc': 40 },
             { 'option': 'Option 3', 'number': 3, 'votes': 1000, 'postproc': 20 },
