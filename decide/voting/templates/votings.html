@@ -1,16 +1,145 @@
 {% extends "base.html" %}
 {% load i18n static %}
 
+
+{% block extrahead %}
+    <!-- <link type="text/css" rel="stylesheet" href="{% static "voting/style.css" %}" /> -->
+{% endblock %}
+
+
 {% block content %}
 
-  {% for row in votings %}
-      <p>{{row.name}} | {{row.id}} </p>	
-      <form method="post" action="start/">
-        {% csrf_token %}
-        <input name="action" type="hidden" value="start"/>
-        <input name="voting_id" type="hidden" value="{{row.id}}"/>
-        <input type="submit" value="Start"/>
-      </form>
-  {% endfor %}
+
+<script>
+    function grab_selected() {
+      var tasks = [];
+      var array = document.getElementsByName("voting_id[]");
+      array.forEach(element => {
+        if(element.checked){
+          tasks.push(element.value);
+        }
+      });
+      var inputNombre = document.getElementById("array_voting_id[]");
+      inputNombre.value = tasks;
+    }
+  </script>
+
+<h1>Voting list</h1>
+
+<form action="update/" id="multiple-selection" method="POST">
+  {% csrf_token %}
+  <div class="actions">
+      <label>Action: 
+        <select name="action" required>
+
+          <option value="" selected>---------</option>
+
+          <option value="delete">Delete selected votings</option>
+
+          <option value="start">Start</option>
+
+          <option value="stop">Stop</option>
+
+          <option value="tally">Tally</option>
+
+        </select>
+    </label>
+    
+    <input type="submit" form="multiple-selection" value="Go"/>
+      
+  </div>
+
+
+  <div class="results">
+    <table>
+      <thead>
+        <tr>
+    
+          <th scope="col">
+            <div class="text"><span><input type="checkbox" id="action-toggle" /></span></div>
+            <div class="clear"></div>
+          </th>
+    
+          <th scope="col">
+            <div class="text"><a href="?o=1">Name</a></div>
+            <div class="clear"></div>
+          </th>
+          
+          <th scope="col">       
+            <div class="text"><a href="?o=2">-</a></div>
+            <div class="clear"></div>
+          </th>
+
+          <th scope="col">       
+            <div class="text"><a href="?o=2">-</a></div>
+            <div class="clear"></div>
+          </th>
+
+          <th scope="col">       
+            <div class="text"><a href="?o=2">-</a></div>
+            <div class="clear"></div>
+          </th>
+
+          <th scope="col">       
+            <div class="text"><a href="?o=2">-</a></div>
+            <div class="clear"></div>
+          </th>
+
+        </tr>
+      </thead>
+    
+      <tbody>
+    
+      {% for row in votings %}
+        <tr class="row">
+            <td>
+              <input type="checkbox" name="voting_id[]" value="{{row.id}}"/>
+            </td>
+            <th>
+              <a href="/admin/voting/voting/{{row.id}}/change/">{{row.name}}</a>
+            </th>
+            <td>
+                <form method="post" action="start/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="start"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Start"/>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="stop/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="stop"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Stop"/>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="tally/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="tally"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Tally"/>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="delete/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="delete"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Delete"/>
+                </form>
+            </td>
+          </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <input type="hidden" id="array_voting_id[]" name="array_voting_id[]" value="">
+   
+  <button type="submit" onclick="grab_selected()" form="multiple-selection" class="button" title="Run the selected action">Go</button>
+</form>
 
 {% endblock %}
+

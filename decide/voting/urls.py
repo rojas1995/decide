@@ -11,4 +11,5 @@ urlpatterns = [
     path('votings/start/', views.voting_list_start, name='voting_start'),
     path('votings/stop/', views.voting_list_stop, name='voting_stop'),
     path('votings/tally/', views.voting_list_tally, name='voting_tally'),
+    path('votings/update/', views.voting_list_update, name='voting_update'),
 ]

@@ -16,8 +16,7 @@ from .forms import UploadFileForm
 
 import csv
 import os
-dirspot = os.getcwd()
-print(dirspot)
+
 def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -69,7 +68,6 @@ def voting_list_start(request):
 
     return HttpResponseRedirect('/voting/votings/')
 
-
 def voting_list_stop(request):
     voting_id = request.POST['voting_id']
     voting = get_object_or_404(Voting, pk=voting_id)
@@ -85,7 +83,6 @@ def voting_list_stop(request):
             st = status.HTTP_200_OK
 
     return HttpResponseRedirect('/admin/')
-
 
 def voting_list_tally(request):
     voting_id = request.POST['voting_id']
@@ -118,6 +115,23 @@ def voting_list_delete(request):
             st = status.HTTP_200_OK
 
     return HttpResponseRedirect('/admin/')
+
+def voting_list_update(request):
+    array_voting_id = request.POST['array_voting_id[]'].split(",")
+    for voting_id in array_voting_id:
+        voting = get_object_or_404(Voting, pk=voting_id)
+        action = request.POST['action']
+        if action == 'start':
+            if voting.start_date:
+                url = "/admin/"
+                # TODO Cuando seleccionas algunas que estan empezadas o no
+            else:
+                voting.start_date = timezone.now()
+                voting.save()
+                url = "/voting/votings/"
+
+    return HttpResponseRedirect(url)
+
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()
