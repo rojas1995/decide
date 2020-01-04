@@ -1,12 +1,13 @@
 from django.urls import path
-from .views import BoothView, GetVoting
+from .views import GetVoting, PageView, votinglist, booth
 
 
 urlpatterns = [
-    path('<int:voting_id>/', BoothView.as_view()),
-    path('login/', BoothView.login),
-    path('', BoothView.llamarIndex),
-    path('logout/', BoothView.logout),
-    path('register/', BoothView.register),
+    path('login/', PageView.login),
+    path('', PageView.index),
+    path('logout/', PageView.logout),
+    path('register/', PageView.register),
+    path('<int:voting_id>/', booth),
+    path('list/', votinglist),
     path('getvoting/', GetVoting.as_view())
 ]
