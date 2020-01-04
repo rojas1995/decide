@@ -97,9 +97,9 @@ def voting_list_update(request):
 
 def voting_list_update_multiple(request):
     array_voting_id = request.POST['array_voting_id[]'].split(",")
+    action = request.POST['action_multiple']
     for voting_id in array_voting_id:
         voting = get_object_or_404(Voting, pk=voting_id)
-        action = request.POST['action']
         if action == 'start':
             if voting.start_date:
                 url = "/admin/"
@@ -125,6 +125,7 @@ def voting_list_update_multiple(request):
             elif voting.tally:
                 url = "/admin/"
             else:
+                #TODO
                 voting.tally_votes(request.auth.key)
                 url = "/voting/votings/"
         elif action == 'delete':

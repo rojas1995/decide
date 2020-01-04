@@ -30,7 +30,7 @@
   {% csrf_token %}
   <div class="actions">
       <label>Action: 
-        <select name="action" required>
+        <select name="action_multiple" required>
 
           <option value="" selected>---------</option>
 
@@ -93,7 +93,7 @@
       {% for row in votings %}
         <tr class="row">
             <td>
-              <input type="checkbox" name="voting_id[]" value="{{row.id}}"/>
+              <input type="checkbox" onclick="grab_selected()" name="voting_id[]" value="{{row.id}}"/>
             </td>
             <th>
               <a href="/admin/voting/voting/{{row.id}}/change/">{{row.name}}</a>
@@ -138,7 +138,7 @@
 
   <input type="hidden" id="array_voting_id[]" name="array_voting_id[]" value="">
    
-  <button type="submit" onclick="grab_selected()" form="multiple-selection" class="button" title="Run the selected action">Go</button>
+  <button type="submit"  form="multiple-selection" class="button" title="Run the selected action">Go</button>
 </form>
 
 {% endblock %}
