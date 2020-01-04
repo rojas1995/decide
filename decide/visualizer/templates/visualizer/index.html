@@ -19,7 +19,7 @@
     <div id="app-visualizer" class="text-center">
 
         <header>
-            <h1 class="text-center text-light">Decide</h1>
+            <h1 class="text-center text-light">Bienvenido a la página de Visualización de <span class="badge badge-dark">Decide</span></h1>
             <h2 class="text-center text-light">[[voting.id]] - <span class="badge badge-success">[[voting.name]]</span></h2>
         </header>
 
@@ -27,17 +27,12 @@
         <h2 v-else-if="!voting.end_date">Votación en curso</h2>
         <div v-else>
             <div class="btn-group" role="group" aria-label="">
-                <!--
-                <button id="btnSemiCircleDonut" type="button" class="btn btn-secondary">Semi Circle Donut</button>
-                <button id="btnPie" type="button" class="btn btn-primary">Pie</button>
-                <button id="btnDualAxe" type="button" class="btn btn-info">Dual Axe</button>
-                -->
-                <button id="btnPrueba" onclick="grafica()" type="button" class="btn btn-danger">Grafico de Prueba</button>
+                <button id="btnPrueba" onclick="grafica()" type="button" class="btn btn-info btn-lg">Resultados</button>
             </div>
         </div>
 
         <div id="grafica">
-            <canvas id="myChart" width="400" height="400"></canvas>
+            <canvas id="myChart" width="600" height="400"></canvas>
         </div>
 
     </div>
@@ -59,18 +54,6 @@
     
 
 <script>
-
-//    $("#btnPie").click(function () {
-//    $(".modal-header").css("background-color", "#343a40");
-//    $(".modal-header").css("color", "white");
-//    $(".modal-title").text("Gráfico Ejemplo");
-//   $("#modal-1").modal("show");
-//    pie();
-//});
-//['rgb(66, 134, 244,0.5)',
-//   'rgb(74, 135, 72,0.5)',
-//   'rgb(229, 89, 50,0.5)'
-//    ]
     var voting = {{voting|safe}};
     var app = new Vue({
         delimiters: ['[[', ']]'],
@@ -82,9 +65,15 @@
 
 function grafica() {
 
-    var ctx= document.getElementById("myChart").getContext("2d");
-        var myChart= new Chart(ctx,{
+    var ctx = document.getElementById("myChart").getContext("2d");
+    Chart.defaults.global.defaultFontFamily = "Lato";
+    Chart.defaults.global.defaultFontSize = 18;    
+    var myChart = new Chart(ctx,{
             type:"doughnut",
+            legend:{
+                horizontalAlign: "right",
+                color: "white"
+            },
             data:{
                 labels:opciones(),
                 datasets:[{
@@ -94,9 +83,15 @@ function grafica() {
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
+//                legend: {
+//                    position: 'right'
+//                },
                 rotation: 1 * Math.PI,
-                circumference: 1 * Math.PI
-            }
+                circumference: 1 * Math.PI,
+            },
+            
         });
 
 }
