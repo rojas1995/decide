@@ -2,59 +2,15 @@
 {% load i18n static %}
 
 {% block content %}
-<div id="toolbar"><form id="changelist-search" method="get">
-  <div><!-- DIV needed for valid HTML -->
-  <label for="searchbar"><img src="/static/admin/img/search.svg" alt="Search" /></label>
-  <input type="text" size="40" name="q" value="" id="searchbar" autofocus />
-  <input type="submit" value="Search" />
-  
-  
-  </div>
-  </form></div>
-
 
   {% for row in votings %}
-          <p>{{row.name}}</p>	
+      <p>{{row.name}} | {{row.id}} </p>	
+      <form method="post" action="start/">
+        {% csrf_token %}
+        <input name="action" type="hidden" value="start"/>
+        <input name="voting_id" type="hidden" value="{{row.id}}"/>
+        <input type="submit" value="Start"/>
+      </form>
   {% endfor %}
-
-  <table id="result_list">
-    <thead>
-    <tr>
-    
-    <th scope="col"  class="action-checkbox-column">
-       
-       <div class="text"><span><input type="checkbox" id="action-toggle" /></span></div>
-       <div class="clear"></div>
-    </th>
-    <th scope="col"  class="sortable column-name">
-       
-         
-       
-       <div class="text"><a href="?o=1">Name</a></div>
-       <div class="clear"></div>
-    </th>
-    <th scope="col"  class="sortable column-start_date">
-       
-         
-       
-       <div class="text"><a href="?o=2">Start date</a></div>
-       <div class="clear"></div>
-    </th>
-    <th scope="col"  class="sortable column-end_date">
-       
-         
-       
-       <div class="text"><a href="?o=3">End date</a></div>
-       <div class="clear"></div>
-    </th>
-    </tr>
-    </thead>
-    <tbody>
-    
-    
-    <tr class="row1"><td class="action-checkbox"><input type="checkbox" name="_selected_action" value="1" class="action-select" /></td><th class="field-name"><a href="/admin/voting/voting/1/change/">sdbsfb</a></th><td class="field-start_date nowrap">-</td><td class="field-end_date nowrap">-</td></tr>
-    
-    </tbody>
-    </table>
 
 {% endblock %}

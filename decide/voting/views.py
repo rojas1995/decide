@@ -52,11 +52,72 @@ def handle_uploaded_file(f):
         
         Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
 
-class VotingsView():
-    def voting_list(request):
-        votings = Voting.objects.all()
-        return render(request, "votings.html", {'votings':votings, 'STATIC_URL':settings.STATIC_URL})
+def voting_list(request):
+    votings = Voting.objects.all()
+    return render(request, "votings.html", {'votings':votings, 'STATIC_URL':settings.STATIC_URL})
 
+def voting_list_start(request):
+    voting_id = request.POST['voting_id']
+    voting = get_object_or_404(Voting, pk=voting_id)
+    action = request.POST['action']
+    if action == 'start':
+        if voting.start_date:
+            msg = "None"
+        else:
+            voting.start_date = timezone.now()
+            voting.save()
+
+    return HttpResponseRedirect('/voting/votings/')
+
+
+def voting_list_stop(request):
+    voting_id = request.POST['voting_id']
+    voting = get_object_or_404(Voting, pk=voting_id)
+    action = request.POST['action']
+    if action == 'start':
+        if voting.start_date:
+            msg = 'Voting already started'
+            st = status.HTTP_400_BAD_REQUEST
+        else:
+            voting.start_date = timezone.now()
+            voting.save()
+            msg = 'Voting started'
+            st = status.HTTP_200_OK
+
+    return HttpResponseRedirect('/admin/')
+
+
+def voting_list_tally(request):
+    voting_id = request.POST['voting_id']
+    voting = get_object_or_404(Voting, pk=voting_id)
+    action = request.POST['action']
+    if action == 'start':
+        if voting.start_date:
+            msg = 'Voting already started'
+            st = status.HTTP_400_BAD_REQUEST
+        else:
+            voting.start_date = timezone.now()
+            voting.save()
+            msg = 'Voting started'
+            st = status.HTTP_200_OK
+
+    return HttpResponseRedirect('/admin/')
+
+def voting_list_delete(request):
+    voting_id = request.POST['voting_id']
+    voting = get_object_or_404(Voting, pk=voting_id)
+    action = request.POST['action']
+    if action == 'start':
+        if voting.start_date:
+            msg = 'Voting already started'
+            st = status.HTTP_400_BAD_REQUEST
+        else:
+            voting.start_date = timezone.now()
+            voting.save()
+            msg = 'Voting started'
+            st = status.HTTP_200_OK
+
+    return HttpResponseRedirect('/admin/')
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()
