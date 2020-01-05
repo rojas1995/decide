@@ -246,7 +246,7 @@ class PostProcView(APIView):
             if check:
                 options = []
                 options = self.simple(opts, s)
-                return response(self.paridad(opts))
+                return Response(self.paridad(opts))
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
 
@@ -255,11 +255,11 @@ class PostProcView(APIView):
             if check:
                 options = []
                 options = self.dhondt(opts, s)
-                return response(self.paridad(options))
+                return Response(self.paridad(options))
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
               
         elif t == 'DHONDT':
-            return response(self.dhondt(opts, s))
+            return Response(self.dhondt(opts, s))
 
         return Response({})
