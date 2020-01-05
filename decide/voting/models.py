@@ -50,8 +50,8 @@ class Voting(models.Model):
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
-    start_date_selected = models.DateField(blank=False, null=True)
-    end_date_selected = models.DateField(blank=True, null=True)
+    start_date_selected = models.DateTimeField(blank=False, null=True)
+    end_date_selected = models.DateTimeField(blank=True, null=True)
 
     pub_key = models.OneToOneField(Key, related_name='voting', blank=True, null=True, on_delete=models.SET_NULL)
     auths = models.ManyToManyField(Auth, related_name='votings')

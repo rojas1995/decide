@@ -6,9 +6,11 @@ from django.utils import timezone
 
 def start_votings():
     from voting.models import Voting
-    
     now = timezone.now()
-    findAllByNowDateSelected = Voting.objects.filter(start_date_selected=now, pub_key=None)
+    print(now.date())
+    print(now.time())
+    
+    findAllByNowDateSelected = Voting.objects.filter(start_date_selected__lte = now, pub_key=None)
     
     if findAllByNowDateSelected.count() > 0:
         for v in findAllByNowDateSelected:
@@ -17,9 +19,8 @@ def start_votings():
 
 def end_votings():
     from voting.models import Voting
-    
     now = timezone.now()
-    findAllByNowDateSelected = Voting.objects.filter(end_date_selected=now)
+    findAllByNowDateSelected = Voting.objects.filter(end_date_selected__lte=now)
     
     if findAllByNowDateSelected.count() > 0:
         for v in findAllByNowDateSelected:
@@ -33,8 +34,8 @@ def start():
 
     #Añadimos la tarea definiendo una funcion para que se ejecute en el intervalor que le marquemos.
     # Consultar: https://apscheduler.readthedocs.io/en/latest/userguide.html
-    scheduler.add_job(start_votings, 'interval', seconds=10)
-    scheduler.add_job(end_votings, 'interval', minutes=60)
+    scheduler.add_job(start_votings, 'interval', minutes=30)
+    scheduler.add_job(end_votings, 'interval', minutes=30)
     # Le damos instrucciones al planificador para que comience
     scheduler.start()
     
