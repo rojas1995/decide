@@ -185,6 +185,34 @@ class PostProcView(APIView):
         return out
 
 
+    def sin_paridad(self, options):
+
+        out = []
+
+        for opt in options:
+
+            out.append({
+                **opt,
+                'paridad': [],
+            })
+
+                    
+        for i in out:
+
+            escanos = i['postproc']
+
+            candidatos = i['candidatos']
+
+            a = 0
+
+            while escanos > 0:
+              
+                i['paridad'].append(candidatos[a])
+                a = a + 1
+                      
+        return out
+
+
     def check_json(self, opts):
         out = []
         check = False
@@ -246,9 +274,14 @@ class PostProcView(APIView):
             if check:
                 options = []
                 options = self.simple(opts, s)
-                return Response(self.paridad(opts))
+                return Response(self.paridad(options))
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
+
+        elif t == 'SIMPLESP':
+            options = []
+            options = self.simple(opts, s)
+            return Response(self.paridad(options))
 
         elif t == 'DHONDTP':
             check = self.check_json(opts)
@@ -258,6 +291,11 @@ class PostProcView(APIView):
                 return Response(self.paridad(options))
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
+
+        elif t == 'DHONDTSP':
+            options = []
+            options = self.dhondt(opts, s)
+            return Response(self.paridad(options))
               
         elif t == 'DHONDT':
             return Response(self.dhondt(opts, s))
