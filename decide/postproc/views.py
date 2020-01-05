@@ -244,6 +244,7 @@ class PostProcView(APIView):
         elif t == 'SIMPLEP':
             check = self.check_json(opts)
             if check:
+                options = []
                 options = self.simple(opts, s)
                 return self.paridad(opts)
             else:
@@ -252,7 +253,8 @@ class PostProcView(APIView):
         elif t == 'DHONDTP':
             check = self.check_json(opts)
             if check:
-                options = self.simple(opts, s)
+                options = []
+                options = self.dhondt(opts, s)
                 return self.paridad(options)  
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
