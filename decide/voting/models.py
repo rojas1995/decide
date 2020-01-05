@@ -96,6 +96,7 @@ class QuestionOption(models.Model):
 
 
 class Voting(models.Model):
+    
     name = models.CharField(max_length=200)
     desc = models.TextField(blank=True, null=True)
     question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
@@ -108,6 +109,8 @@ class Voting(models.Model):
 
     tally = JSONField(blank=True, null=True)
     postproc = JSONField(blank=True, null=True)
+
+    custom_url = models.CharField(max_length=200, blank=True, null=True, unique=True)
 
     def create_pubkey(self):
         if self.pub_key or not self.auths.count():

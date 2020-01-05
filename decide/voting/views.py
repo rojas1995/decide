@@ -1,5 +1,6 @@
 import django_filters.rest_framework
 import codecs
+from django.http import HttpResponse
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -15,11 +16,26 @@ from django.shortcuts import render
 from .forms import UploadFileForm
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from voting.models import Voting
 
 import csv
 import os
 dirspot = os.getcwd()
-print(dirspot)
+
+def findVotingByParam(request, voting):
+
+    response = None
+    votacion = None
+
+    if type(voting) is int:
+        votacion = Voting.objects.get(id=voting)
+        response = HttpResponse("Es entero!")
+    elif type(voting) is str:
+        votacion = Voting.objects.get(custom_url=voting)
+        response = HttpResponse("Es cadena!")
+
+    return response
+
 def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
