@@ -16,7 +16,7 @@ class PostProcView(APIView):
 
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
-    def simple(self, options, seats, paridad):
+    def simple(self, options, seats):
 
         out = []
 
@@ -78,13 +78,10 @@ class PostProcView(APIView):
 
                 ne = ne - 1;
         
-        if paridad:
-            out = self.paridad(out)
-        
         return Response(out)
 
 
-    def dhondt(self, options, seats, paridad):
+    def dhondt(self, options, seats):
 
         out = []
 
@@ -125,9 +122,6 @@ class PostProcView(APIView):
             out[actual]['postproc'] = out[actual]['postproc'] + 1;
 
             ne = ne - 1;
-        
-        if paridad:
-            out = self.paridad(out)
             
         return Response(out)
 
@@ -157,10 +151,21 @@ class PostProcView(APIView):
             paridad = True
             while escanos > 0:
                 if paridad:
-                    i['paridad'].append(mujeres[e])
+                    
+                    if e < len(mujeres):
+                        i['paridad'].append(mujeres[e])
+                    else:
+                        i['paridad'].append(hombres[e])
+                        
                     paridad = False
+                    
                 else:
-                    i['paridad'].append(hombres[e])
+                    
+                    if e < len(hombres):
+                        i['paridad'].append(hombres[e])
+                    else:
+                        i['paridad'].append(mujeres[e])
+                        
                     paridad = True
                     e = e+1
                 escanos -= 1
@@ -221,23 +226,23 @@ class PostProcView(APIView):
             return self.identity(opts)
         
         elif t =='SIMPLE':
-            return self.simple(opts, s, False)
+            return self.simple(opts, s)
         
         elif t == 'SIMPLEP':
             check = self.check_json(opts)
             if check:
-                return self.simple(opts, s, True)  
+                return self.paridad(self.simple(opts, s))
             else:
-                return Response({'message' : 'la diferencia del numero de hombresy mujeres es de más de un 60% - 40%'})
+                return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
 
         elif t == 'DHONDTP':
             check = self.check_json(opts)
             if check:
-                return self.dhondt(opts, s, True)  
+                return self.paridad(self.dhondt(opts, s))  
             else:
-                return Response({'message' : 'la diferencia del numero de hombresy mujeres es de más de un 60% - 40%'})
+                return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
               
         elif t == 'DHONDT':
-            return self.dhondt(opts, s, False)
+            return self.dhondt(opts, s)
 
         return Response({})
