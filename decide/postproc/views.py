@@ -147,27 +147,40 @@ class PostProcView(APIView):
                     hombres.append(cand)
                 elif cand['sexo'] == 'mujer':
                     mujeres.append(cand)
-            e=0
+                    
+            h=0
+            m=0
+            
             paridad = True
             while escanos > 0:
                 if paridad:
                     
-                    if e < len(mujeres):
-                        i['paridad'].append(mujeres[e])
+                    if m < len(mujeres):
+                        
+                        i['paridad'].append(mujeres[m])
+                        m = m + 1
+                        
                     else:
-                        i['paridad'].append(hombres[e])
+                        
+                        i['paridad'].append(hombres[h])
+                        h = h + 1
                         
                     paridad = False
                     
                 else:
                     
-                    if e < len(hombres):
-                        i['paridad'].append(hombres[e])
+                    if h < len(hombres):
+                        
+                        i['paridad'].append(hombres[h])
+                        h = h + 1
+                        
                     else:
-                        i['paridad'].append(mujeres[e])
+                        
+                        i['paridad'].append(mujeres[m])
+                        m = m + 1
                         
                     paridad = True
-                    e = e+1
+                    
                 escanos -= 1
         return out
 
