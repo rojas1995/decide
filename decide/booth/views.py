@@ -92,9 +92,12 @@ def votinglist(request):
 
         for c in census:
             voting_id = c.voting_id
-            if voting_id is not None and voting_checks(voting_id):
-                voting = Voting.objects.get(pk = voting_id)
-                res.append(voting)
+            # Only for list view
+            try:
+                if voting_id is not None and voting_checks(voting_id):
+                    res.append(voting)
+            except Voting.DoesNotExist:
+                pass
 
         return render(request, 'booth/votinglist.html', {'res':res})
     else:
@@ -172,12 +175,7 @@ def check_date(date):
 
 def voting_checks(voting_id):
     aux = False
-
-    try:
-        voting = Voting.objects.get(pk = voting_id)
-    except Voting.DoesNotExist:
-        raise Http404
-    
+    voting = Voting.objects.get(pk = voting_id)
     # Check dates. Voting must be between stablished dates
     if (voting.end_date is None or check_date(voting.end_date)) and (voting.start_date is None or not check_date(voting.start_date)):
         # Check that voter doesn't send other vote to this voting
