@@ -16,7 +16,7 @@ class PostProcView(APIView):
 
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
-    def simple(self, options, seats):
+    def simple(self, options, seats, paridad):
 
         out = []
 
