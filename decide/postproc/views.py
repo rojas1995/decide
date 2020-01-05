@@ -198,12 +198,7 @@ class PostProcView(APIView):
 
     def post(self, request):
         """
-<<<<<<< HEAD
-         * type: IDENTITY | EQUALITY | WEIGHT | SIMPLE
-=======
-         * type: IDENTITY | EQUALITY | WEIGHT
-         * seats: int
->>>>>>> postproc-principal
+         * type: IDENTITY | DHONDTP | DHONDT | SIMPLE
          * options: [
             {
              option: str,
@@ -217,10 +212,6 @@ class PostProcView(APIView):
         t = request.data.get('type')
         opts = request.data.get('options', [])
         s = request.data.get('seats')
-<<<<<<< HEAD
-
-=======
->>>>>>> postproc-principal
 
         if t == 'IDENTITY':
             return self.identity(opts)
