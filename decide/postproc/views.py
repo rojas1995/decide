@@ -239,7 +239,7 @@ class PostProcView(APIView):
             return self.identity(opts)
         
         elif t =='SIMPLE':
-            return(self.simple(opts, s))
+            return Response(self.simple(opts, s))
         
         elif t == 'SIMPLEP':
             check = self.check_json(opts)
