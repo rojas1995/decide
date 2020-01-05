@@ -18,6 +18,7 @@ from base.perms import UserIsStaff
 from census.models import Census
 from django.contrib.auth.models import User
 from voting.models import Voting
+import django_excel as excel
 
 
 class CensusCreate(generics.ListCreateAPIView):
@@ -64,7 +65,7 @@ def listaVotantes(request, voting_id):
         votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
         tupla = (user, votacion)
         datos.append(tupla)
-    return render(request, 'tabla.html', {'datos':datos, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'tabla.html', {'datos':datos, 'voting_id':voting_id, 'STATIC_URL':settings.STATIC_URL})
     
 
 def listaCensos(request):
@@ -76,3 +77,44 @@ def listaCensos(request):
         tupla = (user, votacion)
         datos.append(tupla)
     return render(request, 'tabla.html', {'datos':datos, 'STATIC_URL':settings.STATIC_URL})
+
+def export(request):
+    voting_id = request.GET.get('voting_id')
+    print(voting_id)
+    if request.GET.get('voting_id') is not None:
+        voting_id = request.GET.get('voting_id')
+        census = list(Census.objects.filter(voting_id=voting_id))
+        datos = []
+        for c in census:
+            user = list(User.objects.filter(pk=c.voter_id))[0]
+            votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
+            tupla = (user, votacion)
+            datos.append(tupla)
+        sheet = ExportToCsv(datos)
+    else:
+        census = list(Census.objects.all())
+        datos = []
+        for c in census:
+            user = list(User.objects.filter(pk=c.voter_id))[0]
+            votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
+            tupla = (user, votacion)
+            datos.append(tupla)
+        sheet = ExportToCsv(datos)
+    return excel.make_response(sheet, "csv", file_name="census_data.csv")
+
+def ExportToCsv(datos):
+    export = []
+    export.append([
+        'Nombre',
+        'Apellido',
+        'Edad',
+        'Sexo',
+        'Municipio',
+        'Votación',])
+
+    for dato in datos:
+        export.append([dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio, str("/census/web/"+str(dato[1].pk))])
+
+    sheet = excel.pe.Sheet(export)
+
+    return sheet

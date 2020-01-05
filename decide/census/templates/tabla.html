@@ -22,5 +22,9 @@
     {% endfor %}
   </table>
   <div class="border-top my-3"></div>
-  <button type="button" class="btn btn-success float-right">Exportar CSV</button>
+
+<form action="/census/web/export" type="get">
+    <input type="hidden" value={{voting_id}} name="voting_id">
+    <button type="submit" class="btn btn-success float-right" >Exportar CSV</button>
+</form>
 {% endblock %}
