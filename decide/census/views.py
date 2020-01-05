@@ -7,11 +7,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.status import (
-        HTTP_201_CREATED as ST_201,
-        HTTP_204_NO_CONTENT as ST_204,
-        HTTP_400_BAD_REQUEST as ST_400,
-        HTTP_401_UNAUTHORIZED as ST_401,
-        HTTP_409_CONFLICT as ST_409
+    HTTP_201_CREATED as ST_201,
+    HTTP_204_NO_CONTENT as ST_204,
+    HTTP_400_BAD_REQUEST as ST_400,
+    HTTP_401_UNAUTHORIZED as ST_401,
+    HTTP_409_CONFLICT as ST_409
 )
 
 from base.perms import UserIsStaff
@@ -57,6 +57,7 @@ class CensusDetail(generics.RetrieveDestroyAPIView):
             return Response('Invalid voter', status=ST_401)
         return Response('Valid voter')
 
+
 def listaVotantes(request, voting_id):
     census = list(Census.objects.filter(voting_id=voting_id))
     datos = []
@@ -65,8 +66,8 @@ def listaVotantes(request, voting_id):
         votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
         tupla = (user, votacion)
         datos.append(tupla)
-    return render(request, 'tabla.html', {'datos':datos, 'voting_id':voting_id, 'STATIC_URL':settings.STATIC_URL})
-    
+    return render(request, 'tabla.html', {'datos': datos, 'voting_id': voting_id, 'STATIC_URL': settings.STATIC_URL})
+
 
 def listaCensos(request):
     census = list(Census.objects.all())
@@ -76,7 +77,8 @@ def listaCensos(request):
         votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
         tupla = (user, votacion)
         datos.append(tupla)
-    return render(request, 'tabla.html', {'datos':datos, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'tabla.html', {'datos': datos, 'STATIC_URL': settings.STATIC_URL})
+
 
 def export(request):
     voting_id = request.GET.get('voting_id')
@@ -102,6 +104,7 @@ def export(request):
         sheet = ExportToCsv(datos)
     return excel.make_response(sheet, "csv", file_name="census_data.csv")
 
+
 def ExportToCsv(datos):
     export = []
     export.append([
@@ -110,10 +113,12 @@ def ExportToCsv(datos):
         'Edad',
         'Sexo',
         'Municipio',
-        'Votación',])
+        'Votación', ])
 
     for dato in datos:
-        export.append([dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio, str("/census/web/"+str(dato[1].pk))])
+        export.append(
+            [dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio,
+             str("/census/web/" + str(dato[1].pk))])
 
     sheet = excel.pe.Sheet(export)
 
