@@ -78,7 +78,7 @@ class PostProcView(APIView):
 
                 ne = ne - 1;
         
-        return Response(out)
+        return out
 
 
     def dhondt(self, options, seats):
@@ -123,7 +123,7 @@ class PostProcView(APIView):
 
             ne = ne - 1;
             
-        return Response(out)
+        return out
 
 
     def paridad(self, options):
@@ -239,14 +239,14 @@ class PostProcView(APIView):
             return self.identity(opts)
         
         elif t =='SIMPLE':
-            return self.simple(opts, s)
+            return(self.simple(opts, s))
         
         elif t == 'SIMPLEP':
             check = self.check_json(opts)
             if check:
                 options = []
                 options = self.simple(opts, s)
-                return self.paridad(opts)
+                return response(self.paridad(opts))
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
 
@@ -255,11 +255,11 @@ class PostProcView(APIView):
             if check:
                 options = []
                 options = self.dhondt(opts, s)
-                return self.paridad(options)  
+                return response(self.paridad(options))
             else:
                 return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
               
         elif t == 'DHONDT':
-            return self.dhondt(opts, s)
+            return response(self.dhondt(opts, s))
 
         return Response({})
