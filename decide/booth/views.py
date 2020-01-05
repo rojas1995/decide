@@ -1,5 +1,4 @@
-import json, httplib2
-import requests
+import json, requests
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.http import Http404
@@ -15,42 +14,48 @@ from base import mods
 from booth.form import registerForm
 from django.contrib import auth
 from census.models import Census
-from voting.models import Voting, Question, QuestionOption
+from voting.models import Voting
+from store.models import Vote
 from django.shortcuts import render, redirect
 from Crypto.Random import random
 from rest_framework.authtoken.models import Token
+from django.utils import timezone
 
-# TODO: check permissions and census
 
 def booth(request, **kwargs):
     if request.method == 'GET':
         try:
             voting_id = kwargs.get('voting_id')
             voting = Voting.objects.get(pk = voting_id)
-
-            return render(request, 'booth/booth.html', {'voting': voting})
+            if voting_checks(voting_id, voting):
+                return render(request, 'booth/booth.html', {'voting': voting})
+            else:
+                return render(request, 'booth/booth.html', {'voting': voting})
         except:
             raise Http404
     if request.method == 'POST':
         try:
             voting_id = kwargs.get('voting_id')
             voting = Voting.objects.get(pk = voting_id)
-            option = int(request.POST['option'])
-            user_id = request.user.id
-            token = str(Token.objects.get(user = request.user))#Necesitamos que en el request este el auth
+            if voting_checks(voting_id, voting):
+                option = int(request.POST['option'])
+                user_id = request.user.id
+                token = str(Token.objects.get(user = request.user))
 
-            bigpk = {
-                    'p': str(voting.pub_key.p),
-                    'g': str(voting.pub_key.g),
-                    'y': str(voting.pub_key.y),
-                }
+                bigpk = {
+                        'p': str(voting.pub_key.p),
+                        'g': str(voting.pub_key.g),
+                        'y': str(voting.pub_key.y),
+                    }
+                
+                vote = encrypt(bigpk, option)
 
-            vote = encrypt(bigpk, option)
+                send_data(request, user_id, token, voting_id, vote)
+                
 
-            send_data(request, user_id, token, voting_id, vote)
-            
-
-            return render(request, 'booth/success.html', {'user': request.username})
+                return render(request, 'booth/success.html', {'user': request.user})
+            else:
+                raise Http404
         except:
             raise Http404
 
@@ -84,14 +89,65 @@ def votinglist(request):
     if user_id is not None:
         census = Census.objects.filter(voter_id=user_id)
         res = []
-        for censu in census:
-            voto_id = censu.voting_id
-            voting = Voting.objects.get(pk = voto_id)
-            res.append(voting)
+
+        for c in census:
+            voting_id = c.voting_id
+            voting = Voting.objects.get(pk = voting_id)
+            if voting_checks(voting_id, voting):
+                res.append(voting)
+
         return render(request, 'booth/votinglist.html', {'res':res})
     else:
         #If user is not log in, redirect to log in page.
         return PageView.login(request)
+        
+
+class PageView(TemplateView):
+
+    def register(request):
+        if request.user.is_authenticated:
+            return redirect('/')
+            
+        form = None
+        if request.method == "POST":
+            form = registerForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+
+                # Si el usuario se crea correctamente 
+                if user is not None:
+                    return redirect('/login')
+
+        return render(request, "booth/register.html", {'form': form})
+
+    def login(request):
+        if request.user.is_authenticated:
+            return redirect('/')
+
+        errors = 0
+        if request.method == "POST":
+            # Recuperamos las credenciales validadas
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            # Verificamos las credenciales del usuario
+            user = authenticate(request, username=username, password=password)
+            # Si existe un usuario con ese nombre y contraseña
+            if user is not None:
+                do_login(request, user)
+                return redirect(request.META.get('HTTP_REFERER'))
+            else:
+                errors = 1
+        return render(request, "booth/login.html", {'errors': errors})
+
+    def logout(request):
+        do_logout(request)
+        return redirect('/')
+
+    
+
 
 class PageView(TemplateView):
 
@@ -151,3 +207,23 @@ class GetVoting(APIView):
             return Response(r[0], status=HTTP_200_OK)
         except:
             return Response({}, status=HTTP_404_NOT_FOUND)
+
+
+def check_date(date):
+    today = timezone.now()
+    if date > today:
+        # If voting end_date is before today:
+        return True
+    else:
+        return False
+
+def voting_checks(voting_id, voting):
+    aux = False
+    # Check dates. Voting must be between stablished dates
+    if (voting.end_date is None or check_date(voting.end_date)) and (voting.start_date is None or not check_date(voting.start_date)):
+        # Check that voter doesn't send other vote to this voting
+        try:
+            Vote.objects.get(voting_id = voting_id)
+        except Vote.DoesNotExist:
+            aux = True
+    return aux
