@@ -26,18 +26,18 @@ def booth(request, **kwargs):
     if request.method == 'GET':
         try:
             voting_id = kwargs.get('voting_id')
-            voting = Voting.objects.get(pk = voting_id)
-            if voting_checks(voting_id, voting):
+            if voting_checks(voting_id):
+                voting = Voting.objects.get(pk = voting_id)
                 return render(request, 'booth/booth.html', {'voting': voting})
             else:
-                return render(request, 'booth/booth.html', {'voting': voting})
+                raise Http404
         except:
             raise Http404
     if request.method == 'POST':
         try:
             voting_id = kwargs.get('voting_id')
-            voting = Voting.objects.get(pk = voting_id)
-            if voting_checks(voting_id, voting):
+            if voting_checks(voting_id):
+                voting = Voting.objects.get(pk = voting_id)
                 option = int(request.POST['option'])
                 user_id = request.user.id
                 token = str(Token.objects.get(user = request.user))
@@ -92,8 +92,8 @@ def votinglist(request):
 
         for c in census:
             voting_id = c.voting_id
-            voting = Voting.objects.get(pk = voting_id)
-            if voting_checks(voting_id, voting):
+            if voting_id is not None and voting_checks(voting_id):
+                voting = Voting.objects.get(pk = voting_id)
                 res.append(voting)
 
         return render(request, 'booth/votinglist.html', {'res':res})
@@ -146,56 +146,9 @@ class PageView(TemplateView):
         do_logout(request)
         return redirect('/')
 
-    
-
-
-class PageView(TemplateView):
-
-    def register(request):
-        if request.user.is_authenticated:
-            return redirect('/')
-            
-        form = None
-        if request.method == "POST":
-            form = registerForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-                user.set_password(form.cleaned_data['password'])
-                user.save()
-
-                # Si el usuario se crea correctamente 
-                if user is not None:
-                    return redirect('/login')
-
-        return render(request, "booth/register.html", {'form': form})
-
-    def login(request):
-        if request.user.is_authenticated:
-            return redirect('/')
-
-        errors = 0
-        if request.method == "POST":
-            # Recuperamos las credenciales validadas
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-
-            # Verificamos las credenciales del usuario
-            user = authenticate(request, username=username, password=password)
-            # Si existe un usuario con ese nombre y contraseña
-            if user is not None:
-                do_login(request, user)
-                return redirect(request.META.get('HTTP_REFERER'))
-            else:
-                errors = 1
-        return render(request, "booth/login.html", {'errors': errors})
-
-    def logout(request):
-        do_logout(request)
-        return redirect('/')
-
-
     def index(request):
         return render(request, 'booth/index.html')
+
 
 class GetVoting(APIView):
     def post(self, request):
@@ -217,8 +170,14 @@ def check_date(date):
     else:
         return False
 
-def voting_checks(voting_id, voting):
+def voting_checks(voting_id):
     aux = False
+
+    try:
+        voting = Voting.objects.get(pk = voting_id)
+    except Voting.DoesNotExist:
+        raise Http404
+    
     # Check dates. Voting must be between stablished dates
     if (voting.end_date is None or check_date(voting.end_date)) and (voting.start_date is None or not check_date(voting.start_date)):
         # Check that voter doesn't send other vote to this voting
