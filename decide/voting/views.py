@@ -41,6 +41,7 @@ def handle_uploaded_file(f):
     provincias = ['VI', 'AB', 'A', 'AL', 'AV', 'BA', 'PM', 'B', 'BU', 'CC', 'CA', 'CS', 'CR', 'CO', 'C', 'CU', 'GI', 'GR', 'GU', 'SS', 'H', 'HU', 'J', 'LE', 
         'L', 'LO', 'LU', 'M', 'MA', 'MU', 'NA', 'OR', 'O', 'P', 'GC', 'PO', 'SA', 'TF', 'S', 'SG', 'SE', 'SO', 'T', 'TE', 'TO', 'V', 'VA', 'BI', 'ZA', 'Z', 'CE', 'ML']
     count_provincias = dict((prov, 0) for prov in provincias)
+    provincias_variables = []
     
     row_line = 2
     candidatesGroupSex = {}
@@ -53,6 +54,7 @@ def handle_uploaded_file(f):
         primaries = dict(row).__getitem__('primaries')
         sex = dict(row).__getitem__('sex')
         candidatesGroupName = dict(row).__getitem__('candidatesGroup')
+        
         if sex == "HOMBRE":
             candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0] + 1, candidatesGroupSex.get(candidatesGroupName, [0,0])[1]]
         else:
@@ -75,11 +77,12 @@ def handle_uploaded_file(f):
             candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
 
         if _type == 'CANDIDATO':
-            if born_area in count_provincias:
+            if born_area in count_provincias and current_area in count_provincias:
                 count_provincias[born_area] = count_provincias[born_area] + 1
 
-            if current_area in count_provincias:
+            else:
                 count_provincias[current_area] = count_provincias[current_area] + 1
+                count_provincias[born_area] = count_provincias[born_area] + 1
 
 
         try:
@@ -92,8 +95,7 @@ def handle_uploaded_file(f):
         
         row_line = row_line + 1
 
-        Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
-    
+        
     for key in count_presidents.keys():
         if count_presidents[key] > 1:
                 validation_errors.append("La candidatura " + str(key) + " tiene más de un candidato a presidente")
