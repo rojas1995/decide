@@ -24,6 +24,7 @@ class AuthBackend(ModelBackend):
                 'password': password,
             }
             token = mods.post('authentication', entry_point='/login/', json=data)
-            request.session['auth-token'] = token['token']
+            if 'token' in token.keys():
+                request.session['auth-token'] = token['token']
 
         return u
