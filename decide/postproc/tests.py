@@ -903,7 +903,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-     def test_paridad4(self):
+    def test_paridad4(self):
         data = {
             'type': 'SIMPLESP',
             'seats':7,
