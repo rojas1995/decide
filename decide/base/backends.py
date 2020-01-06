@@ -18,13 +18,13 @@ class AuthBackend(ModelBackend):
                                  password=password, **kwargs)
 
         # only doing this for the admin web interface
-        if u and request.content_type == 'application/x-www-form-urlencoded':
-            data = {
-                'username': username,
-                'password': password,
-            }
-            token = mods.post('authentication', entry_point='/login/', json=data)
-            if 'token' in token.keys():
+        if request.get_full_path() != '/login/':
+            if u and request.content_type == 'application/x-www-form-urlencoded':
+                data = {
+                    'username': username,
+                    'password': password,
+                }
+                token = mods.post('authentication', entry_point='/login/', json=data)
                 request.session['auth-token'] = token['token']
 
         return u
