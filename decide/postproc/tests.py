@@ -1033,7 +1033,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'mujer','id':'6'}
                 ], 
                 'paridad': []}
-            }
+        }
 
         response = self.client.post('/postproc/', data, format='json')
         self.assertEqual(response.status_code, 200)
