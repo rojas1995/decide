@@ -908,7 +908,7 @@ class PostProcTestCase(APITestCase):
             'type': 'SIMPLESP',
             'seats':7,
             'options': [
-                { 'option': 'Option 1', 'number': 1, 'votes': 5  'candidatos': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 5,  'candidatos': [
                  {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
