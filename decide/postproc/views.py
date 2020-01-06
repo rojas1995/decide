@@ -281,7 +281,7 @@ class PostProcView(APIView):
         elif t == 'SIMPLESP':
             options = []
             options = self.simple(opts, s)
-            return Response(self.paridad(options))
+            return Response(self.sin_paridad(options))
 
         elif t == 'DHONDTP':
             check = self.check_json(opts)
