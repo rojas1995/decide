@@ -52,7 +52,6 @@ def booth(request, **kwargs):
 
                 send_data(request, user_id, token, voting_id, vote)
                 
-
                 return render(request, 'booth/success.html', {'user': request.user})
             else:
                 raise Http404
@@ -95,6 +94,7 @@ def votinglist(request):
             # Only for list view
             try:
                 if voting_id is not None and voting_checks(voting_id):
+                    voting = Voting.objects.get(pk = voting_id)
                     res.append(voting)
             except Voting.DoesNotExist:
                 pass
