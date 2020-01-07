@@ -210,8 +210,8 @@ class PostProcView(APIView):
                 i['paridad'].append(candidatos[a])
                 a = a + 1
 
-            escanos -= 1 
-                     
+                escanos -= 1 
+
         return out
 
 
