@@ -295,7 +295,7 @@ class PostProcView(APIView):
         elif t == 'DHONDTSP':
             options = []
             options = self.dhondt(opts, s)
-            return Response(self.paridad(options))
+            return Response(self.sin_paridad(options))
               
         elif t == 'DHONDT':
             return Response(self.dhondt(opts, s))
