@@ -140,7 +140,7 @@ class PageView(TemplateView):
             # Si existe un usuario con ese nombre y contraseña
             if user is not None:
                 do_login(request, user)
-                return redirect(request.META.get('HTTP_REFERER'))
+                return redirect('/')
             else:
                 errors = 1
         return render(request, "booth/login.html", {'errors': errors})
