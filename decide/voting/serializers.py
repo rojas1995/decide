@@ -11,7 +11,7 @@ class CandidateSerializer(serializers.HyperlinkedModelSerializer):
 class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CandidatesGroup
-        fields = ('name')
+        fields = ('name', )
 
 class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -27,13 +27,14 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class VotingSerializer(serializers.HyperlinkedModelSerializer):
-    question = QuestionSerializer(many=False)
+    #question = QuestionSerializer(many=False)
+    candidatures = CandidateGroupSerializer(many=False) 
     pub_key = KeySerializer()
     auths = AuthSerializer(many=True)
 
     class Meta:
         model = Voting
-        fields = ('id', 'name', 'desc', 'question', 'start_date',
+        fields = ('id', 'name', 'desc', 'candidatures', 'start_date',
                   'end_date', 'pub_key', 'auths', 'tally', 'postproc')
 
 

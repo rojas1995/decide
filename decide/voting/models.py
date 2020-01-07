@@ -8,7 +8,7 @@ from base.models import Auth, Key
 
 class CandidatesGroup(models.Model):
     name = models.TextField(blank=True, null=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -20,6 +20,9 @@ class Candidate(models.Model):
     primaries = models.BooleanField(default=False)
     sex = models.TextField(blank=True, null=True,choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),])
     candidatesGroup = models.ForeignKey(CandidatesGroup, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} ({}) - {} - {}'.format(self.name, self.type, self.current_area, self.sex)
 
 class Question(models.Model):
     desc = models.TextField()
@@ -45,13 +48,13 @@ class QuestionOption(models.Model):
 class Voting(models.Model):
     name = models.CharField(max_length=200)
     desc = models.TextField(blank=True, null=True)
-    question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
+    ##question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
-    candidaturas = models.ManyToOneRel(Candidate, related_name='candidate', on_delete=models.CASCADE, to=CandidatesGroup, field_name='candidate')
-
+    ##candidatures = models.ForeignKey(CandidatesGroup, related_name='voting', on_delete=models.CASCADE, null=True, blank=True)
+    candidatures = models.ManyToManyField(CandidatesGroup, related_name='voting')
     pub_key = models.OneToOneField(Key, related_name='voting', blank=True, null=True, on_delete=models.SET_NULL)
     auths = models.ManyToManyField(Auth, related_name='votings')
 
