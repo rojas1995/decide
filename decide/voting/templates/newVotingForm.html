@@ -85,7 +85,7 @@ function processDataAsObj(csv){
 	}
         lines.push(obj);
     }
-	drawOutputAsObj(csv,lines);
+	drawOutputAsObj(lines);
 }
 
 function errorHandler(evt) {
@@ -109,7 +109,7 @@ function drawOutput(lines){
 }
 
 //draw the table, if first line contains heading
-function drawOutputAsObj(csv,lines){
+function drawOutputAsObj(lines){
 	//Clear previous data
 	//document.getElementById("tablaCandidatura").innerHTML = "";
 	var table = document.createElement("table");
@@ -141,9 +141,9 @@ function drawOutputAsObj(csv,lines){
 	document.getElementById("tablaCandidatura").appendChild(divCandidatura);
 
     var inputCandidatura = document.createElement("input");
-    inputCandidatura.id="id_candidature_file";
+    inputCandidatura.id="candidature_file";
+    inputCandidatura.name="candidature_file";
     inputCandidatura.type="file";
-    inputCandidatura.value=csv;
 
     document.getElementById("tablaCandidatura"+nameInput).appendChild(inputCandidatura);
     document.getElementById("tablaCandidatura"+nameInput).appendChild(nombreCandidatura);

@@ -28,15 +28,19 @@ def candidates_load(request):
         form = UploadFileForm()
     return render(request, dirspot+'/voting/templates/upload.html', {'form': form})
 
-def voting_edit(request, *args, **kwargs):
+def voting_edit(request):
     #voting_id = request.POST['voting_id']
     #voting = get_object_or_404(Voting, pk=voting_id)
     #action = request.POST['action']
     if request.method == 'POST':
         form = NewVotingForm(request.POST, request.FILES)
+        
+        votingName = request.POST["name"]
+        votingDescription = request.POST["description"]
+
         files = request.FILES.getlist('file_field')
+        print(files)
         permission_classes = (UserIsStaff,)
-        print(form)
         #for data in ['name', 'desc', 'candidatures']:
         #    if not data in request.data:
         #        return Response({}, status=status.HTTP_400_BAD_REQUEST)
@@ -46,18 +50,20 @@ def voting_edit(request, *args, **kwargs):
             for f in files:
                 candidature = handle_uploaded_file(f)
                 candidatures.append(candidature)
-        voting = Voting(name=request.data.get('name'), desc=request.data.get('desc'),
-                candidatures=candidatures)
+
+        voting = Voting(name=votingName, desc=votingDescription)
                 #candidatures=request.data.get('candidatures'))
                 #question=question)
         voting.save()
+
+        voting.candidatures.set(candidatures)
 
         auth, _ = Auth.objects.get_or_create(url=settings.BASEURL,
                                           defaults={'me': True, 'name': 'test auth'})
         auth.save()
         voting.auths.add(auth)
 
-        return Response({}, status=status.HTTP_201_CREATED)
+        return render(request, dirspot+'/voting/templates/newVotingForm.html', {'status':status.HTTP_201_CREATED})
     else:
         form = NewVotingForm()
     return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form})

@@ -6,6 +6,6 @@ class UploadFileForm(forms.Form):
 class NewVotingForm(forms.Form):
     name = forms.TextInput()
     description = forms.Textarea()
-    candidatures = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    #candidatures = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
     candidature_name = forms.TextInput()
-    candidature_file = forms.FileField()
+    candidature_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
