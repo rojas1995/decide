@@ -15,7 +15,7 @@
             <fieldset>
                 <label for="nameCSV">Nombre: </label>
                 <input type="text" id="nameCSV" name="candidature_name" />
-                <label for="csvFileInput"> <strong>CSV File:</strong>
+                <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
                 </label>
                 <input type="file" id="csvFileInput" onchange="handleFiles(this.files)" accept=".csv" />
             </fieldset> 
@@ -146,7 +146,7 @@ function drawOutputAsObj(lines){
 }
 
     function validForm(){
-        return alert("You're saving this voting. You're allowed to edit it after this saving.");
+        return alert("You're saving this voting. You'll be able to edit it after this saving and before the start date.");
 
     }
 

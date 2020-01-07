@@ -28,21 +28,42 @@ def candidates_load(request):
         form = UploadFileForm()
     return render(request, dirspot+'/voting/templates/upload.html', {'form': form})
 
-def voting_edit(request):
+def voting_edit(request, *args, **kwargs):
     #voting_id = request.POST['voting_id']
     #voting = get_object_or_404(Voting, pk=voting_id)
     #action = request.POST['action']
     if request.method == 'POST':
-        form = NewVotingForm(request.POST, request.FILES)
-        if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            return HttpResponseRedirect('/admin/')
+        form = NewVotingForm.get_form()
+        files = request.FILES.getlist('file_field')
+        permission_classes = (UserIsStaff,)
+        for data in ['name', 'desc', 'candidatures']:
+            if not data in request.data:
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        if form.is_valid:
+            candidatures = []
+            for f in files:
+                candidature = handle_uploaded_file(f)
+                candidatures.append(candidature)
+        voting = Voting(name=request.data.get('name'), desc=request.data.get('desc'),
+                candidatures=candidatures)
+                #candidatures=request.data.get('candidatures'))
+                #question=question)
+        voting.save()
+
+        auth, _ = Auth.objects.get_or_create(url=settings.BASEURL,
+                                          defaults={'me': True, 'name': 'test auth'})
+        auth.save()
+        voting.auths.add(auth)
+
+        return Response({}, status=status.HTTP_201_CREATED)
     else:
         form = NewVotingForm()
     return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form})
 
 def handle_uploaded_file(f):
     reader = csv.DictReader(codecs.iterdecode(f, 'utf-8'), delimiter="#")
+    candidature = ""
     for row in reader:
         print(row)
         name = dict(row).__getitem__('name')
@@ -59,11 +80,13 @@ def handle_uploaded_file(f):
             primaries = True
 
         try:
-            candidatesGroup_Search = CandidatesGroup.objects.get(name=candidatesGroupName)
+            candidature = CandidatesGroup.objects.get(name=candidatesGroupName)
         except:
-            candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
+            candidature = CandidatesGroup(name=candidatesGroupName).save()
         
         Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+    
+    return candidature
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()
