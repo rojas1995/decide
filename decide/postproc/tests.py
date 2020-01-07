@@ -1123,7 +1123,7 @@ class PostProcTestCase(APITestCase):
                     ,{'sexo':'mujer','id':'6'}
                     ],'paridad': [
                     {'sexo':'hombre','id':'1'}
-                    ,{'sexo':'mujer','id':'2'}
+                    ,{'sexo':'mujer','id':'2'}]},
                     { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 2, 'candidatos': [
                     {'sexo':'hombre','id':'1'}
                     ,{'sexo':'mujer','id':'2'}
