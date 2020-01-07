@@ -24,25 +24,25 @@ class Candidate(models.Model):
     def __str__(self):
         return '{} ({}) - {} - {}'.format(self.name, self.type, self.current_area, self.sex)
 
-class Question(models.Model):
-    desc = models.TextField()
+#class Question(models.Model):
+#    desc = models.TextField()
 
-    def __str__(self):
-        return self.desc
+#    def __str__(self):
+#        return self.desc
 
 
-class QuestionOption(models.Model):
-    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
-    number = models.PositiveIntegerField(blank=True, null=True)
-    option = models.TextField()
-
-    def save(self):
-        if not self.number:
-            self.number = self.question.options.count() + 2
-        return super().save()
-
-    def __str__(self):
-        return '{} ({})'.format(self.option, self.number)
+#class QuestionOption(models.Model):
+#    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
+#    number = models.PositiveIntegerField(blank=True, null=True)
+#    option = models.TextField()
+#
+#    def save(self):
+#        if not self.number:
+#            self.number = self.question.options.count() + 2
+#        return super().save()
+#
+#    def __str__(self):
+#        return '{} ({})'.format(self.option, self.number)
 
 
 class Voting(models.Model):
@@ -118,7 +118,7 @@ class Voting(models.Model):
 
     def do_postproc(self):
         tally = self.tally
-        options = self.question.options.all()
+        #options = self.question.options.all()
 
         opts = []
         for opt in options:

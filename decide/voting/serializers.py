@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Question, QuestionOption, Voting, Candidate, CandidatesGroup
+from .models import Voting, Candidate, CandidatesGroup
 from base.serializers import KeySerializer, AuthSerializer
 
 class CandidateSerializer(serializers.HyperlinkedModelSerializer):
@@ -13,17 +13,17 @@ class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
         model = CandidatesGroup
         fields = ('name', )
 
-class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = QuestionOption
-        fields = ('number', 'option')
+#class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
+ #   class Meta:
+ #       model = QuestionOption
+  #      fields = ('number', 'option')
 
 
-class QuestionSerializer(serializers.HyperlinkedModelSerializer):
-    options = QuestionOptionSerializer(many=True)
-    class Meta:
-        model = Question
-        fields = ('desc', 'options')
+#class QuestionSerializer(serializers.HyperlinkedModelSerializer):
+#    options = QuestionOptionSerializer(many=True)
+#    class Meta:
+#        model = Question
+#        fields = ('desc', 'options')
 
 
 class VotingSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,8 +39,8 @@ class VotingSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SimpleVotingSerializer(serializers.HyperlinkedModelSerializer):
-    question = QuestionSerializer(many=False)
+ #   question = QuestionSerializer(many=False)
 
     class Meta:
         model = Voting
-        fields = ('name', 'desc', 'question', 'start_date', 'end_date')
+        fields = ('name', 'desc', 'start_date', 'end_date')

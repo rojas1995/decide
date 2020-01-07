@@ -6,13 +6,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from .models import Question, QuestionOption, Voting, CandidatesGroup, Candidate
+from .models import Voting, CandidatesGroup, Candidate
 from .serializers import SimpleVotingSerializer, VotingSerializer
 from base.perms import UserIsStaff
 from base.models import Auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .forms import UploadFileForm
+from .forms import UploadFileForm, NewVotingForm
 
 import csv
 import os
@@ -27,6 +27,19 @@ def candidates_load(request):
     else:
         form = UploadFileForm()
     return render(request, dirspot+'/voting/templates/upload.html', {'form': form})
+
+def voting_edit(request):
+    #voting_id = request.POST['voting_id']
+    #voting = get_object_or_404(Voting, pk=voting_id)
+    #action = request.POST['action']
+    if request.method == 'POST':
+        form = NewVotingForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/admin/')
+    else:
+        form = NewVotingForm()
+    return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form})
 
 def handle_uploaded_file(f):
     reader = csv.DictReader(codecs.iterdecode(f, 'utf-8'), delimiter="#")
@@ -70,7 +83,7 @@ class VotingView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         self.permission_classes = (UserIsStaff,)
         self.check_permissions(request)
-        for data in ['name', 'desc', 'candidates']:
+        for data in ['name', 'desc', 'candidatures']:
             if not data in request.data:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,7 +93,7 @@ class VotingView(generics.ListCreateAPIView):
         #    opt = QuestionOption(question=question, option=q_opt, number=idx)
         #    opt.save()
         voting = Voting(name=request.data.get('name'), desc=request.data.get('desc'),
-                candidates=request.data.get('candidates'))
+                candidates=request.data.get('candidatures'))
                 #question=question)
         voting.save()
 
@@ -88,6 +101,7 @@ class VotingView(generics.ListCreateAPIView):
                                           defaults={'me': True, 'name': 'test auth'})
         auth.save()
         voting.auths.add(auth)
+
         return Response({}, status=status.HTTP_201_CREATED)
 
 
