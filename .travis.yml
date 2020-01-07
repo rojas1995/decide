@@ -1,5 +1,9 @@
 dist: xenial
 
+# safelist
+branches:
+  only:
+  - postproc-feature/paridad
 services:
   - postgresql
 addons:
