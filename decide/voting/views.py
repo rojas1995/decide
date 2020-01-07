@@ -87,7 +87,7 @@ def voting_list_update(request):
             voting.tally_votes(request.auth.key)
             url = "/voting/votings/"
     elif action == 'delete':
-        #TODO 
+        voting.delete()
         url = "/voting/votings/"
     else:
         #TODO 
@@ -130,6 +130,7 @@ def voting_list_update_multiple(request):
                 url = "/voting/votings/"
         elif action == 'delete':
             #TODO 
+            voting.delete()
             url = "/voting/votings/"
         else:
             #TODO 
