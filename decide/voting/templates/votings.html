@@ -24,6 +24,22 @@
     }
   </script>
 
+<script>
+  function select_all(){
+  array = document.getElementsByName("voting_id[]")
+  selector = document.getElementById("selector")
+  array.forEach(element => {
+        if(selector.checked){
+          element.checked = 1
+        } else{
+          element.checked = 0
+        }
+      });
+  }
+</script>
+
+
+
 <h1>Voting list</h1>
 
 <form action="update_selection/" id="multiple-selection" method="POST">
@@ -50,13 +66,13 @@
   </div>
 
 
-  <div class="results">
+  <div class="results" id="results">
     <table>
       <thead>
         <tr>
     
           <th scope="col">
-            <div class="text"><span><input type="checkbox" id="action-toggle" /></span></div>
+            <div class="text"><span><input type="checkbox" id="selector" onclick="select_all()"/></span></div>
             <div class="clear"></div>
           </th>
     
