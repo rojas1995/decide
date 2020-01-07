@@ -12,3 +12,5 @@ jsonnet==0.12.1
 django-heroku==0.3.1
 gunicorn==20.0.4
 django_excel
+pyexcel-xlsx
+

@@ -19,6 +19,7 @@ from census.models import Census
 from django.contrib.auth.models import User
 from voting.models import Voting
 import django_excel as excel
+import pyexcel
 
 
 class CensusCreate(generics.ListCreateAPIView):
@@ -145,12 +146,13 @@ def export_excel(request):
 
 
 def export_to_xlsx(data):
-    export = ['Nombre',
+    export = [[
+        'Nombre',
         'Apellido',
         'Edad',
         'Sexo',
         'Municipio',
-        'Votación', ]
+        'Votación', ]]
 
     for d in data:
         export.append(
