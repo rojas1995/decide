@@ -903,7 +903,7 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-    def test_paridad4(self):
+    def test_simple_sin_paridad4(self):
         data = {
             'type': 'SIMPLESP',
             'seats':7,
@@ -976,8 +976,8 @@ class PostProcTestCase(APITestCase):
             },
               
             { 'option': 'Option 5', 'number': 5, 'votes': 5, 'postproc': 2 , 'candidatos': [
-                 {'sexo':'hombre','id':'1'}
-                ,{'sexo':'mujer','id':'2'}
+                 {'sexo':'mujer','id':'1'}
+                ,{'sexo':'hombre','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
@@ -989,8 +989,8 @@ class PostProcTestCase(APITestCase):
                 ]
             },
             { 'option': 'Option 3', 'number': 3, 'votes': 3, 'postproc': 1 , 'candidatos': [
-                 {'sexo':'hombre','id':'1'}
-                ,{'sexo':'mujer','id':'2'}
+                 {'sexo':'mujer','id':'1'}
+                ,{'sexo':'hombre','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
@@ -1025,8 +1025,8 @@ class PostProcTestCase(APITestCase):
                 ]
             },
             { 'option': 'Option 2', 'number': 2, 'votes': 0, 'postproc': 0 , 'candidatos': [
-                 {'sexo':'hombre','id':'1'}
-                ,{'sexo':'mujer','id':'2'}
+                 {'sexo':'mujer','id':'1'}
+                ,{'sexo':'hombre','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
                 ,{'sexo':'mujer','id':'4'}
                 ,{'sexo':'hombre','id':'5'}
