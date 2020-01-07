@@ -17,7 +17,7 @@
                 <input type="text" id="nameCSV" name="candidature_name" />
                 <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
                 </label>
-                <input type="file" id="csvFileInput" onchange="handleFiles(this.files)" accept=".csv" />
+                <input type="file" id="csvFileInput" name="candidatures" onchange="handleFiles(this.files)" accept=".csv" />
             </fieldset> 
         </div>
         <div id="tablaCandidatura">
@@ -38,6 +38,7 @@
 	// Check for the various File API support.
 	if (window.FileReader) {
 		// FileReader are supported.
+        file = files[0];
 		getAsText(files[0]);
 	} else {
 		alert('FileReader are not supported in this browser.');
@@ -84,8 +85,7 @@ function processDataAsObj(csv){
 	}
         lines.push(obj);
     }
-        console.log(lines);
-	drawOutputAsObj(lines);
+	drawOutputAsObj(csv,lines);
 }
 
 function errorHandler(evt) {
@@ -109,7 +109,7 @@ function drawOutput(lines){
 }
 
 //draw the table, if first line contains heading
-function drawOutputAsObj(lines){
+function drawOutputAsObj(csv,lines){
 	//Clear previous data
 	//document.getElementById("tablaCandidatura").innerHTML = "";
 	var table = document.createElement("table");
@@ -130,8 +130,7 @@ function drawOutputAsObj(lines){
 			data.appendChild(document.createTextNode(lines[i][key]));
 		});
 	}
-    //var tableName = document.createElement("h4").innerHTML = document.getElementById(nameCSV);
-    //document.getElementById("nombreCandidatura").innerHTML = "TABLA";//document.getElementById("nameCSV");
+
     var divCandidatura = document.createElement("div");
     var nameInput = document.getElementById("nameCSV").value;
 
@@ -141,6 +140,12 @@ function drawOutputAsObj(lines){
     
 	document.getElementById("tablaCandidatura").appendChild(divCandidatura);
 
+    var inputCandidatura = document.createElement("input");
+    inputCandidatura.id="id_candidature_file";
+    inputCandidatura.type="file";
+    inputCandidatura.value=csv;
+
+    document.getElementById("tablaCandidatura"+nameInput).appendChild(inputCandidatura);
     document.getElementById("tablaCandidatura"+nameInput).appendChild(nombreCandidatura);
     document.getElementById("tablaCandidatura"+nameInput).appendChild(table);
 }

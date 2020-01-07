@@ -33,12 +33,13 @@ def voting_edit(request, *args, **kwargs):
     #voting = get_object_or_404(Voting, pk=voting_id)
     #action = request.POST['action']
     if request.method == 'POST':
-        form = NewVotingForm.get_form()
+        form = NewVotingForm(request.POST, request.FILES)
         files = request.FILES.getlist('file_field')
         permission_classes = (UserIsStaff,)
-        for data in ['name', 'desc', 'candidatures']:
-            if not data in request.data:
-                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        print(form)
+        #for data in ['name', 'desc', 'candidatures']:
+        #    if not data in request.data:
+        #        return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         if form.is_valid:
             candidatures = []
