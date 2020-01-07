@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.utils import timezone
 
-from .models import QuestionOption
-from .models import Question
 from .models import Voting
-
+from .models import Candidate
+from .models import CandidatesGroup
 from .filters import StartedFilter
 
 
@@ -27,12 +26,12 @@ def tally(ModelAdmin, request, queryset):
         v.tally_votes(token)
 
 
-class QuestionOptionInline(admin.TabularInline):
-    model = QuestionOption
+#class QuestionOptionInline(admin.TabularInline):
+#    model = QuestionOption
 
 
-class QuestionAdmin(admin.ModelAdmin):
-    inlines = [QuestionOptionInline]
+#class QuestionAdmin(admin.ModelAdmin):
+#    inlines = [QuestionOptionInline]
 
 
 class VotingAdmin(admin.ModelAdmin):
@@ -45,6 +44,13 @@ class VotingAdmin(admin.ModelAdmin):
 
     actions = [ start, stop, tally ]
 
+class CandidateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'type', 'born_area', 'current_area', 'primaries', 'sex', 'candidatesGroup',)
 
+class CandidateGroupAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+admin.site.register(Candidate, CandidateAdmin)
+admin.site.register(CandidatesGroup, CandidateGroupAdmin)
 admin.site.register(Voting, VotingAdmin)
-admin.site.register(Question, QuestionAdmin)
+#admin.site.register(Question, QuestionAdmin)
