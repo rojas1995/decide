@@ -23,8 +23,14 @@
   </table>
   <div class="border-top my-3"></div>
 
-<form action="/census/web/export" type="get">
+<form action="/census/web/export_csv" type="get">
     <input type="hidden" value={{voting_id}} name="voting_id">
     <button type="submit" class="btn btn-success float-right" >Exportar CSV</button>
 </form>
+
+<form action="/census/web/export_xlsx" type="get">
+    <input type="hidden" value={{voting_id}} name="voting_id">
+    <button type="submit" class="btn btn-success float-right" >Exportar Excel</button>
+</form>
+
 {% endblock %}

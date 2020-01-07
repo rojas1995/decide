@@ -80,7 +80,7 @@ def listaCensos(request):
     return render(request, 'tabla.html', {'datos': datos, 'STATIC_URL': settings.STATIC_URL})
 
 
-def export(request):
+def export_csv(request):
     voting_id = request.GET.get('voting_id')
     print(voting_id)
     if request.GET.get('voting_id') is not None:
@@ -123,3 +123,40 @@ def ExportToCsv(datos):
     sheet = excel.pe.Sheet(export)
 
     return sheet
+
+
+def export_excel(request):
+    voting_id = request.GET.get('voting_id')
+    census = list(Census.objects.all())
+    data = []
+
+    if request.GET.get('voting_id') is not None:
+        census = list(Census.objects.filter(voting_id=voting_id))
+
+    for cen in census:
+        user = list(User.objects.filter(pk=cen.voter_id))[0]
+        voting = list(Voting.objects.filter(pk=cen.voting_id))[0]
+        com = (user, voting)
+        data.append(com)
+
+    template = export_to_xlsx(data)
+
+    return excel.make_response(template, "xlsx", file_name="census_data.xlsx")
+
+
+def export_to_xlsx(data):
+    export = ['Nombre',
+        'Apellido',
+        'Edad',
+        'Sexo',
+        'Municipio',
+        'Votación', ]
+
+    for d in data:
+        export.append(
+            [d[0].first_name, d[0].last_name, d[0].perfil.edad, d[0].perfil.sexo, d[0].perfil.municipio,
+             str("/census/web/" + str(d[1].pk))])
+
+    template = excel.pe.Sheet(export)
+
+    return template
