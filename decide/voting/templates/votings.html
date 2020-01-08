@@ -1,16 +1,9 @@
-{% extends "base.html" %}
-{% load i18n static %}
-
-
-{% block extrahead %}
-    <!-- <link type="text/css" rel="stylesheet" href="{% static "voting/style.css" %}" /> -->
-{% endblock %}
-
+{% extends 'block.html' %}
 
 {% block content %}
 
-
 <script>
+
     function grab_selected() {
       var tasks = [];
       var array = document.getElementsByName("voting_id[]");
@@ -22,25 +15,23 @@
       var inputNombre = document.getElementById("array_voting_id[]");
       inputNombre.value = tasks;
     }
-  </script>
 
-<script>
-  function select_all(){
-  array = document.getElementsByName("voting_id[]")
-  selector = document.getElementById("selector")
-  array.forEach(element => {
-        if(selector.checked){
-          element.checked = 1
-        } else{
-          element.checked = 0
-        }
-      });
-  }
+    function select_all(){
+      array = document.getElementsByName("voting_id[]")
+      selector = document.getElementById("selector")
+      array.forEach(element => {
+            if(selector.checked){
+              element.checked = 1
+            } else{
+              element.checked = 0
+            }
+          });
+    }
+
 </script>
 
 
-
-<h1>Voting list</h1>
+<h1>Lista de votaciones</h1>
 
 <form action="update_selection/" id="multiple-selection" method="POST">
   {% csrf_token %}
@@ -73,32 +64,26 @@
     
           <th scope="col">
             <div class="text"><span><input type="checkbox" id="selector" onclick="select_all()"/></span></div>
-            <div class="clear"></div>
           </th>
     
           <th scope="col">
-            <div class="text"><a href="?o=1">Name</a></div>
-            <div class="clear"></div>
+            <div class="text"><a href="?o=1">Nombre</a></div>
           </th>
           
           <th scope="col">       
-            <div class="text"><a href="?o=2">-</a></div>
-            <div class="clear"></div>
+            <div class="text"><a href="?o=2">Empezar</a></div>
           </th>
 
           <th scope="col">       
-            <div class="text"><a href="?o=2">-</a></div>
-            <div class="clear"></div>
+            <div class="text"><a href="?o=2">Parar</a></div>
           </th>
 
           <th scope="col">       
-            <div class="text"><a href="?o=2">-</a></div>
-            <div class="clear"></div>
+            <div class="text"><a href="?o=2">Contar</a></div>
           </th>
 
           <th scope="col">       
-            <div class="text"><a href="?o=2">-</a></div>
-            <div class="clear"></div>
+            <div class="text"><a href="?o=2">Eliminar</a></div>
           </th>
 
         </tr>
@@ -153,9 +138,8 @@
   </div>
 
   <input type="hidden" id="array_voting_id[]" name="array_voting_id[]" value="">
-   
-  <button type="submit"  form="multiple-selection" class="button" title="Run the selected action">Go</button>
 </form>
+
 
 {% endblock %}
 
