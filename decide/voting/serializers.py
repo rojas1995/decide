@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Question, QuestionOption, Voting, Candidate, CandidatesGroup
+from .models import Voting, Candidate, CandidatesGroup
 from base.serializers import KeySerializer, AuthSerializer
 
 class CandidateSerializer(serializers.HyperlinkedModelSerializer):
@@ -11,35 +11,36 @@ class CandidateSerializer(serializers.HyperlinkedModelSerializer):
 class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CandidatesGroup
-        fields = ('name')
+        fields = ('name', )
 
-class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = QuestionOption
-        fields = ('number', 'option')
+#class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
+ #   class Meta:
+ #       model = QuestionOption
+  #      fields = ('number', 'option')
 
 
-class QuestionSerializer(serializers.HyperlinkedModelSerializer):
-    options = QuestionOptionSerializer(many=True)
-    class Meta:
-        model = Question
-        fields = ('desc', 'options')
+#class QuestionSerializer(serializers.HyperlinkedModelSerializer):
+#    options = QuestionOptionSerializer(many=True)
+#    class Meta:
+#        model = Question
+#        fields = ('desc', 'options')
 
 
 class VotingSerializer(serializers.HyperlinkedModelSerializer):
-    question = QuestionSerializer(many=False)
+    #question = QuestionSerializer(many=False)
+    candidatures = CandidateGroupSerializer(many=False) 
     pub_key = KeySerializer()
     auths = AuthSerializer(many=True)
 
     class Meta:
         model = Voting
-        fields = ('id', 'name', 'desc', 'question', 'start_date',
+        fields = ('id', 'name', 'desc', 'candidatures', 'start_date',
                   'end_date', 'pub_key', 'auths', 'tally', 'postproc')
 
 
 class SimpleVotingSerializer(serializers.HyperlinkedModelSerializer):
-    question = QuestionSerializer(many=False)
+ #   question = QuestionSerializer(many=False)
 
     class Meta:
         model = Voting
-        fields = ('name', 'desc', 'question', 'start_date', 'end_date')
+        fields = ('name', 'desc', 'start_date', 'end_date')
