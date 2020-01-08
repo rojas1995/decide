@@ -16,8 +16,7 @@ from .forms import UploadFileForm
 
 import csv
 import os
-dirspot = os.getcwd()
-print(dirspot)
+
 def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -51,6 +50,93 @@ def handle_uploaded_file(f):
             candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
         
         Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+
+def voting_list(request):
+    votings = Voting.objects.all()
+    return render(request, "votings.html", {'votings':votings, 'STATIC_URL':settings.STATIC_URL})
+
+def voting_list_update(request):
+    voting_id = request.POST['voting_id']
+    voting = get_object_or_404(Voting, pk=voting_id)
+    action = request.POST['action']
+    if action == 'start':
+        if voting.start_date:
+            url = "/admin/"
+            # TODO Cuando seleccionas algunas que estan empezadas o no
+        else:
+            voting.start_date = timezone.now()
+            voting.save()
+            url = "/voting/votings/"
+    elif action == 'stop':
+        if not voting.start_date:
+            url = "/admin/"
+        elif voting.end_date:
+            url = "/admin/"
+        else:
+            voting.end_date = timezone.now()
+            voting.save()
+            url = "/voting/votings/"
+    elif action == 'tally':
+        if not voting.start_date:
+            url = "/admin/"
+        elif not voting.end_date:
+            url = "/admin/"
+        elif voting.tally:
+            url = "/admin/"
+        else:
+            voting.tally_votes(request.auth.key)
+            url = "/voting/votings/"
+    elif action == 'delete':
+        voting.delete()
+        url = "/voting/votings/"
+    else:
+        #TODO 
+        url = "/voting/votings/"
+
+    return HttpResponseRedirect(url)
+
+def voting_list_update_multiple(request):
+    array_voting_id = request.POST['array_voting_id[]'].split(",")
+    action = request.POST['action_multiple']
+    for voting_id in array_voting_id:
+        voting = get_object_or_404(Voting, pk=voting_id)
+        if action == 'start':
+            if voting.start_date:
+                url = "/admin/"
+                # TODO Cuando seleccionas algunas que estan empezadas o no
+            else:
+                voting.start_date = timezone.now()
+                voting.save()
+                url = "/voting/votings/"
+        elif action == 'stop':
+            if not voting.start_date:
+                url = "/admin/"
+            elif voting.end_date:
+                url = "/admin/"
+            else:
+                voting.end_date = timezone.now()
+                voting.save()
+                url = "/voting/votings/"
+        elif action == 'tally':
+            if not voting.start_date:
+                url = "/admin/"
+            elif not voting.end_date:
+                url = "/admin/"
+            elif voting.tally:
+                url = "/admin/"
+            else:
+                #TODO
+                voting.tally_votes(request.auth.key)
+                url = "/voting/votings/"
+        elif action == 'delete':
+            #TODO 
+            voting.delete()
+            url = "/voting/votings/"
+        else:
+            #TODO 
+            url = "/voting/votings/"
+
+    return HttpResponseRedirect(url)
 
 class VotingView(generics.ListCreateAPIView):
     queryset = Voting.objects.all()

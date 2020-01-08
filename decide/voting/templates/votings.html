@@ -1,0 +1,145 @@
+{% extends 'block.html' %}
+
+{% block content %}
+
+<script>
+
+    function grab_selected() {
+      var tasks = [];
+      var array = document.getElementsByName("voting_id[]");
+      array.forEach(element => {
+        if(element.checked){
+          tasks.push(element.value);
+        }
+      });
+      var inputNombre = document.getElementById("array_voting_id[]");
+      inputNombre.value = tasks;
+    }
+
+    function select_all(){
+      array = document.getElementsByName("voting_id[]")
+      selector = document.getElementById("selector")
+      array.forEach(element => {
+            if(selector.checked){
+              element.checked = 1
+            } else{
+              element.checked = 0
+            }
+          });
+    }
+
+</script>
+
+
+<h1>Lista de votaciones</h1>
+
+<form action="update_selection/" id="multiple-selection" method="POST">
+  {% csrf_token %}
+  <div class="actions">
+      <label>Action: 
+        <select name="action_multiple" required>
+
+          <option value="" selected>---------</option>
+
+          <option value="delete">Delete selected votings</option>
+
+          <option value="start">Start</option>
+
+          <option value="stop">Stop</option>
+
+          <option value="tally">Tally</option>
+
+        </select>
+    </label>
+    
+    <input type="submit" form="multiple-selection" value="Go"/>
+      
+  </div>
+
+
+  <div class="results" id="results">
+    <table>
+      <thead>
+        <tr>
+    
+          <th scope="col">
+            <div class="text"><span><input type="checkbox" id="selector" onclick="select_all()"/></span></div>
+          </th>
+    
+          <th scope="col">
+            <div class="text"><a href="?o=1">Nombre</a></div>
+          </th>
+          
+          <th scope="col">       
+            <div class="text"><a href="?o=2">Empezar</a></div>
+          </th>
+
+          <th scope="col">       
+            <div class="text"><a href="?o=2">Parar</a></div>
+          </th>
+
+          <th scope="col">       
+            <div class="text"><a href="?o=2">Contar</a></div>
+          </th>
+
+          <th scope="col">       
+            <div class="text"><a href="?o=2">Eliminar</a></div>
+          </th>
+
+        </tr>
+      </thead>
+    
+      <tbody>
+    
+      {% for row in votings %}
+        <tr class="row">
+            <td>
+              <input type="checkbox" onclick="grab_selected()" name="voting_id[]" value="{{row.id}}"/>
+            </td>
+            <th>
+              <a href="/admin/voting/voting/{{row.id}}/change/">{{row.name}}</a>
+            </th>
+            <td>
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="start"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Start"/>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="stop"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Stop"/>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="tally"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Tally"/>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="delete"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Delete"/>
+                </form>
+            </td>
+          </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <input type="hidden" id="array_voting_id[]" name="array_voting_id[]" value="">
+</form>
+
+
+{% endblock %}
+
