@@ -46,7 +46,7 @@ class Candidate(models.Model):
 
 
 class Voting(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, blank=False)
     desc = models.TextField(blank=True, null=True)
     ##question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
 

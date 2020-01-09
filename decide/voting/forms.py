@@ -10,3 +10,5 @@ class NewVotingForm(forms.Form):
     candidatures = forms.MultipleHiddenInput()
     candidature_name = forms.TextInput()
     candidature_file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    auths = forms.ModelMultipleChoiceField(queryset=None)
+    
