@@ -8,48 +8,64 @@
       <!-- edit form column -->
       <div class="col-md-9 personal-info">
         <h3>Información personal</h3>
-        
-        <form class="form-horizontal" role="form">
+        {% if form.errors %}
+          <div class="alert alert-danger" role="alert">
+          {% for field in form %}
+              {% for error in field.errors %}
+                  {{ error|escape }}
+              {% endfor %}
+          {% endfor %}
+        </div>
+	      {% endif %}
+        {% if passwordError != 0 %}
+          <div class="alert alert-danger" role="alert">
+          {% if passwordError == 1 %}
+              Las contraseñas deben coincidir
+          {% endif %}
+        </div>
+        {% endif %}
+        <form class="form-horizontal" role="form" method="post">
+          {% csrf_token %}
           <div class="form-group">
             <label class="col-lg-3 control-label">Nombre:</label>
             <div class="col-lg-8">
-              <input class="form-control" type="text" value="Jane">
+              <input class="form-control" type="text" value="{{first_name}}" required="required" name="first_name">
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">Apellido:</label>
             <div class="col-lg-8">
-              <input class="form-control" type="text" value="Bishop">
+              <input class="form-control" type="text" value="{{last_name}}" required="required" name="last_name">
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">Email:</label>
             <div class="col-lg-8">
-              <input class="form-control" type="text" value="janesemail@gmail.com">
+              <input class="form-control" type="text" value="{{email}}" required="required" name="email">
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">Nombre de usuario:</label>
             <div class="col-md-8">
-              <input class="form-control" type="text" value="janeuser">
+              <input class="form-control" type="text" value="{{username}}" required="required" name="username">
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">Contraseña:</label>
             <div class="col-md-8">
-              <input type="password" class="form-control" name="password">
+              <input type="password" class="form-control" name="password" required="required" >
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">Confirmar contraseña:</label>
             <div class="col-md-8">
-              <input class="form-control" type="password" name="confirm_password">
+              <input class="form-control" type="password" name="confirm_password" required="required">
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label"></label>
             <div class="col-md-8">
-              <input type="button" class="btn btn-primary" value="Guardar cambios">
+              <button type="submit" class="btn btn-primary">Guardar cambios</button>
               <span></span>
               <br>
               <a href="/" class="btn-default">Cancelar</a>
