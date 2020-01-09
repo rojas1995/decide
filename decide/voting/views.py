@@ -82,7 +82,6 @@ def voting_edit(request):
 
 
 @csrf_exempt
-@transaction.atomic
 def handle_uploaded_file(response):
     
     rows = response.POST['param'].split("\n")
@@ -168,8 +167,8 @@ def handle_uploaded_file(response):
         validation_errors.append("Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código " + prov) 
 
 
-    if len(validation_errors) > 0:
-       transaction.set_rollback(True)
+    #if len(validation_errors) > 0:
+    #   transaction.set_rollback(True)
 
     return HttpResponse(validation_errors)
     #return validation_errors
