@@ -19,7 +19,7 @@ class Candidate(models.Model):
     current_area = models.TextField(blank=True, null=True)
     primaries = models.BooleanField(default=False)
     sex = models.TextField(blank=True, null=True,choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),])
-    candidatesGroup = models.ForeignKey(CandidatesGroup, on_delete=models.CASCADE)
+    candidatesGroup = models.ForeignKey(CandidatesGroup, related_name='candidates', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} ({}) - {} - {}'.format(self.name, self.type, self.current_area, self.sex)

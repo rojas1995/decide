@@ -6,12 +6,13 @@ from base.serializers import KeySerializer, AuthSerializer
 class CandidateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Candidate
-        fields = ('name', 'type','born_area', 'current_area', 'primaries', 'sex', 'candidatesGroup')
+        fields = ('id', 'name', 'type','born_area', 'current_area', 'primaries', 'sex')
 
 class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
+    candidates = CandidateSerializer(many=True)
     class Meta:
         model = CandidatesGroup
-        fields = ('name', )
+        fields = ('id', 'name', 'candidates')
 
 #class QuestionOptionSerializer(serializers.HyperlinkedModelSerializer):
  #   class Meta:
@@ -28,7 +29,7 @@ class CandidateGroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class VotingSerializer(serializers.HyperlinkedModelSerializer):
     #question = QuestionSerializer(many=False)
-    candidatures = CandidateGroupSerializer(many=False) 
+    candidatures = CandidateGroupSerializer(many=True) 
     pub_key = KeySerializer()
     auths = AuthSerializer(many=True)
 

@@ -1,5 +1,8 @@
-{% extends "base.html" %}
-{% load i18n static %}
+{% extends "block.html" %}
+
+
+
+
 
 {% block content %}
 <!--<script type="text/javascript" src="../../read_csv.js"></script>-->
@@ -10,6 +13,9 @@
       <span><label for="description">Description: {{voting.description}}</label> <input type="textarea" id="description" name="description" /></span>
       <p>Candidaturas: </p>
 
+      <div id="candidatures-div">
+      </div>
+
       <div id="tablaCandidaturas">
         <div id="formularioCandidaturas">
             <fieldset>
@@ -17,7 +23,7 @@
                 <input type="text" id="nameCSV" name="candidature_name" />
                 <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
                 </label>
-                <input type="file" id="csvFileInput" name="candidatures" onchange="handleFiles(this.files)" accept=".csv" />
+                <input type="file" id="csvFileInput" name="candidatures_file" onchange="handleFiles(this.files)" accept=".csv" />
             </fieldset> 
         </div>
         <div id="tablaCandidatura">
@@ -29,10 +35,15 @@
 
       <span><label for="pubKey" >PubKey</label><input type="text" id="pubKey" name="pubKey" minlenght="256"/></span>
 
-      <input type="submit" name="submit" onClick="return validForm();"/>
+      <input type="submit" name="submit" onClick="return alertForm();"/>
     </form>
+    <div id="print">
 
+        <p id="validacion_print"></p>
 
+    </div>
+<input type="button" value="Descargar" onclick="printHTML()"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script> 
     function handleFiles(files) {
 	// Check for the various File API support.
@@ -59,18 +70,9 @@ function loadHandler(event) {
 	processDataAsObj(csv);             
 }
 
-function processData(csv) {
-    var allTextLines = csv.split(/\r\n|\n/);
-    var lines = [];
-    while (allTextLines.length) {
-        lines.push(allTextLines.shift().split(','));
-    }
-	console.log(lines);
-	drawOutput(lines);
-}
-
 //if your csv file contains the column names as the first line
 function processDataAsObj(csv){
+    validateLines(csv);
     var allTextLines = csv.split(/\r\n|\n/);
     var lines = [];
 	
@@ -85,6 +87,7 @@ function processDataAsObj(csv){
 	}
         lines.push(obj);
     }
+
 	drawOutputAsObj(lines);
 }
 
@@ -92,20 +95,6 @@ function errorHandler(evt) {
 	if(evt.target.error.name == "NotReadableError") {
 		alert("Canno't read file !");
 	}
-}
-
-function drawOutput(lines){
-	//Clear previous data
-	document.getElementById("tablaCandidatura").innerHTML = "";
-	var table = document.createElement("table");
-	for (var i = 0; i < lines.length; i++) {
-		var row = table.insertRow(-1);
-		for (var j = 0; j < lines[i].length; j++) {
-			var firstNameCell = row.insertCell(-1);
-			firstNameCell.appendChild(document.createTextNode(lines[i][j]));
-		}
-	}
-	document.getElementById("tablaCandidatura").appendChild(table);
 }
 
 //draw the table, if first line contains heading
@@ -125,10 +114,13 @@ function drawOutputAsObj(lines){
 	//the data
 	for (var i = 0; i < lines.length; i++) {
 		var row = table.insertRow(-1);
-		Object.keys(lines[0]).forEach(function(key){
-			var data = row.insertCell(-1);
-			data.appendChild(document.createTextNode(lines[i][key]));
+        if(lines[i]['name'] != ''){
+            Object.keys(lines[0]).forEach(function(key){
+                var data = row.insertCell(-1);
+			    data.appendChild(document.createTextNode(lines[i][key]));
 		});
+        }
+		
 	}
 
     var divCandidatura = document.createElement("div");
@@ -141,17 +133,104 @@ function drawOutputAsObj(lines){
 	document.getElementById("tablaCandidatura").appendChild(divCandidatura);
 
     var inputCandidatura = document.createElement("input");
-    inputCandidatura.id="candidature_file";
-    inputCandidatura.name="candidature_file";
-    inputCandidatura.type="file";
+    inputCandidatura.id="candidatures";
+    inputCandidatura.name="candidatures";
+    inputCandidatura.type="hidden";
+    inputCandidatura.value = nameInput;
 
-    document.getElementById("tablaCandidatura"+nameInput).appendChild(inputCandidatura);
+    document.getElementById("candidatures-div").appendChild(inputCandidatura);
+
     document.getElementById("tablaCandidatura"+nameInput).appendChild(nombreCandidatura);
     document.getElementById("tablaCandidatura"+nameInput).appendChild(table);
 }
 
-    function validForm(){
+    function alertForm(){
         return alert("You're saving this voting. You'll be able to edit it after this saving and before the start date.");
+
+    }
+
+    function validateLines(csv) {
+        $.ajax({
+            type: "POST",
+            url: "../validate/",
+            data: { param: csv },
+            success: callbackFunc
+        });
+    }
+
+    function callbackFunc(response) {
+        // do something with the response
+        document.getElementById("validacion_print").innerHTML = response;
+    }
+
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function printHTML() {
+
+        var pdf = new jsPDF('p', 'pt', 'letter');
+
+        
+
+        source = $('#print')[0];
+
+        specialElementHandlers = {
+
+            '#bypassme': function (element, renderer) {
+
+                return true
+
+            }
+
+        };
+
+        margins = {
+
+            top: 80,
+
+            bottom: 60,
+
+            left: 40,
+
+            width: 522
+
+        };
+
+        pdf.fromHTML(
+
+            source,
+
+            margins.left,
+
+            margins.top, {
+
+                'width': margins.width,
+
+                'elementHandlers': specialElementHandlers
+
+            },
+
+            function (dispose) {
+
+                pdf.save('Prueba.pdf');
+
+            }, margins
+
+        );
 
     }
 
