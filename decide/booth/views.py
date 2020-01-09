@@ -11,7 +11,7 @@ from django.contrib.auth import login as do_login
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from base import mods
-from booth.form import registerForm
+from booth.form import registerForm, profileForm
 from django.contrib import auth
 from census.models import Census
 from voting.models import Voting
@@ -112,18 +112,22 @@ class PageView(TemplateView):
             return redirect('/')
             
         form = None
+        password = 0
         if request.method == "POST":
             form = registerForm(request.POST)
             if form.is_valid():
-                user = form.save()
-                user.set_password(form.cleaned_data['password'])
-                user.save()
+                if request.POST.get('password') == request.POST.get('confirm_password'):
+                    user = form.save()
+                    user.set_password(form.cleaned_data['password'])
+                    user.save()
 
-                # Si el usuario se crea correctamente 
-                if user is not None:
-                    return redirect('/login')
+                    # Si el usuario se crea correctamente 
+                    if user is not None:
+                        return redirect('/login')
+                else:
+                    password = 1
 
-        return render(request, "booth/register.html", {'form': form})
+        return render(request, "booth/register.html", {'form': form, 'password': password})
 
     def login(request):
         if request.user.is_authenticated:
@@ -151,6 +155,29 @@ class PageView(TemplateView):
 
     def index(request):
         return render(request, 'booth/index.html')
+    
+    def profile(request):
+        username = request.user.username
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        email = request.user.email
+        password = request.user.password
+
+        form = None
+        passwordError = 0
+        if request.method == "POST":
+            form = profileForm(request.POST, instance=request.user)
+            if form.is_valid():
+                if request.POST.get('password') == request.POST.get('confirm_password'):
+                    user = form.save()
+                    user.set_password(form.cleaned_data['password'])
+                    user.save()
+                    do_login(request, user)
+                    return redirect(request.META.get('HTTP_REFERER'))
+                else:
+                    passwordError = 1
+
+        return render(request, 'booth/profile.html', {'password': password,'passwordError': passwordError,'form': form, 'username': username, 'first_name': first_name, 'last_name': last_name, 'email': email})
 
 
 class GetVoting(APIView):

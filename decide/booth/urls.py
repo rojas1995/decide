@@ -9,5 +9,6 @@ urlpatterns = [
     path('register/', PageView.register),
     path('<int:voting_id>/', booth),
     path('list/', votinglist),
+    path('profile/', PageView.profile),
     path('getvoting/', GetVoting.as_view())
 ]
