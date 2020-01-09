@@ -112,18 +112,22 @@ class PageView(TemplateView):
             return redirect('/')
             
         form = None
+        password = 0
         if request.method == "POST":
             form = registerForm(request.POST)
             if form.is_valid():
-                user = form.save()
-                user.set_password(form.cleaned_data['password'])
-                user.save()
+                if request.POST.get('password') == request.POST.get('confirm_password'):
+                    user = form.save()
+                    user.set_password(form.cleaned_data['password'])
+                    user.save()
 
-                # Si el usuario se crea correctamente 
-                if user is not None:
-                    return redirect('/login')
+                    # Si el usuario se crea correctamente 
+                    if user is not None:
+                        return redirect('/login')
+                else:
+                    password = 1
 
-        return render(request, "booth/register.html", {'form': form})
+        return render(request, "booth/register.html", {'form': form, 'password': password})
 
     def login(request):
         if request.user.is_authenticated:
@@ -151,6 +155,10 @@ class PageView(TemplateView):
 
     def index(request):
         return render(request, 'booth/index.html')
+    
+    def profile(request):
+        print(request)
+        return render(request, 'booth/profile.html')
 
 
 class GetVoting(APIView):
