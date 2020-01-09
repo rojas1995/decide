@@ -23,6 +23,8 @@ from django.http import HttpResponse
 import csv
 import os
 
+dirspot = os.getcwd()
+
 def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -37,34 +39,32 @@ def voting_edit(request):
 
     if request.method == 'POST':
         form = NewVotingForm(request.POST, request.FILES)
-        
+
         votingName = request.POST["name"]
         votingDescription = request.POST["description"]
 
-        files = request.FILES.getlist('file_field')
-        print(files)
+        
         permission_classes = (UserIsStaff,)
         #for data in ['name', 'desc', 'candidatures']:
         #    if not data in request.data:
         #        return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         if form.is_valid:
-            candidatures = []
-            for f in files:
-                candidature = handle_file(f)
-                candidatures.append(candidature)
+            candidatures = request.POST.getlist("candidatures")
 
-        voting = Voting(name=votingName, desc=votingDescription)
-                #candidatures=request.data.get('candidatures'))
-                #question=question)
-        voting.save()
+            voting = Voting(name=votingName, desc=votingDescription)
+                    #candidatures=request.data.get('candidatures'))
+                    #question=question)
+            voting.save()
 
-        voting.candidatures.set(candidatures)
+            for candidature in candidatures:
+                c = CandidatesGroup.objects.get(name=candidature)
+                voting.candidatures.add(c)
 
-        auth, _ = Auth.objects.get_or_create(url=settings.BASEURL,
-                                          defaults={'me': True, 'name': 'test auth'})
-        auth.save()
-        voting.auths.add(auth)
+            auth, _ = Auth.objects.get_or_create(url=settings.BASEURL,
+                                            defaults={'me': True, 'name': 'test auth'})
+            auth.save()
+            voting.auths.add(auth)
 
         return render(request, dirspot+'/voting/templates/newVotingForm.html', {'status':status.HTTP_201_CREATED})
     else:
@@ -90,7 +90,8 @@ def handle_uploaded_file(response):
 
     for row in rows:
         user = row.split("#")
-        if user[0] != '':
+        
+        if len(user) > 1 :
             name = user[0]
             _type = user[1]
             born_area = user[2]
@@ -123,12 +124,14 @@ def handle_uploaded_file(response):
                     count_provincias[current_area] = count_provincias[current_area] + 1
                     count_provincias[born_area] = count_provincias[born_area] + 1
 
+
             try:
                 CandidatesGroup.objects.get(name=candidatesGroupName)
             except:
                 CandidatesGroup(name=candidatesGroupName).save()
 
             try:
+                #print(CandidatesGroup.objects.get(name=candidatesGroupName))
                 candidato = Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName))
                 candidato.full_clean()
             except ValidationError:
@@ -183,11 +186,13 @@ def handle_file(f):
             primaries = True
 
         try:
-            candidature = CandidatesGroup.objects.get(name=candidatesGroupName)
+            CandidatesGroup.objects.get(name=candidatesGroupName)
         except:
-            candidature = CandidatesGroup(name=candidatesGroupName).save()
+            CandidatesGroup(name=candidatesGroupName).save()
+
+        candidature = CandidatesGroup.objects.get(name=candidatesGroupName)
         
-        Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName)).save()
+        Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=candidature).save()
     
     return candidature
 
