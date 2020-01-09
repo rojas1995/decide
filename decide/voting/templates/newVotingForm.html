@@ -1,0 +1,269 @@
+{% extends "block.html" %}
+
+
+
+
+
+{% block content %}
+<!--<script type="text/javascript" src="../../read_csv.js"></script>-->
+
+    <form method="post" enctype="multipart/form-data" action="/voting/edit/" >
+      {% csrf_token %}
+      <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span>
+      <span><label for="description">Description: {{voting.description}}</label> <input type="textarea" id="description" name="description" /></span>
+      <p>Candidaturas: </p>
+
+      <div id="candidatures-div">
+      </div>
+
+      <div id="tablaCandidaturas">
+        <div id="formularioCandidaturas">
+            <fieldset>
+                <label for="nameCSV">Nombre: </label>
+                <input type="text" id="nameCSV" name="candidature_name" />
+                <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
+                </label>
+                <input type="file" id="csvFileInput" name="candidatures_file" onchange="handleFiles(this.files)" accept=".csv" />
+            </fieldset> 
+        </div>
+        <div id="tablaCandidatura">
+        </div>
+      </div>
+      <div id="auths_div">
+        <label for="auths" >Auths</label><select id="list" name="auths" multiple>
+            {%for a in auths%}
+            <option value='{{a.name}}'>{{a.name}}</option>
+            {%endfor%}
+        </select>
+        <div id="create_auth">
+            <label for="name-auth">Name:</label><input type="text" id="auth_name" />
+            <label for="base_url">Base URL:</label><input type="text" id="base_url" />
+            <label for="auth-me">Me:</label><input type="checkbox" id="auth_me" value="me"/>
+            <input type="button" onClick="createAuth()" value="Create auth" />
+        </div>
+      </div>
+      <span><label for="startDate" >Start Date</label><input type="date" id="startDate" name="startDate"/></span>
+      <span><label for="endDate" >End Date</label><input type="date" id="endDate" name="endDate"/></span>
+
+      <input type="submit" name="submit" onClick="return alertForm();"/>
+    </form>
+    <div id="print">
+
+        <p id="validacion_print"></p>
+
+    </div>
+    <br/>
+<input type="button" value="Descargar" onclick="printHTML()"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script> 
+    function handleFiles(files) {
+	// Check for the various File API support.
+	if (window.FileReader) {
+		// FileReader are supported.
+        file = files[0];
+		getAsText(files[0]);
+	} else {
+		alert('FileReader are not supported in this browser.');
+	}
+}
+
+function getAsText(fileToRead) {
+	var reader = new FileReader();
+	// Handle errors load
+	reader.onload = loadHandler;
+	reader.onerror = errorHandler;
+	// Read file into memory as UTF-8      
+	reader.readAsText(fileToRead);
+}
+
+function loadHandler(event) {
+	var csv = event.target.result;
+	processDataAsObj(csv);             
+}
+
+//if your csv file contains the column names as the first line
+function processDataAsObj(csv){
+    validateLines(csv);
+    var allTextLines = csv.split(/\r\n|\n/);
+    var lines = [];
+	
+    //first line of csv
+    var keys = allTextLines.shift().split('#');
+	
+    while (allTextLines.length) {
+        var arr = allTextLines.shift().split('#');
+        var obj = {};
+        for(var i = 0; i < keys.length; i++){
+            obj[keys[i]] = arr[i];
+	}
+        lines.push(obj);
+    }
+
+	drawOutputAsObj(lines);
+}
+
+function errorHandler(evt) {
+	if(evt.target.error.name == "NotReadableError") {
+		alert("Canno't read file !");
+	}
+}
+
+//draw the table, if first line contains heading
+function drawOutputAsObj(lines){
+	//Clear previous data
+	//document.getElementById("tablaCandidatura").innerHTML = "";
+	var table = document.createElement("table");
+	
+	//for the table headings
+	var tableHeader = table.insertRow(-1);
+ 	Object.keys(lines[0]).forEach(function(key){
+ 		var el = document.createElement("TH");
+		el.innerHTML = key;		
+		tableHeader.appendChild(el);
+	});	
+	
+	//the data
+	for (var i = 0; i < lines.length; i++) {
+		var row = table.insertRow(-1);
+        if(lines[i]['name'] != ''){
+            Object.keys(lines[0]).forEach(function(key){
+                var data = row.insertCell(-1);
+			    data.appendChild(document.createTextNode(lines[i][key]));
+		});
+        }
+		
+	}
+
+    var divCandidatura = document.createElement("div");
+    var nameInput = document.getElementById("nameCSV").value;
+
+    var nombreCandidatura = document.createElement("label");
+    nombreCandidatura.innerHTML = nameInput;
+    divCandidatura.id = "tablaCandidatura"+nameInput;
+    
+	document.getElementById("tablaCandidatura").appendChild(divCandidatura);
+
+    var inputCandidatura = document.createElement("input");
+    inputCandidatura.id="candidatures";
+    inputCandidatura.name="candidatures";
+    inputCandidatura.type="hidden";
+    inputCandidatura.value = nameInput;
+
+    document.getElementById("candidatures-div").appendChild(inputCandidatura);
+
+    document.getElementById("tablaCandidatura"+nameInput).appendChild(nombreCandidatura);
+    document.getElementById("tablaCandidatura"+nameInput).appendChild(table);
+}
+
+    function alertForm(){
+        return alert("You're saving this voting. You'll be able to edit it after this saving and before the start date.");
+
+    }
+
+    function validateLines(csv) {
+        $.ajax({
+            type: "POST",
+            url: "../validate/",
+            data: { param: csv },
+            success: callbackFunc
+        });
+    }
+
+    function createAuth(){
+        var auth_name = document.getElementById('auth_name').value;
+        var base_url = document.getElementById('base_url').value;
+        var auth_me = document.getElementById('auth_me').checked;
+
+        var me = auth_me?'True':'False';
+
+        $.ajax({type: "POST",
+                url: "../create_auth/",
+                data:{auth_name: auth_name, 
+                base_url: base_url,
+                auth_me: me},
+                success:callbackFunc2
+        });
+    }
+
+    function callbackFunc(response) {
+        // do something with the response
+        document.getElementById("validacion_print").innerHTML = response;
+    }
+
+    function callbackFunc2(response){
+        $('#auths_div').load(' #auths_div');
+    }
+
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function printHTML() {
+
+        var pdf = new jsPDF('p', 'pt', 'letter');
+
+        
+
+        source = $('#print')[0];
+
+        specialElementHandlers = {
+
+            '#bypassme': function (element, renderer) {
+
+                return true
+
+            }
+
+        };
+
+        margins = {
+
+            top: 80,
+
+            bottom: 60,
+
+            left: 40,
+
+            width: 522
+
+        };
+
+        pdf.fromHTML(
+
+            source,
+
+            margins.left,
+
+            margins.top, {
+
+                'width': margins.width,
+
+                'elementHandlers': specialElementHandlers
+
+            },
+
+            function (dispose) {
+
+                pdf.save('Prueba.pdf');
+
+            }, margins
+
+        );
+
+    }
+
+    </script>
+{% endblock %}

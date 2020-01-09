@@ -34,13 +34,9 @@ class VotingTestCase(BaseTestCase):
         k.k = ElGamal.construct((p, g, y))
         return k.encrypt(msg)
 
-    def create_voting(self):
-        q = Question(desc='test question')
-        q.save()
-        for i in range(5):
-            opt = QuestionOption(question=q, option='option {}'.format(i+1))
-            opt.save()
-        v = Voting(name='test voting', question=q)
+    def create_voting_gobern(self):
+        print("Creando Votación Presidenciales - Congreso")
+        v = Voting(name="Votación Gobierno 2020")
         v.save()
 
         a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
@@ -49,6 +45,22 @@ class VotingTestCase(BaseTestCase):
         v.auths.add(a)
 
         return v
+
+    #def create_voting(self):
+    #    q = Question(desc='test question')
+    #    q.save()
+    #    for i in range(5):
+    #        opt = QuestionOption(question=q, option='option {}'.format(i+1))
+    #        opt.save()
+    #    v = Voting(name='test voting', question=q)
+    #    v.save()
+
+    #    a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
+    #                                      defaults={'me': True, 'name': 'test auth'})
+    #    a.save()
+    #    v.auths.add(a)
+
+    #    return v
 
     def create_voters(self, v):
         for i in range(100):

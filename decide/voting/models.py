@@ -8,7 +8,7 @@ from base.models import Auth, Key
 
 class CandidatesGroup(models.Model):
     name = models.TextField(blank=True, null=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -71,42 +71,43 @@ class Candidate(models.Model):
     born_area = models.TextField(choices=PROVINCIAS, default='AB')
     current_area = models.TextField(choices=PROVINCIAS, default='AB')
     primaries = models.BooleanField(default=False)
-    sex = models.TextField(choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),], default="HOMBRE")
-    candidatesGroup = models.ForeignKey(CandidatesGroup, on_delete=models.CASCADE)
-
-class Question(models.Model):
-    desc = models.TextField()
+    sex = models.TextField(blank=True, null=True,choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),])
+    candidatesGroup = models.ForeignKey(CandidatesGroup, related_name='candidates', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.desc
+        return '{} ({}) - {} - {}'.format(self.name, self.type, self.current_area, self.sex)
+
+#class Question(models.Model):
+#    desc = models.TextField()
+
+#    def __str__(self):
+#        return self.desc
 
 
-class QuestionOption(models.Model):
-    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
-    number = models.PositiveIntegerField(blank=True, null=True)
-    option = models.TextField()
-
-    def save(self):
-        if not self.number:
-            self.number = self.question.options.count() + 2
-        return super().save()
-
-    def __str__(self):
-        return '{} ({})'.format(self.option, self.number)
+#class QuestionOption(models.Model):
+#    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
+#    number = models.PositiveIntegerField(blank=True, null=True)
+#    option = models.TextField()
+#
+#    def save(self):
+#        if not self.number:
+#            self.number = self.question.options.count() + 2
+#        return super().save()
+#
+#    def __str__(self):
+#        return '{} ({})'.format(self.option, self.number)
 
 
 class Voting(models.Model):
-    
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, blank=False)
     desc = models.TextField(blank=True, null=True)
-    question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
+    ##question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
-    start_date_selected = models.DateTimeField(blank=False, null=True)
-    end_date_selected = models.DateTimeField(blank=True, null=True)
-
+    ##candidatures = models.ForeignKey(CandidatesGroup, related_name='voting', on_delete=models.CASCADE, null=True, blank=True)
+    candidatures = models.ManyToManyField(CandidatesGroup, related_name='voting')
     pub_key = models.OneToOneField(Key, related_name='voting', blank=True, null=True, on_delete=models.SET_NULL)
     auths = models.ManyToManyField(Auth, related_name='votings')
 
@@ -172,7 +173,7 @@ class Voting(models.Model):
 
     def do_postproc(self):
         tally = self.tally
-        options = self.question.options.all()
+        #options = self.question.options.all()
 
         opts = []
         for opt in options:
