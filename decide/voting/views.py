@@ -110,10 +110,11 @@ def voting_edit(request):
         form = NewVotingForm()
     return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form, 'auths':auths})
 
+
 @csrf_exempt
 @transaction.atomic
 def handle_uploaded_file(response):
-
+    
     rows = response.POST['param'].split("\n")
 
     validation_errors = []
@@ -125,54 +126,58 @@ def handle_uploaded_file(response):
     row_line = 2
     candidatesGroupSex = {}
     count_presidents = {}
-    for row in reader:
-        name = dict(row).__getitem__('name')
-        _type = dict(row).__getitem__('type')
-        born_area = dict(row).__getitem__('born_area')
-        current_area = dict(row).__getitem__('current_area')
-        primaries = dict(row).__getitem__('primaries')
-        sex = dict(row).__getitem__('sex')
-        candidatesGroupName = dict(row).__getitem__('candidatesGroup')
+
+    for row in rows:
+        user = row.split("#")
         
-        if sex == "HOMBRE":
-            candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0] + 1, candidatesGroupSex.get(candidatesGroupName, [0,0])[1]]
-        else:
-            candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0], candidatesGroupSex.get(candidatesGroupName, [0,0])[1] + 1]
-       
-        if primaries == 'FALSE':
-            primaries = False
-            validation_errors.append("Error en la línea " + str(row_line) + ": El candidato " + str(name) + " no ha pasado el proceso de primarias")
-        else:
-            primaries = True
-
-        if _type == "PRESIDENCIA":
-            count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0) + 1
-        else:
-            count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0)
-
-        try:
-            CandidatesGroup.objects.get(name=candidatesGroupName)
-        except:
-            candidatesGroup_Search = CandidatesGroup(name=candidatesGroupName).save()
-
-        if _type == 'CANDIDATO':
-            if born_area in count_provincias and current_area in count_provincias:
-                count_provincias[born_area] = count_provincias[born_area] + 1
-
+        if len(user) > 1 :
+            name = user[0]
+            _type = user[1]
+            born_area = user[2]
+            current_area = user[3]
+            primaries = user[4]
+            sex = user[5]
+            candidatesGroupName = user[6]
+            
+            if sex == "HOMBRE":
+                candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0] + 1, candidatesGroupSex.get(candidatesGroupName, [0,0])[1]]
             else:
-                count_provincias[current_area] = count_provincias[current_area] + 1
-                count_provincias[born_area] = count_provincias[born_area] + 1
-
-
-        try:
-            candidato = Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName))
-            candidato.full_clean()
-        except ValidationError:
-            validation_errors.append("Error en la línea " + str(row_line) + ": Hay errores de formato/validación")
-        else:
-            candidato.save()
+                candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0], candidatesGroupSex.get(candidatesGroupName, [0,0])[1] + 1]
         
-        row_line = row_line + 1
+            if primaries == 'FALSE':
+                primaries = False
+                validation_errors.append("Error en la línea " + str(row_line) + ": El candidato " + str(name) + " no ha pasado el proceso de primarias")
+            else:
+                primaries = True
+
+            if _type == "PRESIDENCIA":
+                count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0) + 1
+            else:
+                count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0)
+
+            if _type == 'CANDIDATO':
+                if born_area in count_provincias and current_area in count_provincias:
+                    count_provincias[born_area] = count_provincias[born_area] + 1
+
+                else:
+                    count_provincias[current_area] = count_provincias[current_area] + 1
+                    count_provincias[born_area] = count_provincias[born_area] + 1
+
+
+            try:
+                CandidatesGroup.objects.get(name=candidatesGroupName)
+            except:
+                CandidatesGroup(name=candidatesGroupName).save()
+
+            try:
+                candidato = Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName))
+                candidato.full_clean()
+            except ValidationError:
+                validation_errors.append("Error en la línea " + str(row_line) + ": Hay errores de formato/validación")
+            else:
+                candidato.save()
+            
+            row_line = row_line + 1
 
         
     for key in count_presidents.keys():
@@ -193,10 +198,10 @@ def handle_uploaded_file(response):
 
 
     if len(validation_errors) > 0:
-        transaction.set_rollback(True)
-    
-    return validation_errors
+       transaction.set_rollback(True)
 
+    return HttpResponse(validation_errors)
+    
 
 def voting_list(request):
     votings = Voting.objects.all()
