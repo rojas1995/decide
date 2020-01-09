@@ -11,5 +11,6 @@ urlpatterns = [
     path('votings/update/', views.voting_list_update, name='voting_update'),
     path('votings/update_selection/', views.voting_list_update_multiple, name='voting_update_multiple'),
     path('edit/', views.voting_edit, name='voting'),
-    path('view', views.getVoting, name='voting view')
+    path('view', views.getVoting, name='voting_view'),
+    path('create_auth/', views.create_auth, name="votings")
 ]

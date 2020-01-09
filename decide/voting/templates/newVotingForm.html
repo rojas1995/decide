@@ -29,11 +29,21 @@
         <div id="tablaCandidatura">
         </div>
       </div>
-      <span><label for="auths" >Auths</label><input type="" id="auths" name="auths"/></span>
+      <div id="auths_div">
+        <label for="auths" >Auths</label><select id="list" name="auths" multiple>
+            {%for a in auths%}
+            <option value='{{a.name}}'>{{a.name}}</option>
+            {%endfor%}
+        </select>
+        <div id="create_auth">
+            <label for="name-auth">Name:</label><input type="text" id="auth_name" />
+            <label for="base_url">Base URL:</label><input type="text" id="base_url" />
+            <label for="auth-me">Me:</label><input type="checkbox" id="auth_me" value="me"/>
+            <input type="button" onClick="createAuth()" value="Create auth" />
+        </div>
+      </div>
       <span><label for="startDate" >Start Date</label><input type="date" id="startDate" name="startDate"/></span>
       <span><label for="endDate" >End Date</label><input type="date" id="endDate" name="endDate"/></span>
-
-      <span><label for="pubKey" >PubKey</label><input type="text" id="pubKey" name="pubKey" minlenght="256"/></span>
 
       <input type="submit" name="submit" onClick="return alertForm();"/>
     </form>
@@ -158,9 +168,29 @@ function drawOutputAsObj(lines){
         });
     }
 
+    function createAuth(){
+        var auth_name = document.getElementById('auth_name').value;
+        var base_url = document.getElementById('base_url').value;
+        var auth_me = document.getElementById('auth_me').checked;
+
+        var me = auth_me?'True':'False';
+
+        $.ajax({type: "POST",
+                url: "../create_auth/",
+                data:{auth_name: auth_name, 
+                base_url: base_url,
+                auth_me: me},
+                success:callbackFunc2
+        });
+    }
+
     function callbackFunc(response) {
         // do something with the response
         document.getElementById("validacion_print").innerHTML = response;
+    }
+
+    function callbackFunc2(response){
+        $('#auths_div').load(' #auths_div');
     }
 
     function getCookie(name) {

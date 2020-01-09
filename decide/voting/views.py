@@ -38,6 +38,8 @@ def candidates_load(request):
 
 def voting_edit(request):
 
+    auths = Auth.objects.all()
+
     if request.method == 'POST':
         form = NewVotingForm(request.POST, request.FILES)
 
@@ -70,15 +72,24 @@ def voting_edit(request):
             for cand in candidatures_db:
                 voting.candidatures.add(cand)
 
-            auth, _ = Auth.objects.get_or_create(url=settings.BASEURL,
-                                            defaults={'me': True, 'name': 'test auth'})
-            auth.save()
-            voting.auths.add(auth)
+            auths = request.POST.getlist("auths")
+            auths_db = Auth.objects.all()
+            auths_selected = []
 
-        return render(request, dirspot+'/voting/templates/newVotingForm.html', {'status':status.HTTP_201_CREATED})
+            for at in auths_db:
+                for ah in auths:
+                    if at.name == ah:
+                        auths_selected.append(at)
+
+            for a in auths_selected:
+                voting.auths.add(a)
+            #Accion que se debe realizar en la lista
+            #voting.create_pubkey()
+
+        return render(request, dirspot+'/voting/templates/newVotingForm.html', {'status':status.HTTP_201_CREATED, 'auths':auths})
     else:
         form = NewVotingForm()
-    return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form})
+    return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form, 'auths':auths})
 
 
 @csrf_exempt
@@ -140,7 +151,6 @@ def handle_uploaded_file(response):
                 CandidatesGroup(name=candidatesGroupName).save()
 
             try:
-                #print(CandidatesGroup.objects.get(name=candidatesGroupName))
                 candidato = Candidate(name=name, type=_type, born_area=born_area, current_area=current_area, primaries= primaries, sex=sex, candidatesGroup=CandidatesGroup.objects.get(name=candidatesGroupName))
                 candidato.full_clean()
             except ValidationError:
@@ -390,3 +400,21 @@ def getVoting(request):
     voting_json = VotingSerializer(voting)
     data = JSONRenderer().render(voting_json.data)
     return HttpResponse(data)
+
+@csrf_exempt
+def create_auth(request):
+    name = request.POST["auth_name"]
+    baseurl = request.POST["base_url"]
+    auth_me = request.POST["auth_me"]
+
+    if auth_me == 'True':
+        me = True
+    elif auth_me == 'False':
+        me = False
+    
+
+    Auth.objects.get_or_create(url=baseurl, defaults={'me': me, 'name': name})
+
+    auths = Auth.objects.all()
+    
+    return HttpResponse({'auths':auths})
