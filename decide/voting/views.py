@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import requires_csrf_token
 from django.db import transaction
 from django.http import HttpResponse
+from rest_framework.renderers import JSONRenderer
 
 import json
 import csv
@@ -385,7 +386,7 @@ class VotingUpdate(generics.RetrieveUpdateDestroyAPIView):
 def getVoting(request):
     id_voting = request.GET['id']
     voting = get_object_or_404(Voting, pk=id_voting)
-    #voting_json = json.loads(voting)
-    #print(voting_json)
 
-    return HttpResponse(voting)
+    voting_json = VotingSerializer(voting)
+    data = JSONRenderer().render(voting_json.data)
+    return HttpResponse(data)
