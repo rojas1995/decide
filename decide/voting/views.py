@@ -19,7 +19,7 @@ from django.views.decorators.csrf import requires_csrf_token
 from django.db import transaction
 from django.http import HttpResponse
 
-
+import json
 import csv
 import os
 
@@ -57,9 +57,17 @@ def voting_edit(request):
                     #question=question)
             voting.save()
 
+            candidatures_db = []
             for candidature in candidatures:
-                c = CandidatesGroup.objects.get(name=candidature)
-                voting.candidatures.add(c)
+                try:
+                    c = CandidatesGroup.objects.get(name=candidature)
+                    candidatures_db.append(c)
+                except:
+                    c = CandidatesGroup(name=candidature).save() 
+                    candidatures_db.append(c)
+            
+            for cand in candidatures_db:
+                voting.candidatures.add(cand)
 
             auth, _ = Auth.objects.get_or_create(url=settings.BASEURL,
                                             defaults={'me': True, 'name': 'test auth'})
@@ -374,3 +382,10 @@ class VotingUpdate(generics.RetrieveUpdateDestroyAPIView):
             st = status.HTTP_400_BAD_REQUEST
         return Response(msg, status=st)
 
+def getVoting(request):
+    id_voting = request.GET['id']
+    voting = get_object_or_404(Voting, pk=id_voting)
+    #voting_json = json.loads(voting)
+    #print(voting_json)
+
+    return HttpResponse(voting)
