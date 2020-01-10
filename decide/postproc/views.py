@@ -267,6 +267,13 @@ class PostProcView(APIView):
 
         if t == 'IDENTITY':
             return self.identity(opts)
+
+        elif t == 'PARIDAD':
+            check = self.check_json(opts)
+            if check:
+                return Response(self.paridad(opts))
+            else:
+                return Response({'message' : 'la diferencia del numero de hombres y mujeres es de más de un 60% - 40%'})
         
         elif t =='SIMPLE':
             return Response(self.simple(opts, s))
