@@ -1,4 +1,4 @@
-{% extends "block.html" %}
+{% extends 'block.html' %}
 
 
 
@@ -8,27 +8,32 @@
 <!--<script type="text/javascript" src="../../read_csv.js"></script>-->
 
     <form method="post" enctype="multipart/form-data" action="/voting/edit/" >
-      {% csrf_token %}
-      <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span>
-      <span><label for="description">Description: {{voting.description}}</label> <input type="textarea" id="description" name="description" /></span>
-      <p>Candidaturas: </p>
+        {% csrf_token %}
+        <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span>
+        <span><label for="description">Description: {{voting.description}}</label> <input type="textarea" id="description" name="description" /></span>
+        <p>Candidaturas: </p>
 
-      <div id="candidatures-div">
-      </div>
+        <div id="candidatures-div"></div>
 
-      <div id="tablaCandidaturas">
-        <div id="formularioCandidaturas">
-            <fieldset>
-                <label for="nameCSV">Nombre: </label>
-                <input type="text" id="nameCSV" name="candidature_name" />
-                <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
-                </label>
-                <input type="file" id="csvFileInput" name="candidatures_file" onchange="handleFiles(this.files)" accept=".csv" />
-            </fieldset> 
+        <div id="tablaCandidaturas">
+            <div id="formularioCandidaturas">
+                <fieldset>
+                    <label for="nameCSV">Nombre: </label>
+                    <input type="text" id="nameCSV" name="candidature_name" oninput="desbloquear_import()"/>
+                    <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
+                    </label>
+                    <input id="import_button" type="file" id="csvFileInput" disabled="true" name="candidatures_file" onchange="handleFiles(this.files)" accept=".csv" />
+                </fieldset> 
+            </div>
+        
+            <div id="tablaCandidatura" class="tablaCandidatura"></div>
         </div>
-        <div id="tablaCandidatura">
-        </div>
-      </div>
+
+
+        <br>
+        <br>
+        <br>
+        <br>
       <div id="auths_div">
         <label for="auths" >Auths</label><select id="list" name="auths" multiple>
             {%for a in auths%}
@@ -55,105 +60,133 @@
     <br/>
 <input type="button" value="Descargar" onclick="printHTML()"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script> 
+    
+<script> 
+
     function handleFiles(files) {
-	// Check for the various File API support.
-	if (window.FileReader) {
-		// FileReader are supported.
-        file = files[0];
-		getAsText(files[0]);
-	} else {
-		alert('FileReader are not supported in this browser.');
-	}
-}
-
-function getAsText(fileToRead) {
-	var reader = new FileReader();
-	// Handle errors load
-	reader.onload = loadHandler;
-	reader.onerror = errorHandler;
-	// Read file into memory as UTF-8      
-	reader.readAsText(fileToRead);
-}
-
-function loadHandler(event) {
-	var csv = event.target.result;
-	processDataAsObj(csv);             
-}
-
-//if your csv file contains the column names as the first line
-function processDataAsObj(csv){
-    validateLines(csv);
-    var allTextLines = csv.split(/\r\n|\n/);
-    var lines = [];
-	
-    //first line of csv
-    var keys = allTextLines.shift().split('#');
-	
-    while (allTextLines.length) {
-        var arr = allTextLines.shift().split('#');
-        var obj = {};
-        for(var i = 0; i < keys.length; i++){
-            obj[keys[i]] = arr[i];
-	}
-        lines.push(obj);
+    // Check for the various File API support.
+        if (window.FileReader) {
+            // FileReader are supported.
+            file = files[0];
+            getAsText(files[0]);
+        } else {
+            alert('FileReader are not supported in this browser.');
+        }
     }
 
-	drawOutputAsObj(lines);
-}
+    function getAsText(fileToRead) {
+        var reader = new FileReader();
+        // Handle errors load
+        reader.onload = loadHandler;
+        reader.onerror = errorHandler;
+        // Read file into memory as UTF-8      
+        reader.readAsText(fileToRead);
+    }
 
-function errorHandler(evt) {
-	if(evt.target.error.name == "NotReadableError") {
-		alert("Canno't read file !");
-	}
-}
+    function loadHandler(event) {
+        var csv = event.target.result;
+        processDataAsObj(csv);             
+    }
 
-//draw the table, if first line contains heading
-function drawOutputAsObj(lines){
-	//Clear previous data
-	//document.getElementById("tablaCandidatura").innerHTML = "";
-	var table = document.createElement("table");
-	
-	//for the table headings
-	var tableHeader = table.insertRow(-1);
- 	Object.keys(lines[0]).forEach(function(key){
- 		var el = document.createElement("TH");
-		el.innerHTML = key;		
-		tableHeader.appendChild(el);
-	});	
-	
-	//the data
-	for (var i = 0; i < lines.length; i++) {
-		var row = table.insertRow(-1);
-        if(lines[i]['name'] != ''){
-            Object.keys(lines[0]).forEach(function(key){
-                var data = row.insertCell(-1);
-			    data.appendChild(document.createTextNode(lines[i][key]));
-		});
+    //if your csv file contains the column names as the first line
+    function processDataAsObj(csv){
+        validateLines(csv);
+        var allTextLines = csv.split(/\r\n|\n/);
+        var lines = [];
+        
+        //first line of csv
+        var keys = allTextLines.shift().split('#');
+        
+        while (allTextLines.length) {
+            var arr = allTextLines.shift().split('#');
+            var obj = {};
+            for(var i = 0; i < keys.length; i++){
+                obj[keys[i]] = arr[i];
         }
-		
-	}
+            lines.push(obj);
+        }
 
-    var divCandidatura = document.createElement("div");
-    var nameInput = document.getElementById("nameCSV").value;
+        drawOutputAsObj(lines);
+    }
 
-    var nombreCandidatura = document.createElement("label");
-    nombreCandidatura.innerHTML = nameInput;
-    divCandidatura.id = "tablaCandidatura"+nameInput;
+    function errorHandler(evt) {
+        if(evt.target.error.name == "NotReadableError") {
+            alert("Canno't read file !");
+        }
+    }
+
+    //draw the table, if first line contains heading
+    function drawOutputAsObj(lines){
+        //Clear previous data
+        //document.getElementById("tablaCandidatura").innerHTML = "";
+        var table = document.createElement("table");
+        
+        //for the table headings
+        var tableHeader = table.insertRow(-1);
+        Object.keys(lines[0]).forEach(function(key){
+            var el = document.createElement("TH");
+            el.innerHTML = key;		
+            tableHeader.appendChild(el);
+        });	
+        
+        //the data
+        for (var i = 0; i < lines.length; i++) {
+            var row = table.insertRow(-1);
+            if(lines[i]['name'] != ''){
+                Object.keys(lines[0]).forEach(function(key){
+                    var data = row.insertCell(-1);
+                    data.appendChild(document.createTextNode(lines[i][key]));
+            });
+            }
+            
+        }
+
+        var divCandidatura = document.createElement("div");
+        var nameInput = document.getElementById("nameCSV").value;
+
+        var nombreCandidatura = document.createElement("label");
+        nombreCandidatura.innerHTML = nameInput;
+        divCandidatura.id = "tablaCandidatura"+nameInput;
+        
+        document.getElementById("tablaCandidatura").appendChild(divCandidatura);
+
+        var inputCandidatura = document.createElement("input");
+        inputCandidatura.id="candidatures";
+        inputCandidatura.name="candidatures";
+        inputCandidatura.type="hidden";
+        inputCandidatura.value = nameInput;
+
+
+
+        document.getElementById("candidatures-div").appendChild(inputCandidatura);
+
+        var deleteCandidatura = document.createElement("input");
+        deleteCandidatura.value = "Delete " + nameInput;
+        deleteCandidatura.type = "button"
+        deleteCandidatura.onclick = function() {
+            delete_candidature("tablaCandidatura" + nameInput);
+        };
+
+        document.getElementById("tablaCandidatura"+ nameInput).appendChild(nombreCandidatura);
+        document.getElementById("tablaCandidatura"+ nameInput).appendChild(table);
+        document.getElementById("tablaCandidatura"+ nameInput).appendChild(deleteCandidatura);
+    }
     
-	document.getElementById("tablaCandidatura").appendChild(divCandidatura);
+    function delete_candidature(data){
+        document.getElementById(data).remove()
+    }
 
-    var inputCandidatura = document.createElement("input");
-    inputCandidatura.id="candidatures";
-    inputCandidatura.name="candidatures";
-    inputCandidatura.type="hidden";
-    inputCandidatura.value = nameInput;
+    function desbloquear_import(){
+        var regexEliminaEspacios = new RegExp(/\s/);
+        var aux = document.getElementById("nameCSV").value
+        var comprobarEspacios = aux.replace(regexEliminaEspacios, "");
+        if (comprobarEspacios != ""){
+            document.getElementById("import_button").disabled = false;
+        } else{
+            document.getElementById("import_button").disabled = true;
+        }
+    }
 
-    document.getElementById("candidatures-div").appendChild(inputCandidatura);
-
-    document.getElementById("tablaCandidatura"+nameInput).appendChild(nombreCandidatura);
-    document.getElementById("tablaCandidatura"+nameInput).appendChild(table);
-}
 
     function alertForm(){
         return alert("You're saving this voting. You'll be able to edit it after this saving and before the start date.");
@@ -266,4 +299,20 @@ function printHTML() {
     }
 
     </script>
+
+
+    <style>
+        
+    .tablaCandidatura{
+        border: 1px solid black;
+    }
+    
+    
+    
+    
+    </style>
+
+
+
+
 {% endblock %}
