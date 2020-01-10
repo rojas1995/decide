@@ -422,3 +422,12 @@ def copy_voting(request, voting_id):
 
     new_voting.save()
     return HttpResponseRedirect("/voting/votings")
+
+def show_voting(request, voting_id):
+    voting = get_object_or_404(Voting, pk=voting_id)
+    candidates = {}
+    for candidature in voting.candidatures.all():
+        candidates_candidature = Candidate.objects.all().filter(candidatesGroup=candidature)
+        candidates[candidature.id] = candidates_candidature
+
+    return render(request, 'showVoting.html', {'voting': voting, 'candidates' : candidates})
