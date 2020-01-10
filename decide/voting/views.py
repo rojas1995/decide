@@ -85,7 +85,7 @@ def voting_edit(request):
                     c = CandidatesGroup.objects.get(name=candidature)
                     candidatures_db.append(c)
                 except:
-                    CandidatesGroup(name=candidature).save() 
+                    CandidatesGroup(name=candidature).save()
                     c = CandidatesGroup.objects.get(name=candidature)
                     candidatures_db.append(c)
             
@@ -113,14 +113,13 @@ def voting_edit(request):
 
 
 @csrf_exempt
-@transaction.atomic
-def handle_uploaded_file(response):    
+def handle_uploaded_file(response):
     rows = response.POST['param'].split("\n")
 
     validation_errors = []
     provincias = ['VI', 'AB', 'A', 'AL', 'AV', 'BA', 'PM', 'B', 'BU', 'CC', 'CA', 'CS', 'CR', 'CO', 'C', 'CU', 'GI', 'GR', 'GU', 'SS', 'H', 'HU', 'J', 'LE', 
         'L', 'LO', 'LU', 'M', 'MA', 'MU', 'NA', 'OR', 'O', 'P', 'GC', 'PO', 'SA', 'TF', 'S', 'SG', 'SE', 'SO', 'T', 'TE', 'TO', 'V', 'VA', 'BI', 'ZA', 'Z', 'CE', 'ML']
-    count_provincias = dict((prov, 0) for prov in provincias)    
+    count_provincias = dict((prov, 0) for prov in provincias)
     row_line = 1
     candidatesGroupSex = {}
     count_presidents = {}
@@ -137,12 +136,12 @@ def handle_uploaded_file(response):
                 primaries = user[4]
                 sex = user[5]
                 candidatesGroupName = user[6]
-                
+
                 if sex == "HOMBRE":
                     candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0] + 1, candidatesGroupSex.get(candidatesGroupName, [0,0])[1]]
                 else:
                     candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0], candidatesGroupSex.get(candidatesGroupName, [0,0])[1] + 1]
-            
+
                 if primaries == 'FALSE':
                     primaries = False
                     validation_errors.append("Error en la línea " + str(row_line) + ": El candidato " + str(name) + " no ha pasado el proceso de primarias")
@@ -196,11 +195,11 @@ def handle_uploaded_file(response):
         validation_errors.append("Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código " + prov) 
 
 
-    if len(validation_errors) > 0:
-       transaction.set_rollback(True)
+    #if len(validation_errors) > 0:
+    #   transaction.set_rollback(True)
 
     return HttpResponse(validation_errors)
-    
+
 
 def voting_list(request):
     votings = Voting.objects.all()
@@ -400,12 +399,12 @@ def create_auth(request):
         me = True
     elif auth_me == 'False':
         me = False
-    
+
 
     Auth.objects.get_or_create(url=baseurl, defaults={'me': me, 'name': name})
 
     auths = Auth.objects.all()
-    
+
     return HttpResponse({'auths':auths})
 
 def copy_voting(request, voting_id):

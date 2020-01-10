@@ -8,13 +8,37 @@
 <form action = '/booth/{{voting.id}}/' method = 'POST'>
         {%csrf_token%}
 
-        <label for="option" class="text-white">{% trans "Opciones" %}</label><br>
-        {% for opt in voting.question.options.all %}
-        <div class="form-group">
-            <input name = 'option' type="radio" value = "{{opt.number}}" class = "form-check-input"/>{{opt.option}}
-        </div>
+        {% for x in list %}
+            <fieldset>
+                <legend>{{x.candidatura}}</legend>
+
+                    <fieldset>
+                        <legend>Presidente</legend>
+                        <label for="option" class="text-white">Candidatos</label><br>
+                        {% for opt in x.presidentes %}
+                        <div class="form-group">
+                            <input name = 'presidente' type="radio" value = "{{opt.id}}" class = "form-check-input" />{{opt.name}}
+                        </div>
+                        {% endfor %}
+                        <div class="form-group">
+                            <input name = 'presidente' type="radio" value = 999999999 class = "form-check-input" /> Voto nulo
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Diputados</legend>
+                        <label for="option" class="text-white">Candidatos</label><br>
+                        {% for opt in x.candidatos %}
+                        <div class="form-group">
+                            <input name = 'candidatos' type="checkbox" value = "{{opt.id}}" class = "form-check-input"/>{{opt.name}}
+                        </div>
+                        {% endfor %}
+                    </fieldset>
+
+            </fieldset>
         {% endfor %}
-    <button type="submit" class = "btn btn-info btn-md" >{% trans "Enviar" %}</button>
+
+    <button type="submit" class = "btn btn-info btn-md" >Submit</button>
 </form>
 
 {% endblock %}

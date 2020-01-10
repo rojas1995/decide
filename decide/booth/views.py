@@ -28,7 +28,19 @@ def booth(request, **kwargs):
             voting_id = kwargs.get('voting_id')
             if voting_checks(voting_id):
                 voting = Voting.objects.get(pk = voting_id)
-                return render(request, 'booth/booth.html', {'voting': voting})
+                candidatures = voting.candidatures.all()
+
+                list_candidatures = []
+
+                for candidature in candidatures:
+                    res = {
+                        'presidentes' : candidature.candidates.filter(type = 'PRESIDENCIA'),
+                        'candidatos' : candidature.candidates.filter(type = 'CANDIDATO'),
+                        'candidatura' : candidature.name
+
+                    }
+                    list_candidatures.append(res)
+                return render(request, 'booth/booth.html', {'list' : list_candidatures, 'voting' : voting})
             else:
                 raise Http404
         except:
@@ -38,7 +50,11 @@ def booth(request, **kwargs):
             voting_id = kwargs.get('voting_id')
             if voting_checks(voting_id):
                 voting = Voting.objects.get(pk = voting_id)
-                option = int(request.POST['option'])
+                # Presidente is required
+                pres = str(request.POST['presidente'])
+                cand = request.POST.getlist('candidatos')
+                # Get new option. Format: <id_presidente>000<id_candidato1>000<id_candidato2000>
+                option = get_option(pres, cand)
                 user_id = request.user.id
                 token = str(Token.objects.get(user = request.user))
 
@@ -211,3 +227,9 @@ def voting_checks(voting_id):
         except Vote.DoesNotExist:
             aux = True
     return aux
+
+def get_option(presidente, candidatos):
+    option = presidente + '000'
+    for candidato in candidatos:
+        option = option + candidato + '000'
+    return int(option)
