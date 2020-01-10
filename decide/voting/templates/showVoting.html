@@ -64,7 +64,9 @@
     <p>{{voting.name}}</p>
 
     <h3>Description:</h3>
-    <p>{{voting.desc}}</p>
+    {% autoescape off %}
+        {{description_markdown}}
+    {% endautoescape %}
 
     <h3>Auths:</h3>
     <ul>
