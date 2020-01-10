@@ -1,0 +1,68 @@
+{% load i18n static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+    
+    <title>Decide</title>
+  
+    <link rel="stylesheet" href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/booth/style.css">
+  </head>
+
+  <body>
+      <header>
+     
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a class="navbar-brand" href="/">Decide</a>
+        
+          <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"> <a class="nav-link" href="/">{% trans "Inicio" %}</a></li>
+                {% if user.is_authenticated %}
+                <li class="nav-item"> <a class="nav-link" href="/list">{% trans "Votaciones" %}</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/profile">{% trans "Perfil" %}</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/logout">{% trans "Salir" %}</a></li>
+                {% endif %}
+                {% if not user.is_authenticated %}
+                  <li class="nav-item"> <a class="nav-link" href="/register">{% trans "Registrarse" %}</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="/login">{% trans "Entrar" %}</a></li>
+                {% endif %}
+            </ul>
+          </div>
+        </nav>
+      </header>
+
+      <main role="main" class="inner cover">
+        <div class="middle-center">
+          {% block content %}
+          {% endblock %}
+        </div>
+      </main>
+
+    </body>
+    <footer>
+      <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+        <input name="next" type="hidden" value="{{ redirect_to }}" />
+        <select name="language">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+            {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                    {{ language.name_local }} ({{ language.code }})
+                </option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Go" />
+      </form>
+
+    </footer>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  </html>

@@ -73,6 +73,7 @@ BASEURL = 'http://localhost:8000'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -92,6 +93,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -138,7 +140,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+from django.utils.translation import ugettext_lazy as gettext
+LANGUAGE_CODE = 'es'
+LANGUAGES = (
+    ('es',  gettext('Español')),
+    ('en',  gettext('English')),
+)
 
 TIME_ZONE = 'UTC'
 
@@ -148,6 +155,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, "locale"),
+)
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
