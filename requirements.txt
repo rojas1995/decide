@@ -15,4 +15,5 @@ django-heroku==0.3.1
 pyexcel-xlsx
 django_excel
 httplib2==0.15.0
+selenium==2.33.0
 Markdown==3.1.1
