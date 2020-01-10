@@ -1,5 +1,7 @@
 import random
 import itertools
+import re
+import os
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +15,8 @@ from census.models import Census
 from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
-from voting.models import Voting, Question, QuestionOption
+from voting.models import Voting, Question, QuestionOption, Candidate
+from voting.views import handle_uploaded_file
 
 
 class VotingTestCase(BaseTestCase):
@@ -31,13 +34,9 @@ class VotingTestCase(BaseTestCase):
         k.k = ElGamal.construct((p, g, y))
         return k.encrypt(msg)
 
-    def create_voting(self):
-        q = Question(desc='test question')
-        q.save()
-        for i in range(5):
-            opt = QuestionOption(question=q, option='option {}'.format(i+1))
-            opt.save()
-        v = Voting(name='test voting', question=q)
+    def create_voting_gobern(self):
+        print("Creando Votación Presidenciales - Congreso")
+        v = Voting(name="Votación Gobierno 2020")
         v.save()
 
         a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
@@ -46,6 +45,22 @@ class VotingTestCase(BaseTestCase):
         v.auths.add(a)
 
         return v
+
+    #def create_voting(self):
+    #    q = Question(desc='test question')
+    #    q.save()
+    #    for i in range(5):
+    #        opt = QuestionOption(question=q, option='option {}'.format(i+1))
+    #        opt.save()
+    #    v = Voting(name='test voting', question=q)
+    #    v.save()
+
+    #    a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
+    #                                      defaults={'me': True, 'name': 'test auth'})
+    #    a.save()
+    #    v.auths.add(a)
+
+    #    return v
 
     def create_voters(self, v):
         for i in range(100):
@@ -208,3 +223,74 @@ class VotingTestCase(BaseTestCase):
         response = self.client.put('/voting/{}/'.format(voting.pk), data, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Voting already tallied')
+
+    def csv_validation_primaries_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-primarias.csv"
+        file = open(path, 'rb')
+        errores_validacion = handle_uploaded_file(file)
+        lista_comprobacion = list(filter(re.compile(r'no ha pasado el proceso de primarias').search, errores_validacion))
+        print(lista_comprobacion)
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
+
+    def csv_validation_genres_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-genero.csv"
+        file = open(path, 'rb')
+        errores_validacion = list(filter(re.compile(r'no cumple un balance 60-40 entre hombres y mujeres')
+        .search, handle_uploaded_file(file)))
+        list_expected_candidates_group = ["BETIS","MALAGA","BARCELONA"]
+        list_received_candidates_group = []
+        for error in errores_validacion:
+            candidatura = error.split(" no cumple")[0].split("candidatura ")[1]
+            list_received_candidates_group.append(str(candidatura))
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
+         and len(list_received_candidates_group) == len(list_expected_candidates_group)
+          and num_candidatos_inicial == num_candidatos_final)
+    
+    def csv_validation_maximum_candidates_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-maximo.csv"
+        file = open(path, 'rb')
+        errores_validacion = list(filter(re.compile(r'supera el máximo de candidatos permitidos')
+        .search, handle_uploaded_file(file)))
+        list_expected_candidates_group = ["SEVILLA", "BETIS"]
+        list_received_candidates_group = []
+        for error in errores_validacion:
+            candidatura = error.split(" supera el")[0].split("candidatura ")[1]
+            list_received_candidates_group.append(str(candidatura))
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
+         and len(list_received_candidates_group) == len(list_expected_candidates_group)
+          and num_candidatos_inicial == num_candidatos_final)
+    
+    def csv_validation_provincias_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-provincias.csv"
+        file = open(path, 'rb')
+        errores_validacion = handle_uploaded_file(file)
+        lista_comprobacion = list(filter(re.compile(r'Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código ML').search, errores_validacion))
+        print(lista_comprobacion)
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
+
+    def csv_validation_presidents_test(self):
+            num_candidatos_inicial = len(Candidate.objects.all())
+            path = str(os.getcwd()) + "/voting/files/candidatos-test-presidents.csv"
+            file = open(path, 'rb')
+            errores_validacion = list(filter(re.compile(r'tiene más de un candidato a presidente')
+            .search, handle_uploaded_file(file)))
+            list_expected_candidates_group = ["MALAGA"]
+            list_received_candidates_group = []
+            for error in errores_validacion:
+                candidatura = error.split(" tiene más")[0].split("candidatura ")[1]
+                list_received_candidates_group.append(str(candidatura))
+            num_candidatos_final = len(Candidate.objects.all())
+            self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
+            and len(list_received_candidates_group) == len(list_expected_candidates_group)
+            and num_candidatos_inicial == num_candidatos_final)
+

@@ -1,0 +1,127 @@
+{% extends "block.html" %}
+{% block css %}
+<style>
+
+.d-flex.h-100.p-3.flex-column{
+    width: 80%;
+}
+
+.inner.cover {
+    width: 100%;
+}
+
+.candidatures{
+    float: right;
+    width: 70%;
+}
+
+.data{
+    float: left;
+    width: 30%;
+    color: black;
+    text-align: left;
+}
+
+.data > h3{
+    float:left;
+    width: 100%;
+    text-align: left;
+}
+
+.candidatures > h3{
+    float:left;
+    width: 100%;
+    text-align: left;
+    color: black;
+}
+
+#candidature_table {
+    border: black 1px solid !important;
+    float: left;
+    width: 100%;
+}
+#candidature_table td {
+    border:  solid 1px rgba(0,0,0,0.5) !important;
+    color: black;
+    background-color: white;
+}
+#candidature_table th {
+    border:  solid 1px rgba(0,0,0,0.5) !important;
+    background-color: 	#333333;
+}
+#candidature_table caption {
+    color: black;
+    text-align:center;
+    caption-side: top;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="data">
+    <h3>Name:</h3>
+    <p>{{voting.name}}</p>
+
+    <h3>Description:</h3>
+    {% autoescape off %}
+        {{description_markdown}}
+    {% endautoescape %}
+
+    <h3>Auths:</h3>
+    <ul>
+        {% for auth in voting.auths.all %}
+            <li>
+                {{auth}}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Start date selected:</h3>
+    <p>{{voting.start_date_selected}}</p>
+
+    <h3>End date selected:</h3>
+    <p>{{voting.end_date_selected}}</p> 
+
+    <h3>Custom url:</h3>
+    <p>{{voting.custom_url}}</p> 
+
+</div>
+<div class="candidatures">
+    <h3>Candidatures:</h3>
+    {% for candidature in voting.candidatures.all %}
+        <table id="candidature_table">
+            <caption>{{candidature.name}}</caption>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Born area</th>
+                <th>Current area</th>
+                <th>Primaries</th>
+                <th>Sex</th>
+            </tr>
+            {% for key, value in candidates.items %}
+                {% if key == candidature.id %}
+                    {% for candidate in value %}
+                        <tr>
+                            <td>{{candidate.name}}</td>
+                            <td>{{candidate.type}}</td>
+                            <td>{{candidate.born_area}}</td>
+                            <td>{{candidate.current_area}}</td>
+                            {% if candidate.primaries %}
+                            <td>YES</td>
+                            {% else %}
+                            <td>NO</td>
+                            {% endif %}
+                            <td>{{candidate.sex}}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </table>
+        <br>
+    {% endfor %} 
+</div>
+
+{% endblock %}
+

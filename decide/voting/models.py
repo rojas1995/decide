@@ -6,41 +6,116 @@ from django.dispatch import receiver
 from base import mods
 from base.models import Auth, Key
 
-
-class Question(models.Model):
-    desc = models.TextField()
-
-    def __str__(self):
-        return self.desc
-
-
-class QuestionOption(models.Model):
-    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
-    number = models.PositiveIntegerField(blank=True, null=True)
-    option = models.TextField()
-
-    def save(self):
-        if not self.number:
-            self.number = self.question.options.count() + 2
-        return super().save()
+class CandidatesGroup(models.Model):
+    name = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return '{} ({})'.format(self.option, self.number)
+        return self.name
+
+class Candidate(models.Model):
+    PROVINCIAS = (('VI', 'Álava'),        
+        ('AB', 'Albacete'),     
+        ('A', 'Alacant'),       
+        ('AL', 'Almería'),      
+        ('AV', 'Ávila'),        
+        ('BA', 'Badajoz'),      
+        ('PM', 'Illes Balears'),
+        ('B', 'Barcelona'),     
+        ('BU', 'Burgos'),       
+        ('CC', 'Cáceres'),
+        ('CA', 'Cádiz'),
+        ('CS', 'Castelló'),
+        ('CR', 'Ciudad Real'),
+        ('CO', 'Córdoba'),
+        ('C', 'A Coruña'),
+        ('CU', 'Cuenca'),
+        ('GI', 'Girona'),
+        ('GR', 'Granada'),
+        ('GU', 'Guadalajara'),
+        ('SS', 'Gipuzkoa'),
+        ('H', 'Huelva'),
+        ('HU', 'Huesca'),
+        ('J', 'Jaén'),
+        ('LE', 'León'),
+        ('L', 'Lleida'),
+        ('LO', 'La Rioja'),
+        ('LU', 'Lugo'),
+        ('M', 'Madrid'),
+        ('MA', 'Málaga'),
+        ('MU', 'Murcia'),
+        ('NA', 'Nafarroa'),
+        ('OR', 'Ourense'),
+        ('O', 'Asturias'),
+        ('P', 'Palencia'),
+        ('GC', 'Las Palmas'),
+        ('PO', 'Pontevedra'),
+        ('SA', 'Salamanca'),
+        ('TF', 'Sta. Cruz de Tenerife'),
+        ('S', 'Cantabria'),
+        ('SG', 'Segovia'),
+        ('SE', 'Sevilla'),
+        ('SO', 'Soria'),
+        ('T', 'Tarragona'),
+        ('TE', 'Teruel'),
+        ('TO', 'Toledo'),
+        ('V', 'Valéncia'),
+        ('VA', 'Valladolid'),
+        ('BI', 'Bizkaia'),
+        ('ZA', 'Zamora'),
+        ('Z', 'Zaragoza'),
+        ('CE', 'Ceuta'),
+        ('ML', 'Melilla'))
+
+    name = models.TextField(default="CANDIDATO")
+    type = models.TextField(default="CANDIDATO", choices=[('PRESIDENCIA', 'PRESIDENCIA'),('CANDIDATO', 'CANDIDATO'),])
+    born_area = models.TextField(choices=PROVINCIAS, default='AB')
+    current_area = models.TextField(choices=PROVINCIAS, default='AB')
+    primaries = models.BooleanField(default=False)
+    sex = models.TextField(blank=True, null=True,choices=[('HOMBRE', 'HOMBRE'),('MUJER', 'MUJER'),])
+    candidatesGroup = models.ForeignKey(CandidatesGroup, related_name='candidates', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} ({}) - {} - {}'.format(self.name, self.type, self.current_area, self.sex)
+
+#class Question(models.Model):
+#    desc = models.TextField()
+
+#    def __str__(self):
+#        return self.desc
+
+
+#class QuestionOption(models.Model):
+#    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
+#    number = models.PositiveIntegerField(blank=True, null=True)
+#    option = models.TextField()
+#
+#    def save(self):
+#        if not self.number:
+#            self.number = self.question.options.count() + 2
+#        return super().save()
+#
+#    def __str__(self):
+#        return '{} ({})'.format(self.option, self.number)
 
 
 class Voting(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, blank=False)
     desc = models.TextField(blank=True, null=True)
-    question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
+    ##question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-
+    start_date_selected = models.DateTimeField(blank=False, null=True)
+    end_date_selected = models.DateTimeField(blank=True, null=True)
+    ##candidatures = models.ForeignKey(CandidatesGroup, related_name='voting', on_delete=models.CASCADE, null=True, blank=True)
+    candidatures = models.ManyToManyField(CandidatesGroup, related_name='voting')
     pub_key = models.OneToOneField(Key, related_name='voting', blank=True, null=True, on_delete=models.SET_NULL)
     auths = models.ManyToManyField(Auth, related_name='votings')
 
     tally = JSONField(blank=True, null=True)
     postproc = JSONField(blank=True, null=True)
+
+    custom_url = models.CharField(max_length=200, blank=True, null=True, unique=True)
 
     def create_pubkey(self):
         if self.pub_key or not self.auths.count():
@@ -99,7 +174,7 @@ class Voting(models.Model):
 
     def do_postproc(self):
         tally = self.tally
-        options = self.question.options.all()
+        #options = self.question.options.all()
 
         opts = []
         for opt in options:

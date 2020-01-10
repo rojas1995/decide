@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import django_heroku
+from scheduler import updater
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,6 +26,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+BASEURL = 'http://decide-palkia-voting.herokuapp.com'
+
+APIS = {
+    'authentication': BASEURL,
+    'base': BASEURL,
+    'booth': BASEURL,
+    'census': BASEURL,
+    'mixnet': BASEURL,
+    'postproc': BASEURL,
+    'store': BASEURL,
+    'visualizer': BASEURL,
+    'voting': BASEURL,
+}
+
 
 # Application definition
 
@@ -35,7 +50,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'corsheaders',
     'django_filters',
     'rest_framework',
@@ -66,9 +80,8 @@ MODULES = [
     'store',
     'visualizer',
     'voting',
+    'scheduler',
 ]
-
-BASEURL = 'http://localhost:8000'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -186,7 +199,8 @@ if os.path.exists("config.jsonnet"):
     for k, v in config.items():
         vars()[k] = v
 
-
 INSTALLED_APPS = INSTALLED_APPS + MODULES
-
 django_heroku.settings(locals())
+
+# Planificador de tareas. Mirar en el modulo schedule y definir los trabajos para que realice las acciones
+updater.start()
