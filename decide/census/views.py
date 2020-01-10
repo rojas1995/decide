@@ -19,7 +19,6 @@ from census.models import Census
 from django.contrib.auth.models import User
 from voting.models import Voting
 import django_excel as excel
-import pyexcel
 
 
 class CensusCreate(generics.ListCreateAPIView):
@@ -83,7 +82,6 @@ def listaCensos(request):
 
 def export_csv(request):
     voting_id = request.GET.get('voting_id')
-    print(voting_id)
     if request.GET.get('voting_id') is not None:
         voting_id = request.GET.get('voting_id')
         census = list(Census.objects.filter(voting_id=voting_id))
@@ -117,14 +115,14 @@ def ExportToCsv(datos):
         'Votación', ])
 
     for dato in datos:
-        export.append(
-            [dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio,
-             str("/census/web/" + str(dato[1].pk))])
+        if hasattr(dato[0], 'perfil'):
+            export.append(
+                [dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio,
+                 str("/census/web/" + str(dato[1].pk))])
 
     sheet = excel.pe.Sheet(export)
 
     return sheet
-
 
 def export_excel(request):
     voting_id = request.GET.get('voting_id')
@@ -155,9 +153,10 @@ def export_to_xlsx(data):
         'Votación', ]]
 
     for d in data:
-        export.append(
-            [d[0].first_name, d[0].last_name, d[0].perfil.edad, d[0].perfil.sexo, d[0].perfil.municipio,
-             str("/census/web/" + str(d[1].pk))])
+        if hasattr(d[0], 'perfil'):
+            export.append(
+                [d[0].first_name, d[0].last_name, d[0].perfil.edad, d[0].perfil.sexo, d[0].perfil.municipio,
+                 str("/census/web/" + str(d[1].pk))])
 
     template = excel.pe.Sheet(export)
 
