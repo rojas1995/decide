@@ -1,4 +1,5 @@
 {% extends 'booth/block.html' %}
+{% load i18n static %}
 
 {% block content %}
 
@@ -7,13 +8,13 @@
 <form action = '/booth/{{voting.id}}/' method = 'POST'>
         {%csrf_token%}
 
-        <label for="option" class="text-white">Options</label><br>
+        <label for="option" class="text-white">{% trans "Opciones" %}</label><br>
         {% for opt in voting.question.options.all %}
         <div class="form-group">
             <input name = 'option' type="radio" value = "{{opt.number}}" class = "form-check-input"/>{{opt.option}}
         </div>
         {% endfor %}
-    <button type="submit" class = "btn btn-info btn-md" >Submit</button>
+    <button type="submit" class = "btn btn-info btn-md" >{% trans "Enviar" %}</button>
 </form>
 
 {% endblock %}
