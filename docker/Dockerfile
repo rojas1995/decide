@@ -11,7 +11,9 @@ RUN pip install httplib2
 
 WORKDIR /app
 
+
 RUN git clone https://github.com/Decide-Palkia/decide.git .
+
 RUN pip install -r requirements.txt
 
 WORKDIR /app/decide
