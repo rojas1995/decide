@@ -25,6 +25,7 @@ from rest_framework.renderers import JSONRenderer
 import json
 import csv
 import os
+import markdown
 
 dirspot = os.getcwd()
 
@@ -427,4 +428,4 @@ def show_voting(request, voting_id):
         candidates_candidature = Candidate.objects.all().filter(candidatesGroup=candidature)
         candidates[candidature.id] = candidates_candidature
 
-    return render(request, 'showVoting.html', {'voting': voting, 'candidates' : candidates})
+    return render(request, 'showVoting.html', {'voting': voting, 'candidates' : candidates, 'description_markdown': markdown.markdown(voting.desc)})

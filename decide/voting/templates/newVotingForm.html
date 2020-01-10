@@ -6,11 +6,88 @@
 
 {% block content %}
 <!--<script type="text/javascript" src="../../read_csv.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.7/purify.min.js"></script>
 
     <form method="post" enctype="multipart/form-data" action="/voting/edit/" >
       {% csrf_token %}
-      <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span>
-      <span><label for="description">Description: {{voting.description}}</label> <input type="textarea" id="description" name="description" /></span>
+      <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span><br/>
+      
+      <span><label for="description">Description: {{voting.description}}</label><br/>
+      <textarea name="description" id="markdownText" cols="100" rows="10" oninput="htmlRenderizado()" onshow="htmlRenderizado()"></textarea></span>
+      <div id="buttonsMarkdown">
+        <button id="botonAyuda" onclick="hideHelp()" form="no-form">
+            <img class="markdownButtonImage" id="ayudaIcon" src="https://i.ibb.co/Q8vhsWz/see-info.png" alt="Ver ayuda" >
+        </button>
+        <button id="botonAñadirLista" onclick="insertList()" form="no-form">
+            <img class="markdownButtonImage" src="https://i.ibb.co/Nnbc1rL/list.png" alt="Añadir lista">
+        </button>
+        <button id="botonAñadirTítulo" onclick="insertTitle()" form="no-form">
+            <img class="markdownButtonImage" src="https://i.ibb.co/bdys3v6/capital-t.png" alt="Añadir título">
+        </button>
+        <button id="botonBorrar" onclick="deleteContent()" form="no-form">
+            <img class="markdownButtonImage" src="https://i.ibb.co/v17Nrhp/delete-button.png" alt="Borrar todo">
+        </button>
+    </div><br/>
+
+    <div id="markdownRenderizado"></div>
+    <div id="ayudaMarkdown" style="display: none;">
+        <div id="ayudaMarkdownPlain">
+            <p># Encabezado de primer nivel</p>
+            
+            <p>Encabezado de primer nivel</p>
+            <p>=======</p><br/>
+            
+            
+            <p>## Encabezado de segundo nivel</p>
+            
+            <p>Encabezado de segundo nivel</p>
+            <p>-----</p><br/>
+            
+            <p>#### Encabezado de cuarto nivel</p>
+            
+            <p>Para escribir un párrafo no hace falta hacer nada especial</p><br/>
+            
+            <p>Esto es una palabra en **negrita** </p><br/>
+            
+            <p>Esto es una palabra con *énfasis* y esta _también_</p><br/>
+            
+            <p>Tambien se pueden hacer listas:</p>
+            <p>- Crear votación</p>
+            <p>- Subir archivo con los candidatos</p>
+            <p>- Validar el archivo</p><br/>
+            
+            
+            <p>Incluso se pueden añadir [enlaces](http://www.congreso.es/portal/page/portal/Congreso/Congreso)</p><br/>
+            
+            <p>> Con los símbolos de mayor que</p>
+            <p>> se pueden incluir sangría</p><br/>
+            
+        </div>
+        <div id="ayudaMarkdownHTML">
+            <h1>Encabezado de primer nivel</h1>
+            <h1>Encabezado de primer nivel</h1>
+            <h2>Encabezado de segundo nivel</h2>
+            <h2>Encabezado de segundo nivel</h2>
+            <h4>Encabezado de cuarto nivel</h4>
+            <p>Para escribir un párrafo no hace falta hacer nada especial</p>
+            <p>Esto es una palabra en <strong>negrita</strong></p>
+            <p>Esto es una palabra con <em>énfasis</em> y esta <em>también</em></p>
+            <p>Tambien se pueden hacer listas:</p>
+            <ul>
+            <li>Crear votación</li>
+            <li>Subir archivo con los candidatos</li>
+            <li>Validar el archivo</li>
+            </ul>
+            <p>Incluso se pueden añadir <a href="http://www.congreso.es/portal/page/portal/Congreso/Congreso">enlaces</a></p>
+            <blockquote>
+                <p>
+                    Con los símbolos de mayor que<br>
+                    se pueden incluir sangría
+                </p>
+            </blockquote>
+        </div>
+    </div>
       <p>Candidaturas: </p>
 
       <div id="candidatures-div">
@@ -265,5 +342,99 @@ function printHTML() {
 
     }
 
+
+    function htmlRenderizado(){
+        var md = window.markdownit({breaks: true});
+        var valueText = document.getElementById('markdownText').value
+        var dirtyResult = md.render(valueText);
+        var result = DOMPurify.sanitize(result);
+
+        document.getElementById('markdownRenderizado').innerHTML = dirtyResult;
+    }
+
+    function hideHelp(){
+        var divAyuda = document.getElementById("ayudaMarkdown");
+        if (divAyuda.style.display === "none") {
+            divAyuda.style.display = "block";
+            var imageIcon = document.getElementById("ayudaIcon");
+            imageIcon.src = "https://i.ibb.co/syDg5Rk/hide-info.png";
+            imageIcon.alt = "Ocultar ayuda";
+        } else {
+            divAyuda.style.display = "none";
+            var imageIcon = document.getElementById("ayudaIcon");
+            imageIcon.src = "https://i.ibb.co/Q8vhsWz/see-info.png";
+            imageIcon.alt = "Ver ayuda"
+        }
+    }
+
+    function insertList(){
+        var regexEliminaEspacios = new RegExp(/\s/);
+        var valorMarkdownText = document.getElementById("markdownText").value;
+        var comprobarEspacios = valorMarkdownText.replace(regexEliminaEspacios, "");
+        if (comprobarEspacios === ""){
+            document.getElementById("markdownText").value = valorMarkdownText.concat("- "); 
+        } else {
+            document.getElementById("markdownText").value = valorMarkdownText.concat("\n- ");
+        }
+        htmlRenderizado();
+    }
+
+    function insertTitle(){
+        var regexEliminaEspacios = new RegExp(/\s/);
+        var valorMarkdownText = document.getElementById("markdownText").value;
+        var comprobarEspacios = valorMarkdownText.replace(regexEliminaEspacios, "");
+        if (comprobarEspacios === ""){
+            document.getElementById("markdownText").value = valorMarkdownText.concat("# "); 
+        } else {
+            document.getElementById("markdownText").value = valorMarkdownText.concat("\n# ");
+        }
+        htmlRenderizado();
+    }
+
+    function deleteContent(){
+        document.getElementById("markdownText").value = "";
+        htmlRenderizado();
+    }
+
     </script>
+
+<style>
+#ayudaMarkdown {
+    margin-top: 1em;
+}
+#ayudaMarkdownHTML{
+    float: right;
+    width: 50%;
+    text-align: left;
+    height: 670px;
+    background-color: #F3F2ED;
+    border-radius: 5px;
+    border: 1px solid #E1E0D9;
+    color: black;
+    padding: 1em;
+}
+
+#ayudaMarkdownPlain{
+    float: left;
+    width: 45%;
+    background-color: #F3F2ED;
+    border-radius: 5px;
+    border: 1px solid #E1E0D9;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 1em;
+    color: black;
+    text-align: left;
+    height: 670px;
+}
+
+#ayudaMarkdownPlain > p {
+    float: left;
+    width: 100%;
+}
+
+.markdownButtonImage {
+    height: 20px;
+}
+
 {% endblock %}
