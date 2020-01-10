@@ -85,7 +85,8 @@ def voting_edit(request):
                     c = CandidatesGroup.objects.get(name=candidature)
                     candidatures_db.append(c)
                 except:
-                    c = CandidatesGroup(name=candidature).save() 
+                    CandidatesGroup(name=candidature).save() 
+                    c = CandidatesGroup.objects.get(name=candidature)
                     candidatures_db.append(c)
             
             for cand in candidatures_db:
