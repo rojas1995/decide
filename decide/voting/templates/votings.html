@@ -251,6 +251,21 @@
                 </form>
 
             </td>
+            <td class="fil">
+
+              <form method="post" action="update/">
+
+                {% csrf_token %}
+
+                <input name="action" type="hidden" value="copy"/>
+
+                <input name="voting_id" type="hidden" value="{{row.id}}"/>
+
+                <input type="submit" value="copy"/>
+
+              </form>
+
+            </td>
 
           </tr>
 

@@ -241,6 +241,8 @@ def voting_list_update(request):
     elif action == 'delete':
         voting.delete()
         url = "/voting/votings/"
+    elif action == 'copy':
+        url = "/voting/copy/" + str(voting_id)
     else:
         #TODO 
         url = "/voting/votings/"
@@ -406,3 +408,17 @@ def create_auth(request):
     auths = Auth.objects.all()
     
     return HttpResponse({'auths':auths})
+
+def copy_voting(request, voting_id):
+    voting = get_object_or_404(Voting, pk=voting_id)
+    votingName = voting.name
+    votingDescription = voting.desc
+    candidatures = voting.candidatures.all()
+    auths = voting.auths.all()
+    new_voting = Voting(name=votingName, desc=votingDescription)
+    new_voting.save()
+    new_voting.candidatures.set(candidatures)
+    new_voting.auths.set(auths)
+
+    new_voting.save()
+    return HttpResponseRedirect("/voting/votings")
