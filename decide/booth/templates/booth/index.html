@@ -1,11 +1,12 @@
 {% extends 'booth/block.html' %}
+{% load i18n static %}
 
 {% block content %}
 <div class="middle-center2">
   <h1 class="cover-heading">Decide!</h1>
-  <p class="lead">Esta es la página principal de Decide, <br> tu plataforma de voto electrónico en la que podrás <br> realizar votaciones y consultar los resultados</p>
+  <p class="lead">{% trans "Esta es la página principal de Decide," %} <br> {% trans "tu plataforma de voto electrónico en la que podrás" %} <br> {% trans "realizar votaciones y consultar los resultados" %}</p>
   <p class="lead">
-    <a href="/list" class="btn btn-lg btn-primary">Votar</a>
+    <a href="/list" class="btn btn-lg btn-primary">{% trans "Votar" %}</a>
   </p>
 </div>
 {% endblock %}     

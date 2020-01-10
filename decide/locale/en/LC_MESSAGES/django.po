@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-10 02:17+0100\n"
+"POT-Creation-Date: 2020-01-10 14:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,125 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: decide/booth/templates/booth/block.html:24
+
+#: booth/templates/booth/block.html:25
 msgid "Inicio"
 msgstr "Index"
 
+#: booth/templates/booth/block.html:27
+msgid "Votaciones"
+msgstr "Votings"
 
+#: booth/templates/booth/block.html:28
+msgid "Perfil"
+msgstr "Profile"
+
+#: booth/templates/booth/block.html:29
+msgid "Salir"
+msgstr "Logout"
+
+#: booth/templates/booth/block.html:32
+msgid "Registrarse"
+msgstr "Register"
+
+#: booth/templates/booth/block.html:33
+msgid "Entrar"
+msgstr "Sign in"
+
+#: booth/templates/booth/booth(old).html:26
+msgid "Username"
+msgstr ""
+
+#: booth/templates/booth/booth(old).html:34
+msgid "Password"
+msgstr ""
+
+#: booth/templates/booth/booth(old).html:42
+msgid "Login"
+msgstr ""
+
+#: booth/templates/booth/booth(old).html:57
+msgid "Vote"
+msgstr ""
+
+#: booth/templates/booth/booth(old).html:153
+#: booth/templates/booth/booth(old).html:163
+#: booth/templates/booth/booth(old).html:194
+msgid "Error: "
+msgstr ""
+
+#: booth/templates/booth/booth(old).html:191
+msgid "Conglatulations. Your vote has been sent"
+msgstr ""
+
+#: booth/templates/booth/booth.html:11
+msgid "Opciones"
+msgstr "Options"
+
+#: booth/templates/booth/booth.html:17
+msgid "Enviar"
+msgstr "Submit"
+
+#: booth/templates/booth/index.html:7
+msgid "Esta es la página principal de Decide,"
+msgstr "This is the main page of decide, "
+
+#: booth/templates/booth/index.html:7
+msgid "tu plataforma de voto electrónico en la que podrás"
+msgstr "your electronic voting platform where you can"
+
+#: booth/templates/booth/index.html:7
+msgid "realizar votaciones y consultar los resultados"
+msgstr "vote and check the results"
+
+#: booth/templates/booth/index.html:9
+msgid "Votar"
+msgstr "Vote"
+
+#: booth/templates/booth/profile.html:10
+msgid "Información personal"
+msgstr "Personal information"
+
+#: booth/templates/booth/profile.html:23
+msgid "Las contraseñas deben coincidir"
+msgstr "Passwords must match"
+
+#: booth/templates/booth/profile.html:30
+msgid "Nombre"
+msgstr "Name"
+
+#: booth/templates/booth/profile.html:36
+msgid "Apellido"
+msgstr "Surname"
+
+#: booth/templates/booth/profile.html:42
+msgid "Email"
+msgstr "Email"
+
+#: booth/templates/booth/profile.html:48
+msgid "Nombre de usuario"
+msgstr "Username"
+
+#: booth/templates/booth/profile.html:54
+msgid "Contraseña"
+msgstr "Password"
+
+#: booth/templates/booth/profile.html:60
+msgid "Confirmar contraseña"
+msgstr "Confirm password"
+
+#: booth/templates/booth/profile.html:68
+msgid "Guardar cambios"
+msgstr "Save"
+
+#: booth/templates/booth/profile.html:71
+msgid "Cancelar"
+msgstr "Cancel"
+
+#: decide/settings.py:149
+msgid "Español"
+msgstr ""
+
+#: decide/settings.py:150
+msgid "English"
+msgstr ""
