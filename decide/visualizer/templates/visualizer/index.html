@@ -28,11 +28,16 @@
         <div v-else>
             <div class="btn-group" role="group" aria-label="">
                 <button id="btnGrafica" onclick="grafica()" type="button" class="btn btn-info btn-lg">Resultados</button>
+                <button id="btnPorcentage" onclick="graficaPorcentaje()" type="button" class="btn btn-danger btn-lg">Porcentajes</button>
             </div>
         </div>
 
         <div id="grafica">
             <canvas id="myChart" width="600" height="400"></canvas>
+        </div>
+
+        <div id="graficaPorcentaje">
+            <canvas id="myChart2" width="600" height="400"></canvas>
         </div>
 
     </div>
@@ -80,6 +85,36 @@ var myChart = new Chart(ctx,{
             datasets:[{
                     label:'Num datos',
                     data:voto(),
+                    backgroundColor: color_por_opcion()
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            rotation: 1 * Math.PI,
+            circumference: 1 * Math.PI,
+        },
+        
+    });
+
+}
+
+function graficaPorcentaje() {
+
+var ctx = document.getElementById("myChart2").getContext("2d");
+Chart.defaults.global.defaultFontFamily = "Lato";
+Chart.defaults.global.defaultFontSize = 18;    
+var myChart = new Chart(ctx,{
+        type:"doughnut",
+        legend:{
+            horizontalAlign: "right",
+            color: "white"
+        },
+        data:{
+            labels:opciones() ,
+            datasets:[{
+                    label:'Num datos',
+                    data:total_porcentajes(),
                     backgroundColor: color_por_opcion()
             }]
         },
@@ -144,6 +179,32 @@ function color_por_opcion(){
     }
 
     return colores;
+}
+
+function votos(){
+    var sum = 0;
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+        sum = sum + postproc[i].votes;
+    }
+    return sum;
+}
+
+function total_porcentajes(){
+    var porcentajes = [];
+    var porcentaje;
+    var total_votos = votos();
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+
+        porcentaje = 100*(postproc[i].votes/total_votos);
+        porcentajes.push(porcentaje);
+    }
+    console.log(porcentajes);
+    
+    return porcentajes;
 }
 
 </script>
