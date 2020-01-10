@@ -16,9 +16,12 @@
                         <label for="option" class="text-white">Candidatos</label><br>
                         {% for opt in x.presidentes %}
                         <div class="form-group">
-                            <input name = 'presidente' type="radio" value = "{{opt.id}}" class = "form-check-input" required/>{{opt.name}}
+                            <input name = 'presidente' type="radio" value = "{{opt.id}}" class = "form-check-input" />{{opt.name}}
                         </div>
                         {% endfor %}
+                        <div class="form-group">
+                            <input name = 'presidente' type="radio" value = 999999999 class = "form-check-input" /> Voto nulo
+                        </div>
                     </fieldset>
                     
                     <fieldset>
