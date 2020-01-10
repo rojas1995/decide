@@ -29,20 +29,6 @@ import markdown
 
 dirspot = os.getcwd()
 
-def findVotingByParam(request, voting):
-
-    response = None
-    votacion = None
-
-    if type(voting) is int:
-        votacion = Voting.objects.get(id=voting)
-        response = HttpResponse("Es entero!")
-    elif type(voting) is str:
-        votacion = Voting.objects.get(custom_url=voting)
-        response = HttpResponse("Es cadena!")
-
-    return response
-
 def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -422,11 +408,16 @@ def copy_voting(request, voting_id):
     new_voting.save()
     return HttpResponseRedirect("/voting/votings")
 
-def show_voting(request, voting_id):
-    voting = get_object_or_404(Voting, pk=voting_id)
+def show_voting(request, voting):
+
+    if type(voting) is int:
+        votacion = get_object_or_404(Voting, pk=voting)
+    elif type(voting) is str:
+        votacion = get_object_or_404(Voting, custom_url=voting)
+
     candidates = {}
-    for candidature in voting.candidatures.all():
+    for candidature in votacion.candidatures.all():
         candidates_candidature = Candidate.objects.all().filter(candidatesGroup=candidature)
         candidates[candidature.id] = candidates_candidature
 
-    return render(request, 'showVoting.html', {'voting': voting, 'candidates' : candidates, 'description_markdown': markdown.markdown(voting.desc)})
+    return render(request, 'showVoting.html', {'voting': votacion, 'candidates' : candidates, 'description_markdown': markdown.markdown(votacion.desc)})
