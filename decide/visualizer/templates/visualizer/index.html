@@ -26,7 +26,13 @@
         <h2 v-if="!voting.start_date">Votación no comenzada</h2>
         <h2 v-else-if="!voting.end_date">Votación en curso</h2>
         <div v-else>
-            
+            <div class="btn-group" role="group" aria-label="">
+                <button id="btnGrafica" onclick="grafica()" type="button" class="btn btn-info btn-lg">Resultados</button>
+            </div>
+        </div>
+
+        <div id="grafica">
+            <canvas id="myChart" width="600" height="400"></canvas>
         </div>
 
     </div>
@@ -44,6 +50,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 
 
 <script>
@@ -56,6 +63,36 @@
         }
     })
 
+
+function grafica() {
+
+var ctx = document.getElementById("myChart").getContext("2d");
+Chart.defaults.global.defaultFontFamily = "Lato";
+Chart.defaults.global.defaultFontSize = 18;    
+var myChart = new Chart(ctx,{
+        type:"doughnut",
+        legend:{
+            horizontalAlign: "right",
+            color: "white"
+        },
+        data:{
+            labels:opciones() ,
+            datasets:[{
+                    label:'Num datos',
+                    data:voto(),
+                    backgroundColor: color_por_opcion()
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            rotation: 1 * Math.PI,
+            circumference: 1 * Math.PI,
+        },
+        
+    });
+
+}
 
 function opciones() {
     var datos = [];
