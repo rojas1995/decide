@@ -118,6 +118,34 @@ function voto() {
     return datos;
 }
 
+function aleatorio(inferior,superior){
+   numPosibilidades = superior - inferior
+   aleat = Math.random() * numPosibilidades
+   aleat = Math.floor(aleat)
+   return parseInt(inferior) + aleat
+} 
+
+function dame_color_aleatorio(){
+   hexadecimal = new Array("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
+   color_aleatorio = "#";
+   for (i=0;i<6;i++){
+      posarray = aleatorio(0,hexadecimal.length)
+      color_aleatorio += hexadecimal[posarray]
+   }
+   return color_aleatorio
+} 
+
+function color_por_opcion(){
+    var colores = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+        colores.push(dame_color_aleatorio());
+    }
+
+    return colores;
+}
+
 </script>
 
 </body>
