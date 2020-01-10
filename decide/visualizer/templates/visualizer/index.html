@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+{% load i18n static %}
+
+{% block extrahead %}
+<head>
+    <link rel="shortcut-icon" href="#">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "visualizer/estilos.css" %}" />
+
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div id="app-visualizer" class="text-center">
+
+        <header>
+            <h1 class="text-center text-light">Bienvenido a la página de Visualización de <span class="badge badge-dark">Decide</span></h1>
+            <h2 class="text-center text-light">[[voting.id]] - <span class="badge badge-success">[[voting.name]]</span></h2>
+        </header>
+
+        <h2 v-if="!voting.start_date">Votación no comenzada</h2>
+        <h2 v-else-if="!voting.end_date">Votación en curso</h2>
+        <div v-else>
+            
+        </div>
+
+    </div>
+
+    
+
+    {% endblock %}
+
+{% block extrabody %}
+
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+<script>
+    var voting = {{voting|safe}};
+    var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app-visualizer',
+        data: {
+            voting: voting
+        }
+    })
+
+
+function opciones() {
+    var datos = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    for(var i = 0; i < postproc.length; i++) {
+        datos.push(postproc[i].option);
+    }
+
+    return datos;
+}
+
+function voto() {
+    var datos = [];
+    var sum = 0;
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    for(var i = 0; i < postproc.length; i++) {
+        datos.push(postproc[i].votes);
+    }
+    return datos;
+}
+
+</script>
+
+</body>
+{% endblock %}
+
+</html>
