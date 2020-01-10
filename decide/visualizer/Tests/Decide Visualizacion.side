@@ -1,0 +1,320 @@
+{
+  "id": "175086da-ece3-4aed-9ff9-d8c95e2ecdab",
+  "version": "2.0",
+  "name": "Decide Visualizacion",
+  "url": "http://localhost:8000/visualizer/3/",
+  "tests": [{
+    "id": "c76c2bdc-63c6-4f23-90ba-0dd6e79d44bb",
+    "name": "Boton con los resultados con el numero de votos",
+    "commands": [{
+      "id": "f2aea6f9-fe16-473d-af09-e29c6c8b1d47",
+      "comment": "",
+      "command": "",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "18984307-7136-4d1f-b552-4617b987d801",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:8000/visualizer/3/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8a08293c-6880-4465-b38e-209444b0e59c",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "911x903",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "de56811a-8ba6-4cb2-9ea8-bef5eab51e59",
+      "comment": "",
+      "command": "click",
+      "target": "id=btnGrafica",
+      "targets": [
+        ["id=btnGrafica", "id"],
+        ["css=#btnGrafica", "css:finder"],
+        ["xpath=//button[@id='btnGrafica']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Resultados')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "1925ff4b-379e-4686-bc18-57182b15a036",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart",
+      "targets": [
+        ["id=myChart", "id"],
+        ["css=#myChart", "css:finder"],
+        ["xpath=//canvas[@id='myChart']", "xpath:attributes"],
+        ["xpath=//div[@id='grafica']/canvas", "xpath:idRelative"],
+        ["xpath=//canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a8839928-49d1-486c-b616-bacc3ef2435b",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart",
+      "targets": [
+        ["id=myChart", "id"],
+        ["css=#myChart", "css:finder"],
+        ["xpath=//canvas[@id='myChart']", "xpath:attributes"],
+        ["xpath=//div[@id='grafica']/canvas", "xpath:idRelative"],
+        ["xpath=//canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a914310d-24c9-4ea4-94b8-49fcc14466b9",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart",
+      "targets": [
+        ["id=myChart", "id"],
+        ["css=#myChart", "css:finder"],
+        ["xpath=//canvas[@id='myChart']", "xpath:attributes"],
+        ["xpath=//div[@id='grafica']/canvas", "xpath:idRelative"],
+        ["xpath=//canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "0921da86-6ee3-4b32-b296-09b21d6beaf6",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart",
+      "targets": [
+        ["id=myChart", "id"],
+        ["css=#myChart", "css:finder"],
+        ["xpath=//canvas[@id='myChart']", "xpath:attributes"],
+        ["xpath=//div[@id='grafica']/canvas", "xpath:idRelative"],
+        ["xpath=//canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "06363aab-cc4a-48b6-9b69-55d4c42b38c8",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart",
+      "targets": [
+        ["id=myChart", "id"],
+        ["css=#myChart", "css:finder"],
+        ["xpath=//canvas[@id='myChart']", "xpath:attributes"],
+        ["xpath=//div[@id='grafica']/canvas", "xpath:idRelative"],
+        ["xpath=//canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "11f7d90f-831b-4af9-b905-defec662249b",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart",
+      "targets": [
+        ["id=myChart", "id"],
+        ["css=#myChart", "css:finder"],
+        ["xpath=//canvas[@id='myChart']", "xpath:attributes"],
+        ["xpath=//div[@id='grafica']/canvas", "xpath:idRelative"],
+        ["xpath=//canvas", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "52b3560f-a2fe-4276-b15e-6b2c49523f00",
+    "name": "Si se vuelve a dar al boton de test, se cambia el color por si no se ve bien",
+    "commands": [{
+      "id": "806e859d-c8a7-4aea-bdb2-b4bb33d59390",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:8000/visualizer/3/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0dc25e52-2bf6-42d2-9058-13b3d4ef52b7",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "911x903",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "466e74ae-2187-4ad5-9262-3c76683ad385",
+      "comment": "",
+      "command": "click",
+      "target": "id=btnGrafica",
+      "targets": [
+        ["id=btnGrafica", "id"],
+        ["css=#btnGrafica", "css:finder"],
+        ["xpath=//button[@id='btnGrafica']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Resultados')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3b2f02cd-f39a-4e87-bcc0-7e28b6278c05",
+      "comment": "",
+      "command": "click",
+      "target": "id=btnGrafica",
+      "targets": [
+        ["id=btnGrafica", "id"],
+        ["css=#btnGrafica", "css:finder"],
+        ["xpath=//button[@id='btnGrafica']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Resultados')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ed5556cc-f8ba-4fae-aaeb-43a7c49a67a6",
+      "comment": "",
+      "command": "click",
+      "target": "id=btnGrafica",
+      "targets": [
+        ["id=btnGrafica", "id"],
+        ["css=#btnGrafica", "css:finder"],
+        ["xpath=//button[@id='btnGrafica']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Resultados')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "1f234d89-90b2-4a7e-8143-54da2c3d2cf4",
+    "name": "Boton con la grafica pero con porcentajes",
+    "commands": [{
+      "id": "ce036cbc-4b8f-4c41-9a0d-cd4dabc67b56",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:8000/visualizer/3/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ae1312db-0392-4c14-a8c1-337750fa80a6",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "911x903",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "54860cd9-329f-4ab8-8749-76860056c336",
+      "comment": "",
+      "command": "click",
+      "target": "id=btnPorcentage",
+      "targets": [
+        ["id=btnPorcentage", "id"],
+        ["css=#btnPorcentage", "css:finder"],
+        ["xpath=//button[@id='btnPorcentage']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Porcentajes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b1f4ef2e-0cfd-48b1-947c-780b67aabd09",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart2",
+      "targets": [
+        ["id=myChart2", "id"],
+        ["css=#myChart2", "css:finder"],
+        ["xpath=//canvas[@id='myChart2']", "xpath:attributes"],
+        ["xpath=//div[@id='graficaPorcentaje']/canvas", "xpath:idRelative"],
+        ["xpath=//div[3]/canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e97f57d5-0ade-4153-b3d0-2d2530d67d65",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart2",
+      "targets": [
+        ["id=myChart2", "id"],
+        ["css=#myChart2", "css:finder"],
+        ["xpath=//canvas[@id='myChart2']", "xpath:attributes"],
+        ["xpath=//div[@id='graficaPorcentaje']/canvas", "xpath:idRelative"],
+        ["xpath=//div[3]/canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9fbe65bc-e25e-4b04-9f70-c8a71aaa2c35",
+      "comment": "",
+      "command": "click",
+      "target": "id=btnPorcentage",
+      "targets": [
+        ["id=btnPorcentage", "id"],
+        ["css=#btnPorcentage", "css:finder"],
+        ["xpath=//button[@id='btnPorcentage']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Porcentajes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e0a3f911-aad6-4626-b65b-8cd30cea276b",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "id=btnPorcentage",
+      "targets": [
+        ["id=btnPorcentage", "id"],
+        ["css=#btnPorcentage", "css:finder"],
+        ["xpath=//button[@id='btnPorcentage']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Porcentajes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "98377bb2-a638-4550-ad75-f459476fc8c8",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "id=btnPorcentage",
+      "targets": [
+        ["id=btnPorcentage", "id"],
+        ["css=#btnPorcentage", "css:finder"],
+        ["xpath=//button[@id='btnPorcentage']", "xpath:attributes"],
+        ["xpath=//div[@id='app-visualizer']/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Porcentajes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c47fdb06-697d-4071-81aa-935cf60c1225",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart2",
+      "targets": [
+        ["id=myChart2", "id"],
+        ["css=#myChart2", "css:finder"],
+        ["xpath=//canvas[@id='myChart2']", "xpath:attributes"],
+        ["xpath=//div[@id='graficaPorcentaje']/canvas", "xpath:idRelative"],
+        ["xpath=//div[3]/canvas", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "93260ecd-e3a3-42ba-a4e6-4345f887ef18",
+      "comment": "",
+      "command": "click",
+      "target": "id=myChart2",
+      "targets": [
+        ["id=myChart2", "id"],
+        ["css=#myChart2", "css:finder"],
+        ["xpath=//canvas[@id='myChart2']", "xpath:attributes"],
+        ["xpath=//div[@id='graficaPorcentaje']/canvas", "xpath:idRelative"],
+        ["xpath=//div[3]/canvas", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "ef2b68e4-51dc-4036-9321-39798722c154",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": []
+  }],
+  "urls": ["http://localhost:8000/", "http://localhost:8000/visualizer/3/"],
+  "plugins": []
+}
