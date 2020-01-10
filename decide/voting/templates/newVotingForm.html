@@ -1,0 +1,477 @@
+{% extends 'block.html' %}
+
+
+
+
+
+{% block content %}
+<!--<script type="text/javascript" src="../../read_csv.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.7/purify.min.js"></script>
+
+    <form method="post" enctype="multipart/form-data" action="/voting/edit/" >
+      {% csrf_token %}
+      <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span><br/>
+      
+      <span><label for="description">Description: {{voting.description}}</label><br/>
+      <textarea name="description" id="markdownText" cols="100" rows="10" oninput="htmlRenderizado()" onshow="htmlRenderizado()"></textarea></span>
+      <div id="buttonsMarkdown">
+        <button id="botonAyuda" onclick="hideHelp()" form="no-form">
+            <img class="markdownButtonImage" id="ayudaIcon" src="https://i.ibb.co/Q8vhsWz/see-info.png" alt="Ver ayuda" >
+        </button>
+        <button id="botonAñadirLista" onclick="insertList()" form="no-form">
+            <img class="markdownButtonImage" src="https://i.ibb.co/Nnbc1rL/list.png" alt="Añadir lista">
+        </button>
+        <button id="botonAñadirTítulo" onclick="insertTitle()" form="no-form">
+            <img class="markdownButtonImage" src="https://i.ibb.co/bdys3v6/capital-t.png" alt="Añadir título">
+        </button>
+        <button id="botonBorrar" onclick="deleteContent()" form="no-form">
+            <img class="markdownButtonImage" src="https://i.ibb.co/v17Nrhp/delete-button.png" alt="Borrar todo">
+        </button>
+    </div><br/>
+
+    <div id="markdownRenderizado"></div>
+    <div id="ayudaMarkdown" style="display: none;">
+        <div id="ayudaMarkdownPlain">
+            <p># Encabezado de primer nivel</p>
+            
+            <p>Encabezado de primer nivel</p>
+            <p>=======</p><br/>
+            
+            
+            <p>## Encabezado de segundo nivel</p>
+            
+            <p>Encabezado de segundo nivel</p>
+            <p>-----</p><br/>
+            
+            <p>#### Encabezado de cuarto nivel</p>
+            
+            <p>Para escribir un párrafo no hace falta hacer nada especial</p><br/>
+            
+            <p>Esto es una palabra en **negrita** </p><br/>
+            
+            <p>Esto es una palabra con *énfasis* y esta _también_</p><br/>
+            
+            <p>Tambien se pueden hacer listas:</p>
+            <p>- Crear votación</p>
+            <p>- Subir archivo con los candidatos</p>
+            <p>- Validar el archivo</p><br/>
+            
+            
+            <p>Incluso se pueden añadir [enlaces](http://www.congreso.es/portal/page/portal/Congreso/Congreso)</p><br/>
+            
+            <p>> Con los símbolos de mayor que</p>
+            <p>> se pueden incluir sangría</p><br/>
+            
+        </div>
+        <div id="ayudaMarkdownHTML">
+            <h1>Encabezado de primer nivel</h1>
+            <h1>Encabezado de primer nivel</h1>
+            <h2>Encabezado de segundo nivel</h2>
+            <h2>Encabezado de segundo nivel</h2>
+            <h4>Encabezado de cuarto nivel</h4>
+            <p>Para escribir un párrafo no hace falta hacer nada especial</p>
+            <p>Esto es una palabra en <strong>negrita</strong></p>
+            <p>Esto es una palabra con <em>énfasis</em> y esta <em>también</em></p>
+            <p>Tambien se pueden hacer listas:</p>
+            <ul>
+            <li>Crear votación</li>
+            <li>Subir archivo con los candidatos</li>
+            <li>Validar el archivo</li>
+            </ul>
+            <p>Incluso se pueden añadir <a href="http://www.congreso.es/portal/page/portal/Congreso/Congreso">enlaces</a></p>
+            <blockquote>
+                <p>
+                    Con los símbolos de mayor que<br>
+                    se pueden incluir sangría
+                </p>
+            </blockquote>
+        </div>
+    </div>
+      <p>Candidaturas: </p>
+
+        <div id="candidatures-div"></div>
+
+        <div id="tablaCandidaturas">
+            <div id="formularioCandidaturas">
+                <fieldset>
+                    <label for="nameCSV">Nombre: </label>
+                    <input type="text" id="nameCSV" name="candidature_name" oninput="desbloquear_import()"/>
+                    <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
+                    </label>
+                    <input id="import_button" type="file" id="csvFileInput" disabled="true" name="candidatures_file" onchange="handleFiles(this.files)" accept=".csv" />
+                </fieldset> 
+            </div>
+        
+            <div id="tablaCandidatura" class="tablaCandidatura"></div>
+        </div>
+
+
+        <br>
+        <br>
+        <br>
+        <br>
+      <div id="auths_div">
+        <label for="auths" >Auths</label><select id="list" name="auths" multiple>
+            {%for a in auths%}
+            <option value='{{a.name}}'>{{a.name}}</option>
+            {%endfor%}
+        </select>
+        <div id="create_auth">
+            <label for="name-auth">Name:</label><input type="text" id="auth_name" />
+            <label for="base_url">Base URL:</label><input type="text" id="base_url" />
+            <label for="auth-me">Me:</label><input type="checkbox" id="auth_me" value="me"/>
+            <input type="button" onClick="createAuth()" value="Create auth" />
+        </div>
+      </div>
+      <span><label for="startDate" >Start Date</label><input type="date" id="startDate" name="startDate"/></span>
+      <span><label for="endDate" >End Date</label><input type="date" id="endDate" name="endDate"/></span>
+
+      <input type="submit" name="submit" onClick="return alertForm();"/>
+    </form>
+    <div id="print">
+
+        <p id="validacion_print"></p>
+
+    </div>
+    <br/>
+<input type="button" value="Descargar" onclick="printHTML()"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+<script> 
+
+    function handleFiles(files) {
+    // Check for the various File API support.
+        if (window.FileReader) {
+            // FileReader are supported.
+            file = files[0];
+            getAsText(files[0]);
+        } else {
+            alert('FileReader are not supported in this browser.');
+        }
+    }
+
+    function getAsText(fileToRead) {
+        var reader = new FileReader();
+        // Handle errors load
+        reader.onload = loadHandler;
+        reader.onerror = errorHandler;
+        // Read file into memory as UTF-8      
+        reader.readAsText(fileToRead);
+    }
+
+    function loadHandler(event) {
+        var csv = event.target.result;
+        processDataAsObj(csv);             
+    }
+
+    //if your csv file contains the column names as the first line
+    function processDataAsObj(csv){
+        validateLines(csv);
+        var allTextLines = csv.split(/\r\n|\n/);
+        var lines = [];
+        
+        //first line of csv
+        var keys = allTextLines.shift().split('#');
+        
+        while (allTextLines.length) {
+            var arr = allTextLines.shift().split('#');
+            var obj = {};
+            for(var i = 0; i < keys.length; i++){
+                obj[keys[i]] = arr[i];
+        }
+            lines.push(obj);
+        }
+
+        drawOutputAsObj(lines);
+    }
+
+    function errorHandler(evt) {
+        if(evt.target.error.name == "NotReadableError") {
+            alert("Canno't read file !");
+        }
+    }
+
+    //draw the table, if first line contains heading
+    function drawOutputAsObj(lines){
+        //Clear previous data
+        //document.getElementById("tablaCandidatura").innerHTML = "";
+        var table = document.createElement("table");
+        
+        //for the table headings
+        var tableHeader = table.insertRow(-1);
+        Object.keys(lines[0]).forEach(function(key){
+            var el = document.createElement("TH");
+            el.innerHTML = key;		
+            tableHeader.appendChild(el);
+        });	
+        
+        //the data
+        for (var i = 0; i < lines.length; i++) {
+            var row = table.insertRow(-1);
+            if(lines[i]['name'] != ''){
+                Object.keys(lines[0]).forEach(function(key){
+                    var data = row.insertCell(-1);
+                    data.appendChild(document.createTextNode(lines[i][key]));
+            });
+            }
+            
+        }
+
+        var divCandidatura = document.createElement("div");
+        var nameInput = document.getElementById("nameCSV").value;
+
+        var nombreCandidatura = document.createElement("label");
+        nombreCandidatura.innerHTML = nameInput;
+        divCandidatura.id = "tablaCandidatura"+nameInput;
+        
+        document.getElementById("tablaCandidatura").appendChild(divCandidatura);
+
+        var inputCandidatura = document.createElement("input");
+        inputCandidatura.id="candidatures";
+        inputCandidatura.name="candidatures";
+        inputCandidatura.type="hidden";
+        inputCandidatura.value = nameInput;
+
+
+
+        document.getElementById("candidatures-div").appendChild(inputCandidatura);
+
+        var deleteCandidatura = document.createElement("input");
+        deleteCandidatura.value = "Delete " + nameInput;
+        deleteCandidatura.type = "button"
+        deleteCandidatura.onclick = function() {
+            delete_candidature("tablaCandidatura" + nameInput);
+        };
+
+        document.getElementById("tablaCandidatura"+ nameInput).appendChild(nombreCandidatura);
+        document.getElementById("tablaCandidatura"+ nameInput).appendChild(table);
+        document.getElementById("tablaCandidatura"+ nameInput).appendChild(deleteCandidatura);
+    }
+    
+    function delete_candidature(data){
+        document.getElementById(data).remove()
+    }
+
+    function desbloquear_import(){
+        var regexEliminaEspacios = new RegExp(/\s/);
+        var aux = document.getElementById("nameCSV").value
+        var comprobarEspacios = aux.replace(regexEliminaEspacios, "");
+        if (comprobarEspacios != ""){
+            document.getElementById("import_button").disabled = false;
+        } else{
+            document.getElementById("import_button").disabled = true;
+        }
+    }
+
+
+    function alertForm(){
+        return alert("You're saving this voting. You'll be able to edit it after this saving and before the start date.");
+
+    }
+
+    function validateLines(csv) {
+        $.ajax({
+            type: "POST",
+            url: "../validate/",
+            data: { param: csv },
+            success: callbackFunc
+        });
+    }
+
+    function createAuth(){
+        var auth_name = document.getElementById('auth_name').value;
+        var base_url = document.getElementById('base_url').value;
+        var auth_me = document.getElementById('auth_me').checked;
+
+        var me = auth_me?'True':'False';
+
+        $.ajax({type: "POST",
+                url: "../create_auth/",
+                data:{auth_name: auth_name, 
+                base_url: base_url,
+                auth_me: me},
+                success:callbackFunc2
+        });
+    }
+
+    function callbackFunc(response) {
+        // do something with the response
+        document.getElementById("validacion_print").innerHTML = response;
+    }
+
+    function callbackFunc2(response){
+        $('#auths_div').load(' #auths_div');
+    }
+
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function printHTML() {
+
+        var pdf = new jsPDF('p', 'pt', 'letter');
+
+        
+
+        source = $('#print')[0];
+
+        specialElementHandlers = {
+
+            '#bypassme': function (element, renderer) {
+
+                return true
+
+            }
+
+        };
+
+        margins = {
+
+            top: 80,
+
+            bottom: 60,
+
+            left: 40,
+
+            width: 522
+
+        };
+
+        pdf.fromHTML(
+
+            source,
+
+            margins.left,
+
+            margins.top, {
+
+                'width': margins.width,
+
+                'elementHandlers': specialElementHandlers
+
+            },
+
+            function (dispose) {
+
+                pdf.save('Prueba.pdf');
+
+            }, margins
+
+        );
+
+    }
+
+
+    function htmlRenderizado(){
+        var md = window.markdownit({breaks: true});
+        var valueText = document.getElementById('markdownText').value
+        var dirtyResult = md.render(valueText);
+        var result = DOMPurify.sanitize(result);
+
+        document.getElementById('markdownRenderizado').innerHTML = dirtyResult;
+    }
+
+    function hideHelp(){
+        var divAyuda = document.getElementById("ayudaMarkdown");
+        if (divAyuda.style.display === "none") {
+            divAyuda.style.display = "block";
+            var imageIcon = document.getElementById("ayudaIcon");
+            imageIcon.src = "https://i.ibb.co/syDg5Rk/hide-info.png";
+            imageIcon.alt = "Ocultar ayuda";
+        } else {
+            divAyuda.style.display = "none";
+            var imageIcon = document.getElementById("ayudaIcon");
+            imageIcon.src = "https://i.ibb.co/Q8vhsWz/see-info.png";
+            imageIcon.alt = "Ver ayuda"
+        }
+    }
+
+    function insertList(){
+        var regexEliminaEspacios = new RegExp(/\s/);
+        var valorMarkdownText = document.getElementById("markdownText").value;
+        var comprobarEspacios = valorMarkdownText.replace(regexEliminaEspacios, "");
+        if (comprobarEspacios === ""){
+            document.getElementById("markdownText").value = valorMarkdownText.concat("- "); 
+        } else {
+            document.getElementById("markdownText").value = valorMarkdownText.concat("\n- ");
+        }
+        htmlRenderizado();
+    }
+
+    function insertTitle(){
+        var regexEliminaEspacios = new RegExp(/\s/);
+        var valorMarkdownText = document.getElementById("markdownText").value;
+        var comprobarEspacios = valorMarkdownText.replace(regexEliminaEspacios, "");
+        if (comprobarEspacios === ""){
+            document.getElementById("markdownText").value = valorMarkdownText.concat("# "); 
+        } else {
+            document.getElementById("markdownText").value = valorMarkdownText.concat("\n# ");
+        }
+        htmlRenderizado();
+    }
+
+    function deleteContent(){
+        document.getElementById("markdownText").value = "";
+        htmlRenderizado();
+    }
+
+    </script>
+    <style>
+        
+    .tablaCandidatura{
+        border: 1px solid black;
+    }
+    
+#ayudaMarkdown {
+    margin-top: 1em;
+}
+#ayudaMarkdownHTML{
+    float: right;
+    width: 50%;
+    text-align: left;
+    height: 670px;
+    background-color: #F3F2ED;
+    border-radius: 5px;
+    border: 1px solid #E1E0D9;
+    color: black;
+    padding: 1em;
+}
+
+#ayudaMarkdownPlain{
+    float: left;
+    width: 45%;
+    background-color: #F3F2ED;
+    border-radius: 5px;
+    border: 1px solid #E1E0D9;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 1em;
+    color: black;
+    text-align: left;
+    height: 670px;
+}
+
+#ayudaMarkdownPlain > p {
+    float: left;
+    width: 100%;
+}
+
+.markdownButtonImage {
+    height: 20px;
+}
+    </style>
+{% endblock %}

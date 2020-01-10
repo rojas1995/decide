@@ -1,5 +1,23 @@
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
 <form method="post" enctype="multipart/form-data" action="/voting/load/">
     {% csrf_token %}
     <input type="file" name="file">
     <button type="submit">Upload</button>
   </form>
+
+  {% if validation_errors %}
+  <div style="color: #D63301;
+    background-color: #FFCCBA;
+    border-radius: 1em;
+    padding: 1em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #D63301;
+    font: small sans-serif;">
+    {% for error in validation_errors %}
+    <td> {{error}}</td></br>
+    {% endfor %}
+  </div>
+  {% endif %}
