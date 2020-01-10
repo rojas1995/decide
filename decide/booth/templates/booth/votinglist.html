@@ -20,6 +20,7 @@
     </style>
 
   <main role="main" class="inner cover">
+    {% if res.size > 0%}
       <table>
         <tr>
           <th>Nombre</th>
@@ -28,6 +29,7 @@
           <th>Fecha finalizacion</th>
           <th>Votar</th>
         </tr>
+        {% for x in res %}
         <tr>
           <td>{{x.name}}</td>
           <td>{{x.id}}</td>
@@ -35,7 +37,13 @@
           <td>{{x.end_date}}</td>
           <td><button type="button" class="btn btn-primary" onclick="window.location.href = '/booth/{{x.id}}';">Votar</button></td>
         </tr>
+        {% endfor %}
       </table>
+
+    {% else %}
+      <h3>Actualmente no hay votaciones disponibles para ti. </br> Si crees que se trata de un error, por favor, contacte con el administrador</h3>
+
+    {% endif %}
   </main>
 
   {% endblock %}
