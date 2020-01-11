@@ -13,8 +13,6 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'https://decide-palkia-django.herokuapp.com'
-
 APIS = {
     'authentication': 'https://decide-palkia-django.herokuapp.com',
     'base': 'https://decide-palkia-django.herokuapp.com',
@@ -26,6 +24,8 @@ APIS = {
     'visualizer': 'https://decide-palkia-django.herokuapp.com',
     'voting': 'https://decide-palkia-django.herokuapp.com',
 }
+
+BASEURL = 'https://decide-palkia-django.herokuapp.com'
 
 DATABASES = {
     'default': {

@@ -202,13 +202,10 @@ class PageView(TemplateView):
 class GetVoting(APIView):
     def post(self, request):
         vid = request.data.get('voting', '')
-        try:
-            r = mods.get('voting', params={'id': vid})
-            for k, v in r[0]['pub_key'].items():
-                r[0]['pub_key'][k] = str(v)
-            return Response(r[0], status=HTTP_200_OK)
-        except:
-            return Response({}, status=HTTP_404_NOT_FOUND)
+        r = mods.get('voting', params={'id': vid})
+        for k, v in r[0]['pub_key'].items():
+            r[0]['pub_key'][k] = str(v)
+        return Response(r[0], status=HTTP_200_OK)
 
 
 def check_date(date):
