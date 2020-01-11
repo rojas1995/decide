@@ -51,6 +51,9 @@ def voting_edit(request):
 
         votingName = request.POST["name"]
         votingDescription = request.POST["description"]
+        start_date_selected = request.POST["start_date_selected"]
+        end_date_selected = request.POST["end_date_selected"]
+        custom_url = request.POST["custom_url"]
 
         
         permission_classes = (UserIsStaff,)
@@ -60,7 +63,7 @@ def voting_edit(request):
 
         if form.is_valid:
             candidatures = request.POST.getlist("candidatures")
-            voting = Voting(name=votingName, desc=votingDescription)
+            voting = Voting(name=votingName, desc=votingDescription, custom_url=custom_url, start_date_selected=start_date_selected, end_date_selected=end_date_selected)
                     #candidatures=request.data.get('candidatures'))
                     #question=question)
             voting.save()
@@ -91,8 +94,8 @@ def voting_edit(request):
                 voting.auths.add(a)
             #Accion que se debe realizar en la lista
             #voting.create_pubkey()
-
-        return render(request, dirspot+'/voting/templates/newVotingForm.html', {'status':status.HTTP_201_CREATED, 'auths':auths})
+        votings = Voting.objects.all()
+        return render(request, 'votings.html', {'votings': votings})    
     else:
         form = NewVotingForm()
     return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form, 'auths':auths})
@@ -179,10 +182,12 @@ def handle_uploaded_file(response):
 
     #if len(validation_errors) > 0:
     #   transaction.set_rollback(True)
-    html = '<div style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;font: small sans-serif;">'
-    for error in validation_errors:
-        html = html + '<td> ' + error + '</td></br>'
-    html = html + '</div>'
+    html = ""
+    if len(validation_errors) > 0:
+        html = '<div id="errors" style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;font: small sans-serif;">'
+        for error in validation_errors:
+            html = html + '<td> ' + error + '</td></br>'
+        html = html + '</div>'
     return HttpResponse(html)
 
 

@@ -11,10 +11,10 @@
 
     <form method="post" enctype="multipart/form-data" action="/voting/edit/" >
       {% csrf_token %}
-      <span><label for="name">Name: {{voting.name}}</label> <input type="text" id="name" name="name" /></span><br/>
+      <span><label for="name">Name: </label> <input type="text" id="name" name="name" value="{{voting.name}}" required/></span><br/>
       
-      <span><label for="description">Description: {{voting.description}}</label><br/>
-      <textarea name="description" id="markdownText" cols="100" rows="10" oninput="htmlRenderizado()" onshow="htmlRenderizado()"></textarea></span>
+      <span><label for="description">Description: </label><br/>
+      <textarea name="description" id="markdownText" cols="100" rows="10" oninput="htmlRenderizado()" onshow="htmlRenderizado()" value="{{voting.desc}}"></textarea></span>
       <div id="buttonsMarkdown">
         <button id="botonAyuda" onclick="hideHelp()" form="no-form">
             <img class="markdownButtonImage" id="ayudaIcon" src="https://i.ibb.co/Q8vhsWz/see-info.png" alt="Ver ayuda" >
@@ -95,7 +95,7 @@
         <div id="tablaCandidaturas">
             <div id="formularioCandidaturas">
                 <fieldset>
-                    <label for="nameCSV">Nombre: </label>
+                    <label for="nameCSV">Name: </label>
                     <input type="text" id="nameCSV" name="candidature_name" oninput="desbloquear_import()"/>
                     <label for="csvFileInput"> <strong>Candidatures' CSV File:</strong>
                     </label>
@@ -112,7 +112,7 @@
         <br>
         <br>
       <div id="auths_div">
-        <label for="auths" >Auths</label><select id="list" name="auths" multiple>
+        <label for="auths" >Auths</label><select id="list" name="auths" multiple required>
             {%for a in auths%}
             <option value='{{a.name}}'>{{a.name}}</option>
             {%endfor%}
@@ -124,10 +124,11 @@
             <input type="button" onClick="createAuth()" value="Create auth" />
         </div>
       </div>
-      <span><label for="startDate" >Start Date</label><input type="date" id="startDate" name="startDate"/></span>
-      <span><label for="endDate" >End Date</label><input type="date" id="endDate" name="endDate"/></span>
+      <span><label for="startDate" >Programed Start Date</label><input type="date" id="start_date_selected" name="start_date_selected" value="{{voting.start_date_selected}}"/></span>
+      <span><label for="endDate" >Programed End Date</label><input type="date" id="end_date_selected" name="end_date_selected" value="{{voting.end_date_selected}}"/></span>
+      <span><label for="custom_url">Custom url: </label> <input type="text" id="custom_url" name="custom_url" value="{{voting.custom_url}}"/></span><br/>
 
-      <input type="submit" name="submit" onClick="return alertForm();"/>
+      <input type="submit" name="submit" id="button_submit" disabled="true" onClick="return alertForm();"/>
     </form>
     <div id="print">
 
@@ -182,6 +183,11 @@
         }
 
         drawOutputAsObj(lines);
+        var errors = document.getElementById("errors");
+        if (errors == null) {
+           $("#button_submit").attr("disabled", false);
+        }
+        
     }
 
     function errorHandler(evt) {
@@ -226,7 +232,7 @@
         document.getElementById("tablaCandidatura").appendChild(divCandidatura);
 
         var inputCandidatura = document.createElement("input");
-        inputCandidatura.id="candidatures";
+        inputCandidatura.id="candidatures" + nameInput;
         inputCandidatura.name="candidatures";
         inputCandidatura.type="hidden";
         inputCandidatura.value = nameInput;
@@ -239,7 +245,7 @@
         deleteCandidatura.value = "Delete " + nameInput;
         deleteCandidatura.type = "button"
         deleteCandidatura.onclick = function() {
-            delete_candidature("tablaCandidatura" + nameInput);
+            delete_candidature(nameInput);
         };
 
         document.getElementById("tablaCandidatura"+ nameInput).appendChild(nombreCandidatura);
@@ -248,7 +254,8 @@
     }
     
     function delete_candidature(data){
-        document.getElementById(data).remove()
+        document.getElementById("tablaCandidatura"+data).remove();
+        document.getElementById("candidatures"+data).remove();
     }
 
     function desbloquear_import(){
