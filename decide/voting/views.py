@@ -19,8 +19,9 @@ from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import requires_csrf_token
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from rest_framework.renderers import JSONRenderer
+from django.contrib.auth.decorators import user_passes_test
 
 import json
 import csv
@@ -29,6 +30,7 @@ import markdown
 
 dirspot = os.getcwd()
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def candidates_load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -42,6 +44,7 @@ def candidates_load(request):
         form = UploadFileForm()
     return render(request, dirspot+'/voting/templates/upload.html', {'form': form})
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def voting_edit(request):
 
     auths = Auth.objects.all()
@@ -191,11 +194,12 @@ def handle_uploaded_file(response):
         html = html + '<ul/></div>'
     return HttpResponse(html)
 
-
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def voting_list(request):
     votings = Voting.objects.all()
     return render(request, "votings.html", {'votings':votings, 'STATIC_URL':settings.STATIC_URL})
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def voting_list_update(request):
     voting_id = request.POST['voting_id']
     voting = get_object_or_404(Voting, pk=voting_id)
@@ -238,6 +242,7 @@ def voting_list_update(request):
 
     return HttpResponseRedirect(url)
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def voting_list_update_multiple(request):
     array_voting_id = request.POST['array_voting_id[]'].split(",")
     action = request.POST['action_multiple']
@@ -398,6 +403,7 @@ def create_auth(request):
 
     return HttpResponse({'auths':auths})
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def copy_voting(request, voting_id):
     voting = get_object_or_404(Voting, pk=voting_id)
     votingName = voting.name
@@ -412,6 +418,7 @@ def copy_voting(request, voting_id):
     new_voting.save()
     return HttpResponseRedirect("/voting/votings")
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def show_voting(request, voting):
 
     if type(voting) is int:

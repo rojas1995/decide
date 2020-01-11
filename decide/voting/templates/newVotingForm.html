@@ -9,6 +9,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.js" ></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.7/purify.min.js"></script>
 
+    <a href="../votings">Atrás</a>
+
     <form method="post" enctype="multipart/form-data" action="/voting/edit/" >
       {% csrf_token %}
       <span><label for="name">Name: </label> <input type="text" id="name" name="name" value="{{voting.name}}" required/></span><br/>
