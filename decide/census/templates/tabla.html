@@ -32,28 +32,24 @@
     <tr class="jctx-host jctx-id-foo" id="{{dato.2}}">
       <td>{{dato.0.first_name}}</td>
       <td>{{dato.0.last_name}}</td>
-      <td>{{dato.0.perfil.edad}}</td>
-      <td>{{dato.0.perfil.sexo}}</td>
-      <td>{{dato.0.perfil.municipio}}</td>
+      <td>{{dato.0.edad}}</td>
+      <td>{{dato.0.sexo}}</td>
+      <td>{{dato.0.municipio}}</td>
       <td><a href="/census/web/{{dato.1.pk}}">{{dato.1}}</a></td>
     </tr>
     {% endfor %}
   </table>
   <div class="border-top my-3"></div>
 
-<form action="/census/web/export_csv" type="get">
-    <input type="hidden" value="{{voting_id}}" name="voting_id">
-    <button type="submit" class="btn btn-success float-right m-1" >Exportar CSV</button>
+
+<form method="POST" action="/census/web/add/">
+    <select name="select-voting" id="select-voting" required>
+        {% for d in dist %}
+            <option name="voting-selected" value="{{d.0.pk}}">{{d.1.name}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Ir al censo">
 </form>
 
-<form action="/census/web/export_xlsx" type="get">
-    <input type="hidden" value="{{voting_id}}" name="voting_id">
-    <button type="submit" class="btn btn-success float-right m-1" >Exportar Excel</button>
-</form>
-
-<form action="/census/web/export_pdf" type="get">
-    <input type="hidden" value={{voting_id}} name="voting_id">
-    <button type="submit" class="btn btn-success float-right" >Exportar PDF</button>
-</form>
 
 {% endblock %}

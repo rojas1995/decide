@@ -22,7 +22,7 @@
     <div class="col-5">
         <form method="POST">{% csrf_token %}
             <div class="form-group m-2">
-                <legend>Añadir Censo a la votacion</legend>
+                <legend>Añadir Censo a la Votacion</legend>
                 <input type="hidden" name="tipo" value="votacion">
                 <label for="votaciones">Votaciones</label>
                 <select class="form-control" id="votaciones" name="id">
@@ -69,5 +69,11 @@
     <input type="hidden" value={{voting_id}} name="voting_id">
     <button type="submit" class="btn btn-success float-right m-1" >Exportar Excel</button>
 </form>
+
+<form action="/census/web/export_pdf" type="get">
+    <input type="hidden" value={{voting_id}} name="voting_id">
+    <button type="submit" class="btn btn-success float-right m-1" >Exportar PDF</button>
+</form>
+
 
 {% endblock %}
