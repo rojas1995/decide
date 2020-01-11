@@ -1,6 +1,24 @@
 {% extends 'main.html' %}
 
 {% block contenido %} 
+<script>
+	function handleMenuAction(evt, e) {
+		switch (evt) {
+      case "delete":
+        var confirmar = confirm("¿Desea elminar este Censo?");
+        if(confirmar){
+          window.location.href = "/census/web/delete/" + e.parentElement.getAttribute("id");
+        }
+        break;
+    }
+	}
+</script>
+
+<ul class="jctx jctx-id-foo jctx-white jctx-black-shadow">
+	<li data-action="delete" class="eliminar">Eliminar</li>
+	<li data-action="" class="disabled">Modificar</li>
+</ul>
+
 <table style = "background-color: #fff">
     <tr>
       <th>Nombre</th>
@@ -11,7 +29,7 @@
       <th>Votacion</th>
     </tr>
     {% for dato in datos %}
-    <tr>
+    <tr class="jctx-host jctx-id-foo" id="{{dato.2}}">
       <td>{{dato.0.first_name}}</td>
       <td>{{dato.0.last_name}}</td>
       <td>{{dato.0.perfil.edad}}</td>
@@ -24,13 +42,18 @@
   <div class="border-top my-3"></div>
 
 <form action="/census/web/export_csv" type="get">
-    <input type="hidden" value={{voting_id}} name="voting_id">
-    <button type="submit" class="btn btn-success float-right" >Exportar CSV</button>
+    <input type="hidden" value="{{voting_id}}" name="voting_id">
+    <button type="submit" class="btn btn-success float-right m-1" >Exportar CSV</button>
 </form>
 
 <form action="/census/web/export_xlsx" type="get">
+    <input type="hidden" value="{{voting_id}}" name="voting_id">
+    <button type="submit" class="btn btn-success float-right m-1" >Exportar Excel</button>
+</form>
+
+<form action="/census/web/export_pdf" type="get">
     <input type="hidden" value={{voting_id}} name="voting_id">
-    <button type="submit" class="btn btn-success float-right" >Exportar Excel</button>
+    <button type="submit" class="btn btn-success float-right" >Exportar PDF</button>
 </form>
 
 {% endblock %}

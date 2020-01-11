@@ -1,0 +1,73 @@
+{% extends 'main.html' %}
+
+{% block contenido %} 
+
+<div class="row">
+    <div class="col-5">
+        <form method="POST">{% csrf_token %}
+            <div class="form-group m-2">
+                <legend>Añadir Usuario a la votacion</legend>
+                <input type="hidden" name="tipo" value="usuario">
+                <label for="usuarios">Usuarios</label>
+                <select class="form-control" id="usuarios" name="id">
+                {% for usuario in usuarios %}
+                    <option value="{{usuario.pk}}">{{usuario.username}}</option>
+                {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success float-center mt-3" >Añadir Usuario</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-2"></div>
+    <div class="col-5">
+        <form method="POST">{% csrf_token %}
+            <div class="form-group m-2">
+                <legend>Añadir Censo a la votacion</legend>
+                <input type="hidden" name="tipo" value="votacion">
+                <label for="votaciones">Votaciones</label>
+                <select class="form-control" id="votaciones" name="id">
+                {% for votacion in votaciones %}
+                    <option value="{{votacion.pk}}">{{votacion.name}}</option>
+                {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success float-center mt-3" >Añadir Censo</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<table style = "background-color: #fff" class="mt-3">
+    <tr>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Edad</th>
+      <th>Sexo</th>
+      <th>Municipio</th>
+      <th>Votacion</th>
+    </tr>
+    {% for dato in datos %}
+    <tr>
+      <td>{{dato.0.first_name}}</td>
+      <td>{{dato.0.last_name}}</td>
+      <td>{{dato.0.perfil.edad}}</td>
+      <td>{{dato.0.perfil.sexo}}</td>
+      <td>{{dato.0.perfil.municipio}}</td>
+      <td><a href="/census/web/{{dato.1.pk}}">{{dato.1}}</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div class="border-top my-3"></div>
+
+<form action="/census/web/export_csv" type="get">
+    <input type="hidden" value={{voting_id}} name="voting_id">
+    <button type="submit" class="btn btn-success float-right m-1" >Exportar CSV</button>
+</form>
+
+<form action="/census/web/export_xlsx" type="get">
+    <input type="hidden" value={{voting_id}} name="voting_id">
+    <button type="submit" class="btn btn-success float-right m-1" >Exportar Excel</button>
+</form>
+
+{% endblock %}
