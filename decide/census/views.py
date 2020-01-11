@@ -6,6 +6,7 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.status import (
     HTTP_201_CREATED as ST_201,
     HTTP_204_NO_CONTENT as ST_204,
@@ -19,7 +20,6 @@ from census.models import Census
 from django.contrib.auth.models import User
 from voting.models import Voting
 import django_excel as excel
-import pyexcel
 
 
 class CensusCreate(generics.ListCreateAPIView):
@@ -83,7 +83,6 @@ def listaCensos(request):
 
 def export_csv(request):
     voting_id = request.GET.get('voting_id')
-    print(voting_id)
     if request.GET.get('voting_id') is not None:
         voting_id = request.GET.get('voting_id')
         census = list(Census.objects.filter(voting_id=voting_id))
@@ -117,14 +116,14 @@ def ExportToCsv(datos):
         'Votación', ])
 
     for dato in datos:
-        export.append(
-            [dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio,
-             str("/census/web/" + str(dato[1].pk))])
+        if hasattr(dato[0], 'perfil'):
+            export.append(
+                [dato[0].first_name, dato[0].last_name, dato[0].perfil.edad, dato[0].perfil.sexo, dato[0].perfil.municipio,
+                 str("/census/web/" + str(dato[1].pk))])
 
     sheet = excel.pe.Sheet(export)
 
     return sheet
-
 
 def export_excel(request):
     voting_id = request.GET.get('voting_id')
@@ -155,10 +154,41 @@ def export_to_xlsx(data):
         'Votación', ]]
 
     for d in data:
-        export.append(
-            [d[0].first_name, d[0].last_name, d[0].perfil.edad, d[0].perfil.sexo, d[0].perfil.municipio,
-             str("/census/web/" + str(d[1].pk))])
+        if hasattr(d[0], 'perfil'):
+            export.append(
+                [d[0].first_name, d[0].last_name, d[0].perfil.edad, d[0].perfil.sexo, d[0].perfil.municipio,
+                 str("/census/web/" + str(d[1].pk))])
 
     template = excel.pe.Sheet(export)
 
     return template
+
+
+def addCensus(request, votacionID):
+    id = request.POST.get("id")
+    votacion = get_object_or_404(Voting, pk=votacionID)
+    tipo = request.POST.get("tipo")
+    if tipo == "usuario":
+        usuario = get_object_or_404(User, pk=id)
+        Census.objects.create(voter_id=usuario.pk, voting_id=votacion.pk)
+
+    elif tipo == "votacion":
+        votacion2 = get_object_or_404(Voting, pk=id)
+        census = list(Census.objects.filter(voting_id=votacion2.pk))
+        for c in census:
+            try:
+                Census.objects.create(voting_id=votacion.pk, voter_id=c.voter_id)
+            except:
+                pass
+        
+    usuarios = User.objects.all()
+    votaciones = Voting.objects.all().exclude(pk=votacion.pk)
+    census = list(Census.objects.filter(voting_id=votacion.pk))
+    datos = []
+    for c in census:
+        u = list(User.objects.filter(pk=c.voter_id))[0]
+        v= list(Voting.objects.filter(pk=c.voting_id))[0]
+        tupla = (u, v)
+        datos.append(tupla)
+    
+    return render(request, 'add.html', {'datos': datos, 'usuarios':usuarios, 'votaciones':votaciones,'STATIC_URL': settings.STATIC_URL})
