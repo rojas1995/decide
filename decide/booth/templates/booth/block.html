@@ -26,7 +26,8 @@
                 {% if user.is_authenticated %}
                   {% if user.is_superuser %}
                     <li class="nav-item"> <a class="nav-link" href="/voting/votings">{% trans "Votaciones" %}</a></li>
-                  {% else %}
+                    <li class="nav-item"> <a class="nav-link" href="/census/web">{% trans "Censos" %}</a></li>
+                {% else %}
                     <li class="nav-item"> <a class="nav-link" href="/list">{% trans "Votaciones" %}</a></li>
                   {% endif %}
                 <li class="nav-item"> <a class="nav-link" href="/profile">{% trans "Perfil" %}</a></li>
