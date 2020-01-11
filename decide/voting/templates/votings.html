@@ -1,110 +1,58 @@
 {% extends 'block.html' %}
 
-
-
 {% block content %}
 
-
-
 <script>
-
-
-
     function grab_selected() {
-
       var tasks = [];
-
       var array = document.getElementsByName("voting_id[]");
-
       array.forEach(element => {
-
         if(element.checked){
-
           tasks.push(element.value);
-
         }
-
       });
-
       var inputNombre = document.getElementById("array_voting_id[]");
-
       inputNombre.value = tasks;
-
     }
-
-
 
     function select_all(){
-
       array = document.getElementsByName("voting_id[]")
-
       selector = document.getElementById("selector")
-
       array.forEach(element => {
-
             if(selector.checked){
-
               element.checked = 1
-
             } else{
-
               element.checked = 0
-
             }
-
           });
-
     }
-
-
-
 </script>
-
-
-
 
 
 <h1>Lista de votaciones</h1>
 
+{% if errors != 0 %}
 
+    <div class="alert alert-danger" role="alert">
+        <p>{{msg}}</p>
+    </div>
+
+{% endif %}
 
 <form id="form-votaciones" action="update_selection/" id="multiple-selection" method="POST">
-
   {% csrf_token %}
 
   <div class="actions">
 
-      <label>Action: 
-
-        <select name="action_multiple" required>
-
-
-
+    <label>Action: 
+        <select name="action_multiple" >
           <option value="" selected>---------</option>
-
-
-
           <option value="delete">Delete selected votings</option>
-
-
-
           <option value="start">Start</option>
-
-
-
           <option value="stop">Stop</option>
-
-
-
           <option value="tally">Tally</option>
-
-
-
         </select>
-
     </label>
-
-    
 
     <input type="submit" form="multiple-selection" value="Go"/>
 
@@ -114,210 +62,131 @@
 
   </div>
 
-
-
-
-
-
-
   <table>
 
       <tr>
-
         <th scope="col">
-
             <div class="text"><span><input type="checkbox" id="selector" onclick="select_all()"/></span></div>
+        </th>
 
-          </th>
-
-    
-
-          <th scope="col" class="titulo">
-
+        <th scope="col" class="titulo">
             <div class="text"><a href="?o=1">Nombre</a></div>
+        </th>
 
-          </th>
+        <th scope="col" class="titulo">
+          <div class="text"><a href="?o=1">Comienzo</a></div>
+        </th>
 
-
-
-
+        <th scope="col" class="titulo">
+          <div class="text"><a href="?o=1">Finalización</a></div>
+        </th>
       </tr>
 
     {% for row in votings %}
 
         <tr>
-
             <td>
-
               <input type="checkbox" onclick="grab_selected()" name="voting_id[]" value="{{row.id}}"/>
-
             </td>
 
             <th class="fil">
-
               <a href="/voting/show/{{row.id}}">{{row.name}}</a>
-
             </th>
 
-            <td class="fil">
+            <th class="fil">
+              <p>{{row.start_date}}</p>
+            </th>
 
-                <form method="post" action="update/">
+            <th class="fil">
+              <p>{{row.end_date}}</p>
+            </th>
 
-                  {% csrf_token %}
-
-                  <input name="action" type="hidden" value="start"/>
-
-                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
-
-                  <input type="submit" value="Start"/>
-
-                </form>
-
-            </td>
+            <form></form>
 
             <td class="fil">
-
-                <form method="post" action="update/">
-
-                  {% csrf_token %}
-
-                  <input name="action" type="hidden" value="stop"/>
-
-                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
-
-                  <input type="submit" value="Stop"/>
-
-                </form>
-
-            </td>
-
-            <td class="fil">
-
-                <form method="post" action="update/">
-
-                  {% csrf_token %}
-
-                  <input name="action" type="hidden" value="tally"/>
-
-                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
-
-                  <input type="submit" value="Tally"/>
-
-                </form>
-
-            </td>
-
-            <td class="fil">
-
-                <form method="post" action="update/">
-
-                  {% csrf_token %}
-
-                  <input name="action" type="hidden" value="delete"/>
-
-                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
-
-                  <input type="submit" value="Delete"/>
-
-                </form>
-
-            </td>
-            <td class="fil">
-
               <form method="post" action="update/">
-
                 {% csrf_token %}
-
-                <input name="action" type="hidden" value="copy"/>
-
+                <input name="action" type="hidden" value="start"/>
                 <input name="voting_id" type="hidden" value="{{row.id}}"/>
-
-                <input type="submit" value="copy"/>
-
+                <input type="submit" value="Empezar"/>
               </form>
+            </td>
 
+            <td class="fil">
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="stop"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Parar"/>
+                </form>
+            </td>
+
+            <td class="fil">
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="tally"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Contar"/>
+                </form>
+            </td>
+
+            <td class="fil">
+                <form method="post" action="update/">
+                  {% csrf_token %}
+                  <input name="action" type="hidden" value="delete"/>
+                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                  <input type="submit" value="Eliminar"/>
+                </form>
             </td>
             
-
+            <td class="fil">
+              <form method="get" action="../copy/{{row.id}}">
+                {% csrf_token %}
+                <input type="submit" value="Copiar"/>
+              </form>
+            </td>
           </tr>
-
       {% endfor %}
 
   </table>
-
-
 
   <input type="hidden" id="array_voting_id[]" name="array_voting_id[]" value="">
 
 </form>
 
-
-
 <style>
 
-
-
-
-
-
-
     #form-votaciones{
-
         float: left;
-
     }
-
-
 
     #form-votaciones > .actions{
-
-      width: 100%;
-
-      float: left;
-
-      margin-bottom: 10px;
-
-      margin-top: 25px;
-
+        width: 100%;
+        float: left;
+        margin-bottom: 10px;
+        margin-top: 25px;
     }
-
-    
 
     #form-votaciones > .actions > input,label{
-
-      float: left;
-
-      margin-left: 40px;
-
+        float: left;
+        margin-left: 40px;
     }
-
-  
-
     #form-votaciones > table{
-
-      width: 100%;
-
+        width: 100%;
     }
-
-
 
     .fil{
-
-      padding-bottom: 5px;
-
-      padding-top: 5px;
-
+        padding-bottom: 5px;
+        padding-top: 5px;
     }
-
-    
 
     </style>
 
-    
-
-    
-
 {% endblock %}
+
+
+
+
 
 
 
