@@ -131,8 +131,6 @@
     </form>
     <div id="print">
 
-        <p id="validacion_print"></p>
-
     </div>
     <br/>
 <input type="button" value="Descargar" onclick="printHTML()"/>
@@ -299,7 +297,7 @@
 
     function callbackFunc(response) {
         // do something with the response
-        document.getElementById("validacion_print").innerHTML = response;
+        document.getElementById("print").innerHTML = response;
     }
 
     function callbackFunc2(response){

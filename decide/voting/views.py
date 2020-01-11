@@ -163,13 +163,13 @@ def handle_uploaded_file(response):
         row_line = row_line + 1
 
     if count_presidents > 1:
-            validation_errors.append("La candidatura " + str(key) + " tiene más de un candidato a presidente")
+            validation_errors.append("La candidatura " + candidatesGroupName + " tiene más de un candidato a presidente")
 
     malePercentage = (maleCount*100)/(maleCount+femaleCount)
     if  malePercentage > 60 or malePercentage < 40:
-        validation_errors.append("La candidatura " + str(key) + " no cumple un balance 60-40 entre hombres y mujeres")
+        validation_errors.append("La candidatura " + candidatesGroupName + " no cumple un balance 60-40 entre hombres y mujeres")
     if maleCount + femaleCount > 350:
-        validation_errors.append("La candidatura " + str(key) + " supera el máximo de candidatos permitidos (350)")
+        validation_errors.append("La candidatura " + candidatesGroupName + " supera el máximo de candidatos permitidos (350)")
     
     provincias_validacion = [prov for prov in provincias if count_provincias[prov] < 2]
 
@@ -183,7 +183,7 @@ def handle_uploaded_file(response):
     for error in validation_errors:
         html = html + '<td> ' + error + '</td></br>'
     html = html + '</div>'
-    return HttpResponse(validation_errors)
+    return HttpResponse(html)
 
 
 def voting_list(request):
