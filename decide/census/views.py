@@ -6,6 +6,7 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.status import (
     HTTP_201_CREATED as ST_201,
     HTTP_204_NO_CONTENT as ST_204,
@@ -161,3 +162,33 @@ def export_to_xlsx(data):
     template = excel.pe.Sheet(export)
 
     return template
+
+
+def addCensus(request, votacionID):
+    id = request.POST.get("id")
+    votacion = get_object_or_404(Voting, pk=votacionID)
+    tipo = request.POST.get("tipo")
+    if tipo == "usuario":
+        usuario = get_object_or_404(User, pk=id)
+        Census.objects.create(voter_id=usuario.pk, voting_id=votacion.pk)
+
+    elif tipo == "votacion":
+        votacion2 = get_object_or_404(Voting, pk=id)
+        census = list(Census.objects.filter(voting_id=votacion2.pk))
+        for c in census:
+            try:
+                Census.objects.create(voting_id=votacion.pk, voter_id=c.voter_id)
+            except:
+                pass
+        
+    usuarios = User.objects.all()
+    votaciones = Voting.objects.all().exclude(pk=votacion.pk)
+    census = list(Census.objects.filter(voting_id=votacion.pk))
+    datos = []
+    for c in census:
+        u = list(User.objects.filter(pk=c.voter_id))[0]
+        v= list(Voting.objects.filter(pk=c.voting_id))[0]
+        tupla = (u, v)
+        datos.append(tupla)
+    
+    return render(request, 'add.html', {'datos': datos, 'usuarios':usuarios, 'votaciones':votaciones,'STATIC_URL': settings.STATIC_URL})
