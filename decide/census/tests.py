@@ -83,48 +83,39 @@ class CensusTestCase(BaseTestCase):
         self.login()
         # username, password1, password2, nombre, apellido, email, edad, sexo, municipio, votación, status_code
         user_data = [
-            ['username1', 'abcd1234', 'abcd1234', 'nombre1', 'apellido1', 'correo1@mail.com', '21', 'Masculino',
-             'Sevilla', 'votaciontest1', 201],
-            ['username2', 'abcd1234', 'abcd1234', 'nombre2', 'apellido2', 'correo2@mail.com', '22', 'Femenino',
-             'Sevilla', 'votaciontest2', 201]
+            ['username1', 'abcd1234', 'abcd1234', 'nombre1', 'apellido1', 'correo1@mail.com', '21', 'M',
+             'Sevilla', 'Sevilla', 'votaciontest1', 200],  # OK
+            ['username2', 'abcd1234', 'abcd1234', 'nombre2', 'apellido2', 'correo2@mail.com', '22', 'F',
+             'Sevilla', 'Sevilla', 'votaciontest2', 200],  # OK
         ]
         for data in user_data:
             self._census_create(*data)
 
-    def _census_create(self, username, password1, password2, nombre, apellido, email, sexo, edad, municipio,
+    def _census_create(self, username, password1, password2, nombre, apellido, email, sexo, provincia, edad, municipio,
                        votacion, expected_status_code):
-
-        found_status = 302
-
-        # /admin/auth/user/add/ -- Crear al nuevo usuario/Registrarse en la app
-        user_acc = {'username': username,
-                    'password1': password1,
-                    'password2': password2}
-        response = self.client.post('/admin/auth/user/add/', user_acc, format='json')
-        self.assertEqual(response.status_code, expected_status_code)
-
-        # Traemos el usuario creado
-        user_id = User.objects.filter(username=username).values('id')[0]['id']
-
-        # /admin/auth/user/{id_voter}/change/ -- Editar datos del usuario
-        user_data = {'username': username,
-                     'first_name': nombre,
+        # /register/ -- Registrarse en la app
+        user_data = {'first_name': nombre,
                      'last_name': apellido,
-                     'email': email}
-        response = self.client.get('/admin/auth/user/{}/change/'.format(user_id))
-        self.assertEqual(response.status_code, found_status)
-        response = self.client.post('/admin/auth/user/{}/change/'.format(user_id), user_data, format='json')
+                     'username': username,
+                     'email': email,
+                     'edad': edad,
+                     'sexo': sexo,
+                     'provincia': provincia,
+                     'municipio': municipio,
+                     'password': password1,
+                     'confirm_password': password2}
+        response = self.client.get('/register/')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/register/', user_data, format='json')
         self.assertEqual(response.status_code, expected_status_code)
 
-        # /admin/authentication/perfil/{id_voter}/change/ -- Editar el perfil del usuario
-        user_profile = {'user': username,
-                        'sexo': sexo,
-                        'edad': edad,
-                        'municipio': municipio}
-        response = self.client.get('/admin/authentication/perfil/{}/change/'.format(user_id))
-        self.assertEqual(response.status_code, found_status)
-        response = self.client.post('/admin/authentication/perfil/{}/change/'.format(user_id),
-                                    user_profile, format='json')
+        # /login/ -- Entrar en la app
+        user_data = {'username': username,
+                     'password': password1
+                     }
+        response = self.client.get('/login/')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/login/', user_data, format='json')
         self.assertEqual(response.status_code, expected_status_code)
 
         # admin/voting/voting/add/ -- Crear la votacion
@@ -134,20 +125,20 @@ class CensusTestCase(BaseTestCase):
             'question': 'la pregunta de la votacion de test',
             'question_opt': ['verdadero', 'falso', 'nada es lo que parece']
         }
-        response = self.client.post('/voting/', voting_data, format='json')
-        self.assertEqual(response.status_code, 201)
+        response = self.client.post('/admin/voting/voting/add/', voting_data, format='json')
+        self.assertEqual(response.status_code, 302)
+
+        # Traemos al usuario creado
+        user_id = User.objects.filter(username=username).values('id')
+        self.assertNotEqual(user_id, None)
 
         # Traemos la votacion creada
-        voting_id = Voting.objects.filter(name=votacion).values('id')[0]['id']
+        voting_id = Voting.objects.filter(name=votacion).values('id')
+        self.assertNotEqual(voting_id, None)
 
         # /admin/census/census/add/ -- Añadir usuarios al censo
         census_data = {'voting_id': voting_id,
                        'voters': user_id}
         response = self.client.post('/admin/census/census/add/', census_data, format='json')
-        self.assertEqual(response.status_code, expected_status_code)
-
-        # /census/web/ -- Comprueba que los datos nuevo esten en la vista
-        response = self.client.post('/census/web/')
-        self.assertIn(nombre, response.content)
-        self.assertIn(apellido, response.content)
-        self.assertIn(municipio, response.content)
+        self.assertEqual(response.status_code, 302)
+        self.assertNotEqual(0, Census.objects.count())
