@@ -342,7 +342,7 @@
 
     function callbackFunc(response) {
         // do something with the response
-        document.getElementById("print").innerHTML = response;
+        document.getElementById("print").insertAdjacentHTML('beforeend',response);
     }
 
     function callbackFunc2(response){
