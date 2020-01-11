@@ -2309,4 +2309,90 @@ class PostProcTestCase(APITestCase):
         self.assertEqual(values, expected_result)
 
 
+        def test_simple10(self):
+        data = {
+            'type': 'SIMPLE',
+            'seats': 43, #23.255
+            'options': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 200 }, #8,60 +1
+                { 'option': 'Option 2', 'number': 2, 'votes': 50 }, #2.15
+                { 'option': 'Option 3', 'number': 3, 'votes': 500 }, #21,5
+                { 'option': 'Option 4', 'number': 4, 'votes': 100 }, #4,3
+                { 'option': 'Option 5', 'number': 5, 'votes': 60 }, # 2,58 +1
+                { 'option': 'Option 6', 'number': 6, 'votes': 90 }, # 3,87 +1
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Option 3', 'number': 3, 'votes': 500, 'postproc': 21 },
+            { 'option': 'Option 1', 'number': 1, 'votes': 200, 'postproc': 9 },
+            { 'option': 'Option 4', 'number': 4, 'votes': 100, 'postproc': 4 },
+            { 'option': 'Option 6', 'number': 6, 'votes': 90, 'postproc': 4 },
+            { 'option': 'Option 5', 'number': 5, 'votes': 60, 'postproc': 3 },
+            { 'option': 'Option 2', 'number': 2, 'votes': 50, 'postproc': 2 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_simple11(self):
+        data = {
+            'type': 'SIMPLE',
+            'seats': 86, #11.63
+            'options': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 200 }, #17.19
+                { 'option': 'Option 2', 'number': 2, 'votes': 50 }, #4.29
+                { 'option': 'Option 3', 'number': 3, 'votes': 500 }, #42.99
+                { 'option': 'Option 4', 'number': 4, 'votes': 100 }, #8.59
+                { 'option': 'Option 5', 'number': 5, 'votes': 60 }, # 5.15
+                { 'option': 'Option 6', 'number': 6, 'votes': 90 }, # 7.73
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Option 3', 'number': 3, 'votes': 500, 'postproc': 43 },
+            { 'option': 'Option 1', 'number': 1, 'votes': 200, 'postproc': 17 },
+            { 'option': 'Option 4', 'number': 4, 'votes': 100, 'postproc': 9 },
+            { 'option': 'Option 6', 'number': 6, 'votes': 90, 'postproc': 8 },
+            { 'option': 'Option 5', 'number': 5, 'votes': 60, 'postproc': 5 },
+            { 'option': 'Option 2', 'number': 2, 'votes': 50, 'postproc': 4 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_simple12(self):
+        data = {
+            'type': 'SIMPLE',
+            'seats': 10
+            'options': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 200 }, #2
+                { 'option': 'Option 2', 'number': 2, 'votes': 50 }, #0,5
+                { 'option': 'Option 3', 'number': 3, 'votes': 500 }, #5
+                { 'option': 'Option 4', 'number': 4, 'votes': 100 }, #1
+                { 'option': 'Option 5', 'number': 5, 'votes': 60 }, # 0.6
+                { 'option': 'Option 6', 'number': 6, 'votes': 90 }, # 0.9
+            ]
+        }
+
+        expected_result = [
+            { 'option': 'Option 3', 'number': 3, 'votes': 500, 'postproc': 5 },
+            { 'option': 'Option 1', 'number': 1, 'votes': 200, 'postproc': 2 },
+            { 'option': 'Option 4', 'number': 4, 'votes': 100, 'postproc': 1 },
+            { 'option': 'Option 6', 'number': 6, 'votes': 90, 'postproc': 1 },
+            { 'option': 'Option 5', 'number': 5, 'votes': 60, 'postproc': 1 },
+            { 'option': 'Option 2', 'number': 2, 'votes': 50, 'postproc': 0 },
+        ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
         
