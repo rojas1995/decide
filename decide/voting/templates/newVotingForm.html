@@ -271,10 +271,12 @@
     }
 
     function validateLines(csv) {
+        var candidature_name = document.getElementById('nameCSV').value;
+
         $.ajax({
             type: "POST",
             url: "../validate/",
-            data: { param: csv },
+            data: { param: csv, candidature_name: candidature_name },
             success: callbackFunc
         });
     }
