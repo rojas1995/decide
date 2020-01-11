@@ -107,8 +107,9 @@ def handle_uploaded_file(response):
         'L', 'LO', 'LU', 'M', 'MA', 'MU', 'NA', 'OR', 'O', 'P', 'GC', 'PO', 'SA', 'TF', 'S', 'SG', 'SE', 'SO', 'T', 'TE', 'TO', 'V', 'VA', 'BI', 'ZA', 'Z', 'CE', 'ML']
     count_provincias = dict((prov, 0) for prov in provincias)
     row_line = 1
-    candidatesGroupSex = {}
-    count_presidents = {}
+    maleCount = 0
+    femaleCount = 0
+    count_presidents = 0
 
     for row in rows:
         if row_line != 1:
@@ -121,12 +122,12 @@ def handle_uploaded_file(response):
                 current_area = user[3]
                 primaries = user[4]
                 sex = user[5]
-                candidatesGroupName = user[6]
+                candidatesGroupName = response.POST['candidature_name']
 
                 if sex == "HOMBRE":
-                    candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0] + 1, candidatesGroupSex.get(candidatesGroupName, [0,0])[1]]
+                    maleCount = maleCount + 1
                 else:
-                    candidatesGroupSex[candidatesGroupName] = [candidatesGroupSex.get(candidatesGroupName, [0,0])[0], candidatesGroupSex.get(candidatesGroupName, [0,0])[1] + 1]
+                    femaleCount = femaleCount + 1
 
                 if primaries == 'FALSE':
                     primaries = False
@@ -135,9 +136,7 @@ def handle_uploaded_file(response):
                     primaries = True
 
                 if _type == "PRESIDENCIA":
-                    count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0) + 1
-                else:
-                    count_presidents[candidatesGroupName] = count_presidents.get(candidatesGroupName, 0)
+                    count_presidents = count_presidents + 1
 
                 if _type == 'CANDIDATO' and (born_area in count_provincias and current_area in count_provincias):
                     if born_area == current_area:
@@ -163,17 +162,14 @@ def handle_uploaded_file(response):
             
         row_line = row_line + 1
 
-        
-    for key in count_presidents.keys():
-        if count_presidents[key] > 1:
-                validation_errors.append("La candidatura " + str(key) + " tiene más de un candidato a presidente")
-    
-    for key in candidatesGroupSex.keys():
-        malePercentage = (candidatesGroupSex[key][0]*100)/(candidatesGroupSex[key][0]+candidatesGroupSex[key][1])
-        if  malePercentage > 60 or malePercentage < 40:
-            validation_errors.append("La candidatura " + str(key) + " no cumple un balance 60-40 entre hombres y mujeres")
-        if candidatesGroupSex[key][0] + candidatesGroupSex[key][1] > 350:
-            validation_errors.append("La candidatura " + str(key) + " supera el máximo de candidatos permitidos (350)")
+    if count_presidents > 1:
+            validation_errors.append("La candidatura " + str(key) + " tiene más de un candidato a presidente")
+
+    malePercentage = (maleCount*100)/(maleCount+femaleCount)
+    if  malePercentage > 60 or malePercentage < 40:
+        validation_errors.append("La candidatura " + str(key) + " no cumple un balance 60-40 entre hombres y mujeres")
+    if maleCount + femaleCount > 350:
+        validation_errors.append("La candidatura " + str(key) + " supera el máximo de candidatos permitidos (350)")
     
     provincias_validacion = [prov for prov in provincias if count_provincias[prov] < 2]
 
@@ -183,7 +179,10 @@ def handle_uploaded_file(response):
 
     #if len(validation_errors) > 0:
     #   transaction.set_rollback(True)
-
+    html = '<div style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;font: small sans-serif;">'
+    for error in validation_errors:
+        html = html + '<td> ' + error + '</td></br>'
+    html = html + '</div>'
     return HttpResponse(validation_errors)
 
 
