@@ -17,7 +17,8 @@ from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
 from voting.models import Voting, Question, QuestionOption, Candidate
 from voting.views import handle_uploaded_file
-
+import unittest
+from selenium import webdriver
 
 class VotingTestCase(BaseTestCase):
 
@@ -294,3 +295,21 @@ class VotingTestCase(BaseTestCase):
             and len(list_received_candidates_group) == len(list_expected_candidates_group)
             and num_candidatos_inicial == num_candidatos_final)
 
+class TestSignup(unittest.TestCase):
+
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        
+    def test_custom_url(self):
+        self.driver.get("http://localhost:8000/admin/login/?next=/admin/")
+        # TODO
+        self.driver.find_element_by_id('id_username').send_keys("practica")
+        self.driver.find_element_by_id('id_password').send_keys("practica")
+        #self.driver.find_element_by_id('login-form').click()
+        #self.assertTrue(len(self.driver.find_elements_by_id('user-tools'))>0) 
+    
+    def tearDown(self):
+        self.driver.quit
+
+if __name__ == '__main__':
+    unittest.main()

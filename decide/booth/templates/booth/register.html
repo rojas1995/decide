@@ -2,55 +2,100 @@
 {% load i18n static %}
 {% block content %}
 <div class="signup-form">	
-    {% if form.errors %}
+
+	{% if lenErrors > 0 %}
         <div class="alert alert-danger" role="alert">
-        {% for field in form %}
-            {% for error in field.errors %}
-                {{ error|escape }}
-            {% endfor %}
+		{% for x in errors %}
+			{% if x == -1 %}
+				{% for field in form %}
+					{% for error in field.errors %}
+						{{ error }}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+
+            {% if x == 0 %}
+                El nombre no puede estar vacío
+			{% endif %}
+
+			{% if x == 1 %}
+				El apellido no puede estar vacío
+			{% endif %}
+
+			{% if x == 2 %}
+				Las contraseñas deben coincidir
+			{% endif %}
+
+            {% if x == 3 %}
+              El email no puede estar vacío
+			{% endif %}
+
+			{% if x == 4 %}
+              La edad debe ser un número / no debe estar vacía
+            {% endif %}
+
         {% endfor %}
         </div>
 	{% endif %}
-	{% if password != 0 %}
-        <div class="alert alert-danger" role="alert">
-        {% if password == 1 %}
-            Las contraseñas deben coincidir
-        {% endif %}
-        </div>
-    {% endif %}
     <form id="login-form" class="form" action="" method="post">
         {% csrf_token %}
 
 		<h2>Crear Cuenta</h2>
-		<p class="lead">Es totalmente gratuito!</p>
 		<div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-user"></i></span>
-				<input type="text" class="form-control" name="first_name" placeholder="Nombre" required="required" value="{{ form.first_name.value }}">
+				<input type="text" class="form-control" name="first_name" placeholder="Nombre" value="{{ form.first_name.value }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-user"></i></span>
-				<input type="text" class="form-control" name="last_name" placeholder="Apellido" required="required" value="{{ form.last_name.value }}">
+				<input type="text" class="form-control" name="last_name" placeholder="Apellido" value="{{ form.last_name.value }}">
 			</div>
         </div>
         <div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-user"></i></span>
-				<input type="text" class="form-control" name="username" placeholder="Nombre de usuario" required="required" value="{{ form.username.value }}">
+				<input type="text" class="form-control" name="username" placeholder="Nombre de usuario" value="{{ form.username.value }}">
 			</div>
         </div>
         <div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-				<input type="email" class="form-control" name="email" placeholder="Email" required="required" value="{{ form.email.value }}">
+				<input type="email" class="form-control" name="email" placeholder="Email" value="{{ form.email.value }}">
 			</div>
-        </div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+				<input type="number" class="form-control" name="edad" placeholder="Edad" value="{{ form.edad.value }}">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+				<select name="sexo">
+					<option value="M">Mujer</option>
+					<option value="H">Hombre</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+				<input type="text" class="form-control" name="provincia" placeholder="Provincia" value="{{ form.provincia.value }}">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+				<input type="text" class="form-control" name="municipio" placeholder="Municipio" value="{{ form.municipio.value }}">
+			</div>
+		</div>
 		<div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-				<input type="password" class="form-control" name="password" placeholder="Contraseña" required="required">
+				<input type="password" class="form-control" name="password" placeholder="Contraseña">
 			</div>
         </div>
 		<div class="form-group">
@@ -59,7 +104,7 @@
 					<i class="fa fa-lock"></i>
 					<i class="fa fa-check"></i>
 				</span>
-				<input type="password" class="form-control" name="confirm_password" placeholder="Confirmar contraseña" required="required">
+				<input type="password" class="form-control" name="confirm_password" placeholder="Confirmar contraseña">
 			</div>
         </div>        
 		<div class="form-group">
