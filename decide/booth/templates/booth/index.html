@@ -6,7 +6,16 @@
   <h1 class="cover-heading">Decide!</h1>
   <p class="lead">{% trans "Esta es la página principal de Decide," %} <br> {% trans "tu plataforma de voto electrónico en la que podrás" %} <br> {% trans "realizar votaciones y consultar los resultados" %}</p>
   <p class="lead">
-    <a href="/list" class="btn btn-lg btn-primary">{% trans "Votar" %}</a>
+      {% if user.is_superuser %}
+        <a href="/voting/votings" class="btn btn-lg btn-primary">
+        Ver lista de votaciones
+        </a>
+      {% else %}
+        <a href="/list" class="btn btn-lg btn-primary">
+        {% trans "Votar" %}
+        </a>
+      {% endif %}
+    
   </p>
 </div>
 {% endblock %}     
