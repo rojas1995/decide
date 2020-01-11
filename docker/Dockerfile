@@ -1,4 +1,4 @@
-from python:3.6-alpine
+from python:alpine
 
 RUN apk add --no-cache git postgresql-dev gcc libc-dev
 RUN apk add --no-cache gcc g++ make libffi-dev python3-dev build-base
@@ -12,7 +12,9 @@ RUN pip install httplib2
 WORKDIR /app
 
 
+
 RUN git clone https://github.com/Decide-Palkia/decide.git .
+
 
 RUN pip install -r requirements.txt
 

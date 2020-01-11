@@ -83,6 +83,7 @@ MODULES = [
     'scheduler',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -200,7 +201,9 @@ if os.path.exists("config.jsonnet"):
         vars()[k] = v
 
 INSTALLED_APPS = INSTALLED_APPS + MODULES
+
 django_heroku.settings(locals())
 
 # Planificador de tareas. Mirar en el modulo schedule y definir los trabajos para que realice las acciones
 updater.start()
+
