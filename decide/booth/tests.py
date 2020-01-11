@@ -67,14 +67,29 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_profile(self):
-        response = self.client.post('/profile/', {
+        response = self.client.post('/register/', {
+            'username': 'test3',
             'first_name': 'test',
             'last_name': 'test',
             'email': 'test@test.com',
             'municipio': 'test',
             'provincia': 'test',
             'edad': 23,
-            'sexo': 'M'
+            'sexo': 'M',
+            'password': 'test3',
+            'confirm_password': 'test3'
+        }, follow=True)
+
+        response = self.client.post('/login/', {'username': 'test3', 'password': 'test3'}, follow=True)
+
+        response = self.client.post('/profile/', {
+            'first_name': 'test2',
+            'last_name': 'test2',
+            'email': 'test2@test.com',
+            'municipio': 'test',
+            'provincia': 'test',
+            'edad': 23,
+            'sexo': 'M',
         }, follow=True)
 
         self.assertEqual(response.status_code, 200)
