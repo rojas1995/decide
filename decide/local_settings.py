@@ -14,8 +14,8 @@ MODULES = [
 ]
 
 APIS = {
-    'authentication':  'http://localhost:8000',
-    'base':  'http://localhost:8000',
+    'authentication': 'http://localhost:8000',
+    'base': 'http://localhost:8000',
     'booth': 'http://localhost:8000',
     'census': 'http://localhost:8000',
     'mixnet': 'http://localhost:8000',
@@ -31,10 +31,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'decide',
-	    'PASSWORD': 'decide', 
-        'NAME': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432', 
+        'PASSWORD': 'decide',
+        'NAME': 'decide',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
