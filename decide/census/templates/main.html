@@ -6,6 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{STATIC_URL}}census/css/main.css">
+
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> <!-- jQuery -->
+     <script defer src="{{STATIC_URL}}census/js/main.js"></script> 
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -14,28 +18,39 @@
     <title>Censo</title>
 </head>
 <body class="text-center" >
-    <nav class="navbar navbar-expand-lg navbar-light" >
-        <div class="container">
-          <a class="navbar-brand" href="/census/web" >Censo</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fas fa-bars"></i>
-              </a>
-                <!-- Here's the magic. Add the .animate and .slide-in classes to your .dropdown-menu and you're all set! -->
-                <div class="dropdown-menu dropdown-menu-right animate slideIn" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/census/web">Censos</a>
-                </div>
+   <section class="navigation">
+  <div class="nav-container">
+    <div class="brand">
+      <a href="/census/web">Decide</a>
+    </div>
+    <nav>
+      <div class="nav-mobile"><a id="nav-toggle" href="#!"><span></span></a></div>
+      <ul class="nav-list">
+        <li>
+          <a href="/census/web">Census</a>
+        </li>
+
+            {% if user.is_authenticated %}
+            <li>
+            <a href="/list">Votaciones</a>
+            </li>
+            <li>
+            <a href="/logout">Logout</a>
+            </li>
+            {% endif %}
+            {% if not user.is_authenticated %}
+              <li>
+              <a  href="/register">Registrarse</a>
               </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+              <li>
+              <a  href="/login">Entrar </a>
+              </li>
+            {% endif %}
+
+      </ul>
+    </nav>
+  </div>
+</section>
       
 
           <div class="container text-center mt-3">
