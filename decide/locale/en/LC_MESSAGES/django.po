@@ -97,8 +97,6 @@ msgid "Usuario y/o contraseña erróneos"
 msgstr "User and/or password incorrect"
 
 #: booth/templates/booth/login.html:15
-#, fuzzy
-#| msgid "Inicia sesión"
 msgid "¡Inicia sesion!"
 msgstr "Sign in"
 
@@ -111,8 +109,6 @@ msgid "Contraseña"
 msgstr "Password"
 
 #: booth/templates/booth/login.html:29
-#, fuzzy
-#| msgid "Iniciar sesión"
 msgid "Iniciar sesion"
 msgstr "Sign in"
 
