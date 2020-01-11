@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-10 16:18+0100\n"
+"POT-Creation-Date: 2020-01-11 20:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr "Profile"
 msgid "Salir"
 msgstr "Logout"
 
-#: booth/templates/booth/block.html:32 booth/templates/booth/register.html:66
+#: booth/templates/booth/block.html:32
 msgid "Registrarse"
 msgstr "Register"
 
@@ -97,22 +97,23 @@ msgid "Usuario y/o contraseña erróneos"
 msgstr "User and/or password incorrect"
 
 #: booth/templates/booth/login.html:15
-
-msgid "Inicia sesión"
+#, fuzzy
+#| msgid "Inicia sesión"
+msgid "¡Inicia sesion!"
 msgstr "Sign in"
 
-#: booth/templates/booth/login.html:19 booth/templates/booth/profile.html:48
-#: booth/templates/booth/register.html:41
+#: booth/templates/booth/login.html:19 booth/templates/booth/register.html:56
 msgid "Nombre de usuario"
 msgstr "Username"
 
-#: booth/templates/booth/login.html:25 booth/templates/booth/profile.html:54
-#: booth/templates/booth/register.html:53
+#: booth/templates/booth/login.html:25 booth/templates/booth/register.html:68
 msgid "Contraseña"
 msgstr "Password"
 
 #: booth/templates/booth/login.html:29
-msgid "Iniciar sesión"
+#, fuzzy
+#| msgid "Iniciar sesión"
+msgid "Iniciar sesion"
 msgstr "Sign in"
 
 #: booth/templates/booth/login.html:32
@@ -127,43 +128,70 @@ msgstr "Register"
 msgid "Información personal"
 msgstr "Personal information"
 
-#: booth/templates/booth/profile.html:23 booth/templates/booth/register.html:17
-msgid "Las contraseñas deben coincidir"
-msgstr "Passwords must match"
+#: booth/templates/booth/profile.html:24 booth/templates/booth/register.html:18
+msgid "El nombre no puede estar vacío"
+msgstr "Name cannot be empty"
 
-#: booth/templates/booth/profile.html:30 booth/templates/booth/register.html:29
+#: booth/templates/booth/profile.html:28 booth/templates/booth/register.html:22
+msgid "El apellido no puede estar vacío"
+msgstr "Surname cannot be empty"
+
+#: booth/templates/booth/profile.html:32 booth/templates/booth/register.html:30
+msgid "El email no puede estar vacío"
+msgstr "Email cannot be empty"
+
+#: booth/templates/booth/profile.html:40
+#, fuzzy
+#| msgid "su voto ha sido correctamente recibido"
+msgid "Actualizado correctamente"
+msgstr "Correctly updated"
+
+#: booth/templates/booth/profile.html:46 booth/templates/booth/register.html:44
 #: booth/templates/booth/votinglist.html:25
 msgid "Nombre"
 msgstr "Name"
 
-#: booth/templates/booth/profile.html:36 booth/templates/booth/register.html:35
+#: booth/templates/booth/profile.html:52 booth/templates/booth/register.html:50
 msgid "Apellido"
 msgstr "Surname"
 
-#: booth/templates/booth/profile.html:42 booth/templates/booth/register.html:47
+#: booth/templates/booth/profile.html:58 booth/templates/booth/register.html:62
 msgid "Email"
 msgstr "Email"
 
-#: booth/templates/booth/profile.html:60 booth/templates/booth/register.html:62
-msgid "Confirmar contraseña"
-msgstr "Confirm password"
-
-#: booth/templates/booth/profile.html:68
+#: booth/templates/booth/profile.html:66
 msgid "Guardar cambios"
 msgstr "Save"
 
-#: booth/templates/booth/profile.html:71
+#: booth/templates/booth/profile.html:67
 msgid "Cancelar"
 msgstr "Cancel"
 
-#: booth/templates/booth/register.html:25
-msgid "Es totalmente gratuito"
-msgstr "It is free"
+#: booth/templates/booth/register.html:26
+msgid "Las contraseñas deben coincidir"
+msgstr "Passwords must match"
 
-#: booth/templates/booth/register.html:69
+#: booth/templates/booth/register.html:40
+msgid "Crear Cuenta"
+msgstr "Create an account"
+
+#: booth/templates/booth/register.html:77
+msgid "Confirmar contraseña"
+msgstr "Confirm password"
+
+#: booth/templates/booth/register.html:81
+msgid "Edad"
+msgstr "Age"
+
+#: booth/templates/booth/register.html:84
 msgid "¿Ya tienes una cuenta?"
 msgstr "You already have an account?"
 
+#: booth/templates/booth/register.html:84
+#, fuzzy
+#| msgid "Inicia sesión"
+msgid "Inicia sesion"
+msgstr "Sign in"
 
 #: booth/templates/booth/success.html:5
 msgid "su voto ha sido correctamente recibido"
@@ -193,10 +221,13 @@ msgstr "Start date"
 msgid "Fecha finalizacion"
 msgstr "End date"
 
-#: decide/settings.py:149
+#: decide/settings.heroku.py:149 decide/settings.py:149
 msgid "Español"
 msgstr ""
 
-#: decide/settings.py:150
+#: decide/settings.heroku.py:150 decide/settings.py:150
 msgid "English"
 msgstr ""
+
+#~ msgid "Es totalmente gratuito"
+#~ msgstr "It is free"
