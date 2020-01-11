@@ -99,8 +99,10 @@ def listaCensos(request):
 
 def export_csv(request):
     voting_id = request.GET.get('voting_id')
-    if request.GET.get('voting_id') is not None:
-        voting_id = request.GET.get('voting_id')
+    if voting_id is '':
+        voting_id = -1
+
+    if voting_id is not None:
         census = list(Census.objects.filter(voting_id=voting_id))
         datos = []
         for c in census:
@@ -145,6 +147,9 @@ def ExportToCsv(datos):
 
 def export_excel(request):
     voting_id = request.GET.get('voting_id')
+    if voting_id is '':
+        voting_id = -1
+
     census = list(Census.objects.all())
     data = []
 
