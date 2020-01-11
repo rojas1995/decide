@@ -10,4 +10,5 @@ urlpatterns = [
     path('web/export_csv', views.export_csv, name='exportar'),
     path('web/export_xlsx', views.export_excel, name='exportar1_excel'),
     path('web/add/<int:votacionID>', views.addCensus, name='add_census'),
+    path('web/export_pdf', views.exportToPdf, name='exportar_pdf'),
 ]
