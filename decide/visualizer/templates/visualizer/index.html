@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+{% load i18n static %}
+
+{% block extrahead %}
+<head>
+    <link rel="shortcut-icon" href="#">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "visualizer/estilos.css" %}" />
+
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div id="app-visualizer" class="text-center">
+
+        <header>
+            <h1 class="text-center text-light">Bienvenido a la página de Visualización de <span class="badge badge-dark">Decide</span></h1>
+            <h2 class="text-center text-light">[[voting.id]] - <span class="badge badge-success">[[voting.name]]</span></h2>
+        </header>
+
+        <h2 v-if="!voting.start_date">Votación no comenzada</h2>
+        <h2 v-else-if="!voting.end_date">Votación en curso</h2>
+        <div v-else>
+            <div class="btn-group" role="group" aria-label="">
+                <button id="btnGrafica" onclick="grafica()" type="button" class="btn btn-info btn-lg">Resultados</button>
+                <button id="btnPorcentage" onclick="graficaPorcentaje()" type="button" class="btn btn-danger btn-lg">Porcentajes</button>
+            </div>
+        </div>
+
+        <div id="grafica">
+            <canvas id="myChart" width="600" height="400"></canvas>
+        </div>
+
+        <div id="graficaPorcentaje">
+            <canvas id="myChart2" width="600" height="400"></canvas>
+        </div>
+
+    </div>
+
+    
+
+    {% endblock %}
+
+{% block extrabody %}
+
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
+
+<script>
+    var voting = {{voting|safe}};
+    var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app-visualizer',
+        data: {
+            voting: voting
+        }
+    })
+
+
+function grafica() {
+
+var ctx = document.getElementById("myChart").getContext("2d");
+Chart.defaults.global.defaultFontFamily = "Lato";
+Chart.defaults.global.defaultFontSize = 18;    
+var myChart = new Chart(ctx,{
+        type:"doughnut",
+        legend:{
+            horizontalAlign: "right",
+            color: "white"
+        },
+        data:{
+            labels:opciones() ,
+            datasets:[{
+                    label:'Num datos',
+                    data:voto(),
+                    backgroundColor: color_por_opcion()
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            rotation: 1 * Math.PI,
+            circumference: 1 * Math.PI,
+        },
+        
+    });
+
+}
+
+function graficaPorcentaje() {
+
+var ctx = document.getElementById("myChart2").getContext("2d");
+Chart.defaults.global.defaultFontFamily = "Lato";
+Chart.defaults.global.defaultFontSize = 18;    
+var myChart = new Chart(ctx,{
+        type:"doughnut",
+        legend:{
+            horizontalAlign: "right",
+            color: "white"
+        },
+        data:{
+            labels:opciones() ,
+            datasets:[{
+                    label:'Num datos',
+                    data:total_porcentajes(),
+                    backgroundColor: color_por_opcion()
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            rotation: 1 * Math.PI,
+            circumference: 1 * Math.PI,
+        },
+        
+    });
+
+}
+
+function opciones() {
+    var datos = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    for(var i = 0; i < postproc.length; i++) {
+        datos.push(postproc[i].option);
+    }
+
+    return datos;
+}
+
+function voto() {
+    var datos = [];
+    var sum = 0;
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+
+    for(var i = 0; i < postproc.length; i++) {
+        datos.push(postproc[i].votes);
+    }
+    return datos;
+}
+
+function aleatorio(inferior,superior){
+   numPosibilidades = superior - inferior
+   aleat = Math.random() * numPosibilidades
+   aleat = Math.floor(aleat)
+   return parseInt(inferior) + aleat
+} 
+
+function dame_color_aleatorio(){
+   hexadecimal = new Array("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
+   color_aleatorio = "#";
+   for (i=0;i<6;i++){
+      posarray = aleatorio(0,hexadecimal.length)
+      color_aleatorio += hexadecimal[posarray]
+   }
+   return color_aleatorio
+} 
+
+function color_por_opcion(){
+    var colores = [];
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+        colores.push(dame_color_aleatorio());
+    }
+
+    return colores;
+}
+
+function votos(){
+    var sum = 0;
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+        sum = sum + postproc[i].votes;
+    }
+    return sum;
+}
+
+function total_porcentajes(){
+    var porcentajes = [];
+    var porcentaje;
+    var total_votos = votos();
+    var voting = {{voting|safe}};
+    var postproc = voting.postproc;
+    for(var i = 0; i < postproc.length; i++) {
+
+        porcentaje = 100*(postproc[i].votes/total_votos);
+        porcentajes.push(porcentaje);
+    }
+    console.log(porcentajes);
+    
+    return porcentajes;
+}
+
+</script>
+
+</body>
+{% endblock %}
+
+</html>
