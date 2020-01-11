@@ -1,38 +1,34 @@
 {% extends 'booth/block.html' %}
-{% load i18n static %}
+
 {% block content %}
 <div class="signup-form">	
     {% if errors != 0 %}
         <div class="alert alert-danger" role="alert">
         {% if errors == 1 %}
-            {% trans "Usuario y/o contraseña erróneos" %}
+            Usuario y/o contraseña erróneos
         {% endif %}
         </div>
     {% endif %}
     <form id="login-form" class="form" action="" method="post">
         {% csrf_token %}
 
-		<h2>{% trans "Inicia sesión" %}</h2>
+		<h2>Inicia session!</h2>
         <div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-				<input type="text" class="form-control" name="username" placeholder="{% trans "Nombre de usuario" %}" required="required">
-
+				<input type="text" class="form-control" name="username" placeholder="Nombre de usuario" required="required">
 			</div>
         </div>
 		<div class="form-group">
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-        
-				<input type="password" class="form-control" name="password" placeholder="{% trans "Contraseña" %}" required="required">
-
+				<input type="password" class="form-control" name="password" placeholder="Contraseña" required="required">
 			</div>
         </div>     
 		<div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block">{% trans "Iniciar sesión" %}</button>
+            <button type="submit" class="btn btn-primary btn-block">Iniciar session</button>
         </div>
     </form>
-	<div class="text-center">{% trans "¿No tienes ninguna cuenta?" %} <a class="text-primary" href="/register/">{% trans "Registrate" %}</a></div>
+	<div class="text-center">¿No tienes ninguna cuenta? <a class="text-primary" href="/register/">Registrate</a></div>
 </div>
 {% endblock %}
