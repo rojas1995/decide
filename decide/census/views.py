@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 from django.core import serializers
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework.response import Response
@@ -71,7 +72,7 @@ def listaVotantes(request, voting_id):
     for c in census:
         user = list(User.objects.filter(pk=c.voter_id))[0]
         votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
-        tupla = (user, votacion)
+        tupla = (user, votacion, c.pk)
         datos.append(tupla)
     return render(request, 'tabla.html', {'datos': datos, 'voting_id': voting_id, 'STATIC_URL': settings.STATIC_URL})
 
@@ -82,7 +83,7 @@ def listaCensos(request):
     for c in census:
         user = list(User.objects.filter(pk=c.voter_id))[0]
         votacion = list(Voting.objects.filter(pk=c.voting_id))[0]
-        tupla = (user, votacion)
+        tupla = (user, votacion, c.pk)
         datos.append(tupla)
     return render(request, 'tabla.html', {'datos': datos, 'STATIC_URL': settings.STATIC_URL})
 
@@ -251,3 +252,8 @@ def generatePdf(datos):
     response = FileResponse(buff, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="census_data.pdf"'
     return buff
+
+def eliminaCenso(request, census_id):
+    census = get_object_or_404(Census, pk=census_id)
+    census.delete()
+    return listaCensos(request)
