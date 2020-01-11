@@ -8,20 +8,48 @@
       <!-- edit form column -->
       <div class="col-md-9 personal-info">
         <h3>{% trans "Información personal" %}</h3>
-        {% if form.errors %}
-          <div class="alert alert-danger" role="alert">
-          {% for field in form %}
-              {% for error in field.errors %}
-                  {{ error|escape }}
+
+        {% if lenErrors > 0 and is_submit == 1 %}
+        <div class="alert alert-danger" role="alert">
+          {% for x in errors %}
+            {% if x == -1 %}
+              {% for field in form %}
+                {% for error in field.errors %}
+                  {{ error }}
+                {% endfor %}
               {% endfor %}
+            {% endif %}
+
+            {% if x == 0 %}
+              El nombre no puede estar vacío
+            {% endif %}
+
+            {% if x == 1 %}
+              El apellido no puede estar vacío
+            {% endif %}
+
+            {% if x == 2 %}
+              El email no puede estar vacío
+            {% endif %}
+
+            {% if x == 3 %}
+              El municipio no debe estar vacío
+            {% endif %}
+
+            {% if x == 4 %}
+              La provincia no debe estar vacía
+            {% endif %}
+
+            {% if x == 5 %}
+              La edad debe ser un número/ no debe estar vacía
+            {% endif %}
           {% endfor %}
         </div>
-	      {% endif %}
-        {% if passwordError != 0 %}
-          <div class="alert alert-danger" role="alert">
-          {% if passwordError == 1 %}
-          {% trans "Las contraseñas deben coincidir" %}
-          {% endif %}
+        {% endif %}
+
+        {% if lenErrors == 0 and is_submit == 1 %}
+        <div class="alert alert-success" role="alert">
+          Actualizado correctamente
         </div>
         {% endif %}
         <form class="form-horizontal" role="form" method="post">
@@ -45,29 +73,45 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">{% trans "Nombre de usuario" %}:</label>
+            <label class="col-md-3 control-label">Municipio:</label>
             <div class="col-md-8">
-              <input class="form-control" type="text" value="{{username}}" required="required" name="username">
+              <input class="form-control" type="text" value="{{municipio}}" required="required" name="municipio">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">{% trans "Contraseña" %}:</label>
+            <label class="col-md-3 control-label">Provincia:</label>
             <div class="col-md-8">
-              <input type="password" class="form-control" name="password" required="required" >
+              <input class="form-control" type="text" value="{{provincia}}" required="required" name="provincia">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">{% trans "Confirmar contraseña" %}:</label>
+            <label class="col-md-3 control-label">Edad:</label>
             <div class="col-md-8">
-              <input class="form-control" type="password" name="confirm_password" required="required">
+              <input class="form-control" type="number" value="{{edad}}" required="required" name="edad">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Sexo:</label>
+            <div class="col-md-8">
+              <select name="sexo">
+                {% if sexo == 'M' %}
+                <option selected="selected" value="M">Mujer</option>
+                  {%else%}
+                  <option value="M">Mujer</option>
+                {% endif %}
+
+                {% if sexo == 'H' %}
+                <option selected="selected" value="H">Hombre</option>
+                {% else %}
+                <option value="H">Hombre</option>
+                {% endif %}
+              </select>
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label"></label>
             <div class="col-md-8">
               <button type="submit" class="btn btn-primary">{% trans "Guardar cambios" %}</button>
-              <span></span>
-              <br>
               <a href="/" class="btn-default">{% trans "Cancelar" %}</a>
             </div>
           </div>

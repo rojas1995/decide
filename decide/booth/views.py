@@ -15,6 +15,7 @@ from booth.form import registerForm, profileForm
 from django.contrib import auth
 from census.models import Census
 from voting.models import Voting
+from booth.models import profile
 from store.models import Vote
 from django.shortcuts import render, redirect
 from Crypto.Random import random
@@ -126,24 +127,34 @@ class PageView(TemplateView):
     def register(request):
         if request.user.is_authenticated:
             return redirect('/')
-            
+
+        errors = []
         form = None
-        password = 0
         if request.method == "POST":
             form = registerForm(request.POST)
-            if form.is_valid():
-                if request.POST.get('password') == request.POST.get('confirm_password'):
+            if not form.is_valid():
+                errors.append(-1)
+            else:
+                if request.POST.get('first_name') == "":
+                    errors.append(0)
+                if request.POST.get('last_name') == "":
+                    errors.append(1)
+                if request.POST.get('password') != request.POST.get('confirm_password'):
+                    errors.append(2)
+                if request.POST.get('email') == "":
+                    errors.append(3)
+                if not request.POST.get('edad').isdigit():
+                    errors.append(4)
+
+                if len(errors) == 0:
+                    # Si el usuario se crea correctamente
                     user = form.save()
                     user.set_password(form.cleaned_data['password'])
                     user.save()
+                    profile.objects.create(user=user,edad=request.POST.get('edad'), provincia=request.POST.get('provincia'), municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo')).save()
+                    return redirect('/login')
 
-                    # Si el usuario se crea correctamente 
-                    if user is not None:
-                        return redirect('/login')
-                else:
-                    password = 1
-
-        return render(request, "booth/register.html", {'form': form, 'password': password})
+        return render(request, "booth/register.html", {'form': form, 'errors': errors, 'lenErrors': len(errors)})
 
     def login(request):
         if request.user.is_authenticated:
@@ -163,6 +174,7 @@ class PageView(TemplateView):
                 return redirect('/')
             else:
                 errors = 1
+
         return render(request, "booth/login.html", {'errors': errors})
 
     def logout(request):
@@ -173,27 +185,63 @@ class PageView(TemplateView):
         return render(request, 'booth/index.html')
     
     def profile(request):
-        username = request.user.username
+        user = request.user
         first_name = request.user.first_name
         last_name = request.user.last_name
         email = request.user.email
-        password = request.user.password
+        provincia = profile.objects.get(user=user).provincia
+        edad = profile.objects.get(user=user).edad
+        municipio = profile.objects.get(user=user).municipio
+        sexo = profile.objects.get(user=user).sexo
 
+        errors = []
         form = None
-        passwordError = 0
         if request.method == "POST":
-            form = profileForm(request.POST, instance=request.user)
-            if form.is_valid():
-                if request.POST.get('password') == request.POST.get('confirm_password'):
-                    user = form.save()
-                    user.set_password(form.cleaned_data['password'])
-                    user.save()
-                    do_login(request, user)
-                    return redirect(request.META.get('HTTP_REFERER'))
-                else:
-                    passwordError = 1
+            form = profileForm(request.POST)
+            if not form.is_valid():
+                errors.append(-1)
+            else:
+                profilee = profile.objects.filter(user=user)
+            
+                if request.POST.get('first_name') == "":
+                    errors.append(0)
+                if request.POST.get('last_name') == "":
+                    errors.append(1)
+                if request.POST.get('email') == "":
+                    errors.append(2)
+                if request.POST.get('municipio') == "":
+                    errors.append(3)
+                if request.POST.get('provincia') == "":
+                    errors.append(4)
+                if not request.POST.get('edad').isdigit():
+                    errors.append(5)
 
-        return render(request, 'booth/profile.html', {'password': password,'passwordError': passwordError,'form': form, 'username': username, 'first_name': first_name, 'last_name': last_name, 'email': email})
+                if len(errors) == 0:
+                    user.first_name = request.POST.get('first_name')
+                    user.last_name = request.POST.get('last_name')
+                    user.email = request.POST.get('email')
+                    user.save()
+
+                    first_name = request.POST.get('first_name')
+                    last_name = request.POST.get('last_name')
+                    email = request.POST.get('email')
+                    edad = request.POST.get('edad')
+                    municipio = request.POST.get('municipio')
+                    sexo = request.POST.get('sexo')
+
+                    if not profilee.exists():
+                        profile.objects.create(user=request.user, edad=request.POST.get('edad'), provincia=request.POST.get('provincia'), municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo'))
+                    else:
+                        profilee = profile.objects.get(user=user)
+                        profilee.edad=request.POST.get('edad')
+                        profilee.provincia=request.POST.get('provincia')
+                        profilee.municipio=request.POST.get('municipio')
+                        profilee.sexo=request.POST.get('sexo')
+                        profilee.save()
+                    
+            return render(request, 'booth/profile.html', {'provincia': provincia, 'municipio': municipio, 'edad': edad, 'sexo': sexo, 'is_submit':1, 'form': form, 'first_name': first_name, 'last_name': last_name, 'email': email, 'errors': errors, 'lenErrors': len(errors)})
+
+        return render(request, 'booth/profile.html', {'provincia': provincia, 'municipio': municipio, 'edad': edad, 'sexo': sexo, 'is_submit':0, 'form': form, 'first_name': first_name, 'last_name': last_name, 'email': email, 'errors': errors, 'lenErrors': len(errors)})
 
 
 class GetVoting(APIView):
