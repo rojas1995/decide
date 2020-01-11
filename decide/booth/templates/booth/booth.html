@@ -1,5 +1,5 @@
 {% extends 'booth/block.html' %}
-
+{% load i18n static %}
 {% block content %}
 
 <h1 class=text-center text-white pt-5>{{voting.name}}</h1>
@@ -12,8 +12,8 @@
                 <legend>{{x.candidatura}}</legend>
 
                     <fieldset>
-                        <legend>Presidente</legend>
-                        <label for="option" class="text-white">Candidatos</label><br>
+                        <legend>{% trans "Presidente" %}</legend>
+                        <label for="option" class="text-white">{% trans "Candidatos" %}</label><br>
                         {% for opt in x.presidentes %}
                         <div class="form-group">
                             <input name = 'presidente' type="radio" value = "{{opt.id}}" class = "form-check-input" />{{opt.name}}
@@ -25,8 +25,8 @@
                     </fieldset>
                     
                     <fieldset>
-                        <legend>Diputados</legend>
-                        <label for="option" class="text-white">Candidatos</label><br>
+                        <legend>{% trans "Diputados" %}</legend>
+                        <label for="option" class="text-white">{% trans "Candidatos" %}</label><br>
                         {% for opt in x.candidatos %}
                         <div class="form-group">
                             <input name = 'candidatos' type="checkbox" value = "{{opt.id}}" class = "form-check-input"/>{{opt.name}}
@@ -37,7 +37,7 @@
             </fieldset>
         {% endfor %}
 
-    <button type="submit" class = "btn btn-info btn-md" >Submit</button>
+    <button type="submit" class = "btn btn-info btn-md" >{% trans "Enviar" %}</button>
 </form>
 
 {% endblock %}
