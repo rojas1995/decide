@@ -15,7 +15,7 @@ from census.models import Census
 from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
-from voting.models import Voting, Candidate
+from voting.models import Voting, Candidate, CandidatesGroup
 from voting.views import handle_uploaded_file
 import unittest
 from selenium import webdriver
@@ -225,6 +225,25 @@ class VotingTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Voting already tallied')
 
+    def create_candidateGroup(self):
+        v = CandidatesGroup(name='test candidatesGroup')
+        v.save()
+        return v
+
+    def create_candidate(self):
+        c = Candidate(name='candidate', type='PRESIDENCIA', born_area='SE', current_area='SE', primaries=False, sex='HOMBRE', candidatesGroup=self.create_candidateGroup())
+        c.save()
+        return c
+
+    def test_create_candidateGroup(self):
+        self.login()
+        v = self.create_candidateGroup()
+        self.assertIsNotNone(v, 'Creating CandidatesGroup')
+
+    def test_create_candidate(self):
+        self.login()
+        c = self.create_candidate()
+        self.assertIsNotNone(c, 'Creating Candidate')
     def csv_validation_primaries_test(self):
         num_candidatos_inicial = len(Candidate.objects.all())
 
