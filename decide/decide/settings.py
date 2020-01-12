@@ -70,7 +70,7 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'https://git.heroku.com/decidepostproc.git'
+BASEURL = 'https://git.heroku.com/decide-palkia-postproc.git'
 
 APIS = {}
 
