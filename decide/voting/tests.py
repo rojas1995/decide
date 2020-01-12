@@ -295,6 +295,68 @@ class VotingTestCase(BaseTestCase):
             and len(list_received_candidates_group) == len(list_expected_candidates_group)
             and num_candidatos_inicial == num_candidatos_final)
 
+
+         #TEST ANTONI0
+        def test_update_voting_start(self):        
+            voting = self.create_voting() 
+
+            #Votacion empezada correctamente
+            data = {'action': 'start', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json')   
+            self.assertEqual(response.status_code, 302)
+
+
+        def test_update_voting_stop(self):        
+            voting = self.create_voting() 
+
+            #Votacion parada correctamente
+            data = {'action': 'start', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json') 
+            data = {'action': 'stop', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json') 
+            self.assertEqual(response.status_code, 302) 
+
+
+        def test_update_voting_delete(self):        
+            voting = self.create_voting()  
+
+            #Votacion eliminada correctamente
+            data = {'action': 'delete', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json')
+            self.assertEqual(response.status_code, 302)
+
+
+        def test_update_multiple_voting_start(self):        
+            voting = self.create_voting() 
+
+            #Votacion empezada correctamente
+            data = {'action_multiple': 'start', 'array_voting_id[]': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json')   
+            self.assertEqual(response.status_code, 302)
+
+
+        def test_update_multiple_voting_stop(self):        
+            voting = self.create_voting() 
+
+            #Votacion parada correctamente
+            data = {'action_multiple': 'start', 'array_voting_id[]': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json') 
+            data = {'action_multiple': 'stop', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json') 
+            self.assertEqual(response.status_code, 302) 
+
+
+
+        def test_update_multiple_voting_delete(self):        
+            voting = self.create_voting()  
+
+            #Votacion eliminada correctamente
+            data = {'action': 'delete', 'array_voting_id[]': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json')
+            self.assertEqual(response.status_code, 302)
+
+        #################################################
+
 class TestSignup(unittest.TestCase):
 
     def setUp(self):
