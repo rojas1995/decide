@@ -41,7 +41,7 @@
   </table>
   <div class="border-top my-3"></div>
 
-{% if user.is_staff %}
+{% if dist|length > 0 %}
 
 <form method="POST" action="/census/web/add/"> {% csrf_token %}
     <select name="votacion_id" id="select-voting" required>
