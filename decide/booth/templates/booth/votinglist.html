@@ -23,11 +23,11 @@
     {% if res %}
       <table>
         <tr bgcolor="blue"> 
-          <th>Nombre</th>
+          <th>{% trans "Nombre" %}</th>
           <th>ID</th>
-          <th>Fecha inicio</th>
-          <th>Fecha finalizacion</th>
-          <th>Votar</th>
+          <th>{% trans "Fecha inicio" %}</th>
+          <th>{% trans "Fecha finalizacion" %}</th>
+          <th>{% trans "Votar" %}</th>
         </tr>
         {% for x in res %}
         <tr>
@@ -43,7 +43,7 @@
       </table>
 
     {% else %}
-      <h3>Actualmente no hay votaciones disponibles para ti. </br> Si crees que se trata de un error, por favor, contacte con el administrador</h3>
+      <h3>{% trans "Actualmente no hay votaciones disponibles para ti." %}</br> {% trans "Si crees que se trata de un error, por favor, contacte con el administrador" %}</h3>
 
     {% endif %}
   </main>

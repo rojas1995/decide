@@ -21,27 +21,27 @@
             {% endif %}
 
             {% if x == 0 %}
-              El nombre no puede estar vacío
+              {% trans "El nombre no puede estar vacío" %}
             {% endif %}
 
             {% if x == 1 %}
-              El apellido no puede estar vacío
+              {% trans "El apellido no puede estar vacío" %}
             {% endif %}
 
             {% if x == 2 %}
-              El email no puede estar vacío
+              {% trans "El email no puede estar vacío" %}
             {% endif %}
 
             {% if x == 3 %}
-              El municipio no debe estar vacío
+              {% trans "El municipio no debe estar vacío" %}
             {% endif %}
 
             {% if x == 4 %}
-              La provincia no debe estar vacía
+              {% trans "La provincia no debe estar vacía" %}
             {% endif %}
 
             {% if x == 5 %}
-              La edad debe ser un número/ no debe estar vacía
+              {% trans "La edad debe ser un número/ no debe estar vacía" %}
             {% endif %}
           {% endfor %}
         </div>
@@ -49,7 +49,7 @@
 
         {% if lenErrors == 0 and is_submit == 1 %}
         <div class="alert alert-success" role="alert">
-          Actualizado correctamente
+          {% trans "Actualizado correctamente" %}
         </div>
         {% endif %}
         <form class="form-horizontal" role="form" method="post">
@@ -73,37 +73,37 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Municipio:</label>
+            <label class="col-md-3 control-label">{% trans "Municipio" %}:</label>
             <div class="col-md-8">
               <input class="form-control" type="text" value="{{municipio}}" required="required" name="municipio">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Provincia:</label>
+            <label class="col-md-3 control-label">{% trans "Provincia" %}:</label>
             <div class="col-md-8">
               <input class="form-control" type="text" value="{{provincia}}" required="required" name="provincia">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Edad:</label>
+            <label class="col-md-3 control-label">{% trans "Edad" %}:</label>
             <div class="col-md-8">
               <input class="form-control" type="number" value="{{edad}}" required="required" name="edad">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Sexo:</label>
+            <label class="col-md-3 control-label">{% trans "Sexo" %}:</label>
             <div class="col-md-8">
               <select name="sexo">
                 {% if sexo == 'M' %}
-                <option selected="selected" value="M">Mujer</option>
+                <option selected="selected" value="M">{% trans "Mujer" %}</option>
                   {%else%}
-                  <option value="M">Mujer</option>
+                  <option value="M">{% trans "Mujer" %}</option>
                 {% endif %}
 
                 {% if sexo == 'H' %}
-                <option selected="selected" value="H">Hombre</option>
+                <option selected="selected" value="H">{% trans "Hombre" %}</option>
                 {% else %}
-                <option value="H">Hombre</option>
+                <option value="H">{% trans "Hombre" %}</option>
                 {% endif %}
               </select>
             </div>

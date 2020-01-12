@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.test import APITestCase
-
+from django.test import Client
 from base import mods
 from base.tests import BaseTestCase
 from census.models import Census
@@ -235,38 +235,7 @@ class VotingTestCase(BaseTestCase):
         print(lista_comprobacion)
         num_candidatos_final = len(Candidate.objects.all())
         self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
-
-    def csv_validation_genres_test(self):
-        num_candidatos_inicial = len(Candidate.objects.all())
-        path = str(os.getcwd()) + "/voting/files/candidatos-test-genero.csv"
-        file = open(path, 'rb')
-        errores_validacion = list(filter(re.compile(r'no cumple un balance 60-40 entre hombres y mujeres')
-        .search, handle_uploaded_file(file)))
-        list_expected_candidates_group = ["BETIS","MALAGA","BARCELONA"]
-        list_received_candidates_group = []
-        for error in errores_validacion:
-            candidatura = error.split(" no cumple")[0].split("candidatura ")[1]
-            list_received_candidates_group.append(str(candidatura))
-        num_candidatos_final = len(Candidate.objects.all())
-        self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
-         and len(list_received_candidates_group) == len(list_expected_candidates_group)
-          and num_candidatos_inicial == num_candidatos_final)
     
-    def csv_validation_maximum_candidates_test(self):
-        num_candidatos_inicial = len(Candidate.objects.all())
-        path = str(os.getcwd()) + "/voting/files/candidatos-test-maximo.csv"
-        file = open(path, 'rb')
-        errores_validacion = list(filter(re.compile(r'supera el máximo de candidatos permitidos')
-        .search, handle_uploaded_file(file)))
-        list_expected_candidates_group = ["SEVILLA", "BETIS"]
-        list_received_candidates_group = []
-        for error in errores_validacion:
-            candidatura = error.split(" supera el")[0].split("candidatura ")[1]
-            list_received_candidates_group.append(str(candidatura))
-        num_candidatos_final = len(Candidate.objects.all())
-        self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
-         and len(list_received_candidates_group) == len(list_expected_candidates_group)
-          and num_candidatos_inicial == num_candidatos_final)
     
     def csv_validation_provincias_test(self):
         num_candidatos_inicial = len(Candidate.objects.all())
@@ -279,21 +248,48 @@ class VotingTestCase(BaseTestCase):
         num_candidatos_final = len(Candidate.objects.all())
         self.assertTrue(len(lista_comprobacion) == 1 and num_candidatos_inicial == num_candidatos_final)
 
+#TEST DAVID
+    def csv_validation_genres_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-genero.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('La candidatura prueba no cumple un balance 60-40 entre hombres y mujeres')
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 1)
+        self.assertTrue(num_candidatos_inicial == num_candidatos_final)
+
+    def csv_validation_maximum_candidates_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-maximo.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('La candidatura prueba supera el máximo de candidatos permitidos (350)')
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
+
     def csv_validation_presidents_test(self):
-            num_candidatos_inicial = len(Candidate.objects.all())
-            path = str(os.getcwd()) + "/voting/files/candidatos-test-presidents.csv"
-            file = open(path, 'rb')
-            errores_validacion = list(filter(re.compile(r'tiene más de un candidato a presidente')
-            .search, handle_uploaded_file(file)))
-            list_expected_candidates_group = ["MALAGA"]
-            list_received_candidates_group = []
-            for error in errores_validacion:
-                candidatura = error.split(" tiene más")[0].split("candidatura ")[1]
-                list_received_candidates_group.append(str(candidatura))
-            num_candidatos_final = len(Candidate.objects.all())
-            self.assertTrue(set(list_expected_candidates_group).issuperset(list_received_candidates_group)
-            and len(list_received_candidates_group) == len(list_expected_candidates_group)
-            and num_candidatos_inicial == num_candidatos_final)
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-presidents.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('La candidatura prueba tiene más de un candidato a presidente')
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
+    
+#FIN TEST DAVID
 
 class TestSignup(unittest.TestCase):
 

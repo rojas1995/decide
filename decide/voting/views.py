@@ -103,7 +103,7 @@ def voting_edit(request):
         form = NewVotingForm()
     return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form, 'auths':auths})
 
-
+@transaction.atomic
 @csrf_exempt
 def handle_uploaded_file(response):
     rows = response.POST['param'].split("\n")
@@ -116,6 +116,7 @@ def handle_uploaded_file(response):
     maleCount = 0
     femaleCount = 0
     count_presidents = 0
+    candidature_name = response.POST['candidature_name']
 
     for row in rows:
         if row_line != 1:
@@ -183,11 +184,10 @@ def handle_uploaded_file(response):
         validation_errors.append("Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código " + prov) 
 
 
-    #if len(validation_errors) > 0:
-    #   transaction.set_rollback(True)
-    html = ""
     if len(validation_errors) > 0:
-        html = '<div id="errors" style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;">'
+        html = '<div id="errors'
+        html = html + str(candidatureName)
+        html = html +'" style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;">'
         html = html + '<p style="text-align: left; width: 100%; size: 24px !important; font-weight: bold !important;"> La candidatura ' + candidatesGroupName + ' tiene los siguientes errores: </p><ul>'
         for error in validation_errors:
             html = html + '<li style="text-align: left; padding-left: 15px;"> ' + error + '</li>'

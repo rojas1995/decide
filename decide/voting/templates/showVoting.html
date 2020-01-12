@@ -2,108 +2,103 @@
 {% block css %}
 <style>
 
-.d-flex.h-100.p-3.flex-column{
-    width: 80%;
-}
-
-.inner.cover {
-    width: 100%;
-}
-
-.candidatures{
-    float: right;
-    width: 70%;
-}
-
-.data{
-    float: left;
-    width: 30%;
-    color: black;
-    text-align: left;
-}
-
-.data > h3{
-    float:left;
-    width: 100%;
-    text-align: left;
-}
-
-.candidatures > h3{
-    float:left;
-    width: 100%;
-    text-align: left;
-    color: black;
-}
-
-#candidature_table {
-    border: black 1px solid !important;
-    float: left;
-    width: 100%;
-}
-#candidature_table td {
-    border:  solid 1px rgba(0,0,0,0.5) !important;
-    color: black;
-    background-color: white;
-}
-#candidature_table th {
-    border:  solid 1px rgba(0,0,0,0.5) !important;
-    background-color: 	#333333;
-}
-#candidature_table caption {
-    color: black;
-    text-align:center;
-    caption-side: top;
-}
 </style>
 
 {% endblock %}
 
 {% block content %}
-<div>
-    <a href="/voting/votings">Volver a la lista de votaciones</a>
-</div>
 
+<a style="margin-left: 500px; margin-bottom: 50px; margin-top: 50px;" class="btn btn-primary" id="boton_crear_votacion" role="button" href="/voting/votings">Volver a la lista de votaciones</a>
 
-<div class="data">
-    <h3>Name:</h3>
-    <p>{{voting.name}}</p>
-
-    <h3>Description:</h3>
-    {% autoescape off %}
-        {{description_markdown}}
-    {% endautoescape %}
-
-    <h3>Auths:</h3>
-    <ul>
-        {% for auth in voting.auths.all %}
-            <li>
-                {{auth}}
-            </li>
-        {% endfor %}
+<div class="card" style="width: 60%; margin-bottom: 50px;" >
+    <div class="card-header">
+        <h3>Información</h3>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Nombre: {{voting.name}}</li>
+        <li class="list-group-item">
+            Description: 
+            {% autoescape off %}
+                {{description_markdown}}
+            {% endautoescape %}
+        </li>
+        <li class="list-group-item">Auths: 
+            {% for auth in voting.auths.all %}
+                    {{auth}}
+            {% endfor %}
+        </li>
+        <li class="list-group-item">Fecha de Comienzo: {{voting.start_date}}</li>
+        <li class="list-group-item">Fecha de Fin: {{voting.end_date}}</li>
+        <li class="list-group-item">URL customizable: {{voting.custom_url}}</li>
     </ul>
-
-    <h3>Start date selected:</h3>
-    <p>{{voting.start_date_selected}}</p>
-
-    <h3>End date selected:</h3>
-    <p>{{voting.end_date_selected}}</p> 
-
-    <h3>Custom url:</h3>
-    <p>{{voting.custom_url}}</p> 
-
 </div>
-<div class="candidatures">
+
+
+<div class="card"  style="width: 60%;">
+
+    <div class="card-header">
+        <h3>Candidaturas</h3>
+    </div>
+
+    <div class="card-body">
+
+        <div class="card" style="width: 100%;">
+            {% for candidature in voting.candidatures.all %}
+            <div class="card-header" style="float: left;">
+                <h5 style="float: left;">Nombre: {{candidature.name}}</h5>
+                <input style="float: right; width: 25px;" type="image" id="candidature-hidden-button{{candidature.id}}" src="https://image.flaticon.com/icons/png/512/130/130907.png" onclick="show({{candidature.id}})"/>
+                <p style="float: right; margin-right: 20px;">Mostrar candidatos</p>
+            </div>
+            <div class="card-body" style="display: none;" id="candidature-table{{candidature.id}}">
+                <table class="table table-striped" >
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Origen</th>
+                        <th>Origen Actual</th>
+                        <th>Primarias</th>
+                        <th>Sexo</th>
+                    </tr>
+                    {% for key, value in candidates.items %}
+                        {% if key == candidature.id %}
+                            {% for candidate in value %}
+                                <tr>
+                                    <td>{{candidate.name}}</td>
+                                    <td>{{candidate.type}}</td>
+                                    <td>{{candidate.born_area}}</td>
+                                    <td>{{candidate.current_area}}</td>
+                                    {% if candidate.primaries %}
+                                    <td>SI</td>
+                                    {% else %}
+                                    <td>NO</td>
+                                    {% endif %}
+                                    <td>{{candidate.sex}}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            {% endfor %} 
+        </div>
+    </div>
+</div>
+<!-- 
+<div>
     <h3>Candidatures:</h3>
     {% for candidature in voting.candidatures.all %}
-        <table id="candidature_table">
-            <caption>{{candidature.name}}</caption>
+        <div>
+            <h4>{{candidature.name}}</h4>
+            <input type="image" id="candidature-hidden-button{{candidature.id}}" style="width: 30px;" src="https://image.flaticon.com/icons/svg/60/60995.svg" onclick="hide({{candidature.id}})"/>
+        </div>
+        <table class="table table-striped" id="candidature-table{{candidature.id}}">
             <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Born area</th>
-                <th>Current area</th>
-                <th>Primaries</th>
-                <th>Sex</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Origen</th>
+                <th>Origen Actual</th>
+                <th>Primarias</th>
+                <th>Sexo</th>
             </tr>
             {% for key, value in candidates.items %}
                 {% if key == candidature.id %}
@@ -114,7 +109,7 @@
                             <td>{{candidate.born_area}}</td>
                             <td>{{candidate.current_area}}</td>
                             {% if candidate.primaries %}
-                            <td>YES</td>
+                            <td>SI</td>
                             {% else %}
                             <td>NO</td>
                             {% endif %}
@@ -126,7 +121,28 @@
         </table>
         <br>
     {% endfor %} 
-</div>
+</div> -->
+
+<script>
+
+function hide(idCandidature){
+    document.getElementById("candidature-table" + idCandidature).style.display = "none";
+    document.getElementById("candidature-hidden-button" + idCandidature).onclick = function() {
+            show(idCandidature);
+        };
+    document.getElementById("candidature-hidden-button" + idCandidature).src = "https://image.flaticon.com/icons/png/512/130/130907.png";
+}
+
+function show(idCandidature){
+    document.getElementById("candidature-table" + idCandidature).style.display = "block";
+    document.getElementById("candidature-hidden-button" + idCandidature).onclick = function() {
+            hide(idCandidature);
+        };
+    document.getElementById("candidature-hidden-button" + idCandidature).src = "https://image.flaticon.com/icons/png/512/130/130906.png";
+}
+
+
+</script>
 
 {% endblock %}
 

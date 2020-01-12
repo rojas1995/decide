@@ -29,7 +29,7 @@
 </script>
 
 
-<h1>Lista de votaciones</h1>
+<h1 style="margin-bottom: 50px;" >Lista de votaciones</h1>
 
 {% if errors != 0 %}
 
@@ -44,19 +44,25 @@
 
   <div class="actions">
 
-    <label>Action: 
-        <select name="action_multiple" >
+    <div class="input-group mb-3" style="width: 40%; float: left;">
+      <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">Acciones</label>
+      </div>
+
+        <select class="custom-select" name="action_multiple" >
           <option value="" selected>---------</option>
-          <option value="delete">Delete selected votings</option>
-          <option value="start">Start</option>
-          <option value="stop">Stop</option>
-          <option value="tally">Tally</option>
-        </select>
-    </label>
+          <option value="delete">Eliminar</option>
+          <option value="start">Empezar</option>
+          <option value="stop">Parar</option>
+          <option value="tally" disabled>Hacer recuento</option>
+        </select> 
+        <div class="input-group-append">
+            <input class="btn btn-outline-secondary" role="button"  type="submit" form="multiple-selection" value="Go"/>
+          </div>    
+    </div>
 
-    <input type="submit" form="multiple-selection" value="Go"/>
 
-    <a href="../edit">Crear votación</a>
+    <a class="btn btn-primary" id="boton_crear_votacion" role="button" href="../edit">Crear votación</a>
 
       
 
@@ -65,7 +71,7 @@
   <table>
 
       <tr>
-        <th scope="col">
+        <th scope="col" class="titulo">
             <div class="text"><span><input type="checkbox" id="selector" onclick="select_all()"/></span></div>
         </th>
 
@@ -74,18 +80,25 @@
         </th>
 
         <th scope="col" class="titulo">
-          <div class="text"><a href="?o=1">Comienzo</a></div>
+          <div class="text"><a href="?o=2">Comienzo</a></div>
         </th>
 
         <th scope="col" class="titulo">
-          <div class="text"><a href="?o=1">Finalización</a></div>
+          <div class="text"><a href="?o=3">Finalización</a></div>
         </th>
+
+        <th scope="col" class="titulo"></th>
+        <th scope="col" class="titulo"></th>
+        <th scope="col" class="titulo"></th>
+        <th scope="col" class="titulo"></th>
+        <th scope="col" class="titulo"></th>
+
       </tr>
 
     {% for row in votings %}
 
         <tr>
-            <td>
+            <td class="fil">
               <input type="checkbox" onclick="grab_selected()" name="voting_id[]" value="{{row.id}}"/>
             </td>
 
@@ -94,11 +107,23 @@
             </th>
 
             <th class="fil">
-              <p>{{row.start_date}}</p>
+              {% if row.start_date == null %}  
+                <p>--</p>
+              {% endif %}
+
+              {% if row.start_date != null %}  
+                <p>{{row.start_date}}</p>
+              {% endif %}
             </th>
 
             <th class="fil">
-              <p>{{row.end_date}}</p>
+                {% if row.end_date == null %}  
+                <p>--</p>
+              {% endif %}
+
+              {% if row.end_date != null %}  
+                <p>{{row.end_date}}</p>
+              {% endif %}
             </th>
 
             <form></form>
@@ -108,7 +133,7 @@
                 {% csrf_token %}
                 <input name="action" type="hidden" value="start"/>
                 <input name="voting_id" type="hidden" value="{{row.id}}"/>
-                <input type="submit" value="Empezar"/>
+                <input type="image" src="https://image.flaticon.com/icons/svg/483/483054.svg" value="Empezar" alt="Empezar votación" title="Empezar votación"/>
               </form>
             </td>
 
@@ -117,16 +142,7 @@
                   {% csrf_token %}
                   <input name="action" type="hidden" value="stop"/>
                   <input name="voting_id" type="hidden" value="{{row.id}}"/>
-                  <input type="submit" value="Parar"/>
-                </form>
-            </td>
-
-            <td class="fil">
-                <form method="post" action="update/">
-                  {% csrf_token %}
-                  <input name="action" type="hidden" value="tally"/>
-                  <input name="voting_id" type="hidden" value="{{row.id}}"/>
-                  <input type="submit" value="Contar"/>
+                  <input type="image" src="https://image.flaticon.com/icons/svg/2404/2404640.svg" value="Parar" alt="Parar votación" title="Parar votación"/>
                 </form>
             </td>
 
@@ -135,16 +151,26 @@
                   {% csrf_token %}
                   <input name="action" type="hidden" value="delete"/>
                   <input name="voting_id" type="hidden" value="{{row.id}}"/>
-                  <input type="submit" value="Eliminar"/>
+                  <input type="image"  src="https://image.flaticon.com/icons/svg/1214/1214594.svg" value="Eliminar" alt="Eliminar votación" title="Eliminar votación"/>
                 </form>
             </td>
             
             <td class="fil">
               <form method="get" action="../copy/{{row.id}}">
                 {% csrf_token %}
-                <input type="submit" value="Copiar"/>
+                <input type="image" src="https://image.flaticon.com/icons/svg/1477/1477084.svg" value="Copiar" alt="Copiar votación" title="Copiar votación"/>
               </form>
             </td>
+
+            <td class="fil">
+              <form method="post" action="update/">
+                {% csrf_token %}
+                <input name="action" type="hidden" value="tally"/>
+                <input name="voting_id" type="hidden" value="{{row.id}}"/>
+                <input id="hola" disabled type="image" src="https://image.flaticon.com/icons/svg/1456/1456099.svg" value="Recuento" alt="Hacer recuento" title="Hacer recuento"/>
+              </form>
+            </td>
+
           </tr>
       {% endfor %}
 
@@ -176,8 +202,28 @@
     }
 
     .fil{
+        padding-bottom: 10px;
+        padding-top: 10px;
+        text-align: center;
+    }
+    .fil > form > input{
+        width: 30px; 
+        filter: opacity(45%);
+    }
+
+    .fil > form > input:hover{
+        filter: opacity(65%);
+    }
+
+    .titulo{
         padding-bottom: 5px;
         padding-top: 5px;
+        text-align: center;
+        border-bottom: 1px solid lightgray;
+    }
+
+    #boton_crear_votacion{
+        float: right;
     }
 
     </style>

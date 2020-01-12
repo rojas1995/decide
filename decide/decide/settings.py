@@ -82,11 +82,13 @@ MODULES = [
     'scheduler',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -104,6 +106,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
@@ -147,10 +150,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/2.0/topics/i18n/
 
 from django.utils.translation import ugettext_lazy as gettext
 LANGUAGE_CODE = 'es'
@@ -199,7 +198,9 @@ if os.path.exists("config.jsonnet"):
         vars()[k] = v
 
 INSTALLED_APPS = INSTALLED_APPS + MODULES
+
 django_heroku.settings(locals())
 
 # Planificador de tareas. Mirar en el modulo schedule y definir los trabajos para que realice las acciones
 updater.start()
+
