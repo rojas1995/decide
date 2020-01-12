@@ -25,7 +25,7 @@
             <div class="form-group m-2">
                 <legend>Añadir Censo a la Votacion</legend>
                 <input type="hidden" name="tipo" value="votacion">
-                <input type="hidden" name="votacion_id" value="vot_id.0">
+                <input type="hidden" name="votacion_id" value="{{vot_id}}">
                 <label for="votaciones">Votaciones</label>
                 <select class="form-control" id="votaciones" name="id">
                 {% for votacion in votaciones %}

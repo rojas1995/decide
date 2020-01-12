@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
 from rest_framework.status import (
     HTTP_201_CREATED as ST_201,
     HTTP_204_NO_CONTENT as ST_204,
@@ -65,7 +66,7 @@ class CensusDetail(generics.RetrieveDestroyAPIView):
             return Response('Invalid voter', status=ST_401)
         return Response('Valid voter')
 
-
+@staff_member_required
 def listaVotantes(request, voting_id):
     census = list(Census.objects.filter(voting_id=voting_id))
     datos = []
@@ -76,7 +77,7 @@ def listaVotantes(request, voting_id):
         datos.append(tupla)
     return render(request, 'tabla.html', {'datos': datos, 'voting_id': voting_id, 'STATIC_URL': settings.STATIC_URL})
 
-
+@staff_member_required
 def listaCensos(request):
     census = list(Census.objects.all())
     datos = []
@@ -96,7 +97,7 @@ def listaCensos(request):
 
     return render(request, 'tabla.html', {'datos': datos, 'dist': dist, 'STATIC_URL': settings.STATIC_URL})
 
-
+@staff_member_required
 def export_csv(request):
     voting_id = request.GET.get('voting_id')
     if voting_id is '':
@@ -122,7 +123,7 @@ def export_csv(request):
         sheet = ExportToCsv(datos)
     return excel.make_response(sheet, "csv", file_name="census_data.csv")
 
-
+@staff_member_required
 def ExportToCsv(datos):
     export = []
     export.append([
@@ -144,7 +145,7 @@ def ExportToCsv(datos):
 
     return sheet
 
-
+@staff_member_required
 def export_excel(request):
     voting_id = request.GET.get('voting_id')
     if voting_id is '':
@@ -166,7 +167,7 @@ def export_excel(request):
 
     return excel.make_response(template, "xlsx", file_name="census_data.xlsx")
 
-
+@staff_member_required
 def export_to_xlsx(data):
     export = [[
         'Nombre',
@@ -186,7 +187,7 @@ def export_to_xlsx(data):
 
     return template
 
-
+@staff_member_required
 def addCensus(request):
     id = request.POST.get("id")
     votacion_id = request.POST.get("votacion_id")
@@ -194,7 +195,10 @@ def addCensus(request):
     tipo = request.POST.get("tipo")
     if tipo == "usuario":
         usuario = get_object_or_404(User, pk=id)
-        Census.objects.create(voter_id=usuario.pk, voting_id=votacion.pk)
+        try:
+            Census.objects.create(voter_id=usuario.pk, voting_id=votacion.pk)
+        except:
+            pass
 
     elif tipo == "votacion":
         votacion2 = get_object_or_404(Voting, pk=id)
@@ -219,7 +223,7 @@ def addCensus(request):
                   {'datos': datos, 'usuarios': usuarios, 'votaciones': votaciones, 'vot_id': votacion_id,
                    'STATIC_URL': settings.STATIC_URL})
 
-
+@staff_member_required
 def exportToPdf(request):
     if request.GET.get('voting_id') is not None:
         voting_id = request.GET.get('voting_id')
@@ -245,7 +249,7 @@ def exportToPdf(request):
     response['Content-Disposition'] = 'attachment; filename="census_data.pdf"'
     return response
 
-
+@staff_member_required
 def generatePdf(datos):
     buff = io.BytesIO()
     doc = SimpleDocTemplate(buff, pagesize=A4, rightMargin=50, leftMargin=50, topMargin=60, bottomMargin=18)
@@ -274,7 +278,7 @@ def generatePdf(datos):
     response['Content-Disposition'] = 'attachment; filename="census_data.pdf"'
     return buff
 
-
+@staff_member_required
 def eliminaCenso(request, census_id):
     census = get_object_or_404(Census, pk=census_id)
     census.delete()
