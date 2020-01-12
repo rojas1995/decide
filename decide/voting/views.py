@@ -69,7 +69,15 @@ def voting_edit(request):
             voting = Voting(name=votingName, desc=votingDescription, custom_url=custom_url, start_date_selected=start_date_selected, end_date_selected=end_date_selected)
                     #candidatures=request.data.get('candidatures'))
                     #question=question)
-            voting.save()
+            
+            if custom_url is None:
+                voting.save()
+            else:
+                try:
+                    encuentraVotacionConCustomURL = Voting.objects.get(custom_url=custom_url)
+                    return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form, 'auths':auths, 'mensaje':'Esta url ya existe, elija otra', 'voting':voting})
+                except Exception:    
+                    voting.save()
 
             candidatures_db = []
             for candidature in candidatures:

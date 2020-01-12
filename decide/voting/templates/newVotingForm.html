@@ -208,6 +208,9 @@
                 <span class="input-group-text" id="inputGroup-sizing-default">URL personalizada</span>
             </div>
             <input type="text" id="custom_url" name="custom_url" value="{{voting.custom_url}}" class="form-control">
+            {% if mensaje is not None %}
+                <div class="alert alert-danger"><p>{{mensaje}}</p></div>
+            {% endif %}
         </div>
 
         <div style="text-align: center;">
@@ -423,8 +426,11 @@
         var auth_name = document.getElementById('auth_name').value;
         var base_url = document.getElementById('base_url').value;
         var auth_me = document.getElementById('auth_me').checked;
-
         var me = auth_me?'True':'False';
+
+        if(!(base_url.startsWith('http://') || base_url.startsWith('https://'))){
+            base_url = 'http://' + base_url;
+        }
 
         $.ajax({type: "POST",
                 url: "../create_auth/",
