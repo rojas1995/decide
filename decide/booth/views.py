@@ -203,6 +203,7 @@ class GetVoting(APIView):
     def post(self, request):
         vid = request.data.get('voting', '')
         r = mods.get('voting', params={'id': vid})
+        # mods.query('voting', params={'id': vid}, method='get', baseurl='http://' + request.META['HTTP_HOST'])
         for k, v in r[0]['pub_key'].items():
             r[0]['pub_key'][k] = str(v)
         return Response(r[0], status=HTTP_200_OK)
