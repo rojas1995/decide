@@ -401,6 +401,7 @@ def getVoting(request):
     data = JSONRenderer().render(voting_json.data)
     return HttpResponse(data)
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 @csrf_exempt
 def create_auth(request):
     name = request.POST["auth_name"]

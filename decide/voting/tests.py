@@ -15,7 +15,7 @@ from census.models import Census
 from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
-from voting.models import Voting, Question, QuestionOption, Candidate
+from voting.models import Voting, Candidate
 from voting.views import handle_uploaded_file
 import unittest
 from selenium import webdriver
@@ -290,6 +290,75 @@ class VotingTestCase(BaseTestCase):
         self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
     
 #FIN TEST DAVID
+
+
+##TEST MANU
+    def create_voting_gobern_test(self):
+        print("Creando Votación Congreso - pass")
+        v = Voting(name="Votación Gobierno 2020", desc="Votación básica")
+        v.save()
+
+        self.assertEqual(v.name != "", True)
+
+    def create_voting_gobern(self):
+        print("Creando Votación Congreso - pass")
+        v = Voting(name="Votación Gobierno 2020", desc="Votación básica")
+        v.save()
+
+        return v
+    
+    def create_voting_gobern_API_test(self):
+        print("Creando Votacion Congreso - API - pass")
+        data = {'name': 'Votación Congreso 2020',
+                'description': 'Votacion básica API'
+                }
+        response = self.client.post('/voting/edit/', data, format='json')
+        self.assertEqual(response.status_code, 302)
+
+    def create_voting_FULL_gobern_API_test(self):
+        print("Creando Votacion Completa - API - pass")
+        auths = Auth.objects.all()
+        candidatures = CandidatesGroup.objects.all()
+        data = {'name': 'Votación Congreso 2020',
+                'description': 'Votacion básica API',
+                'start_date_selected': '',
+                'end_date_selected': '',
+                'custom_url': '',
+                'candidatures': candidatures,
+                'auths': auths,
+                }
+        response = self.client.post('/voting/edit/', data, format='json')
+        self.assertEqual(response.status_code, 302)
+
+    def create_auths_API_test(self):
+        print("Creando Auth para Votacion - pass")
+        data = {
+            'auth_name': 'Auths prueba',
+            'base_url': 'https://urlPrueba.co/token',
+            'auth_me': True
+        }
+        response = self.client.post('/voting/create_auth/', data, format='json')
+        self.assertEqual(response.status_code, 302)
+
+    def create_auths_API_fail_test(self):
+        print("Creando Auth para Votacion - fail")
+        data = {
+            'auth_name': '',
+            'base_url': '',
+            'auth_me': ''
+        }
+        response = self.client.post('/voting/create_auth/', data, format='json')
+        self.assertEqual(response.status_code, 302)
+
+    def get_voting_json_API_test(self):
+        print("Seleccionando Votacion - API")
+        v = self.create_voting_gobern()
+        print(v)
+        id_voting = v.pk
+
+        response = self.client.get('/voting/view?id='+str(id_voting))
+        self.assertEqual(response.status_code, 302)
+
 
 class TestSignup(unittest.TestCase):
 
