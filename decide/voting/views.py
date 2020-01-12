@@ -69,7 +69,15 @@ def voting_edit(request):
             voting = Voting(name=votingName, desc=votingDescription, custom_url=custom_url, start_date_selected=start_date_selected, end_date_selected=end_date_selected)
                     #candidatures=request.data.get('candidatures'))
                     #question=question)
-            voting.save()
+            
+            if custom_url is None:
+                voting.save()
+            else:
+                try:
+                    encuentraVotacionConCustomURL = Voting.objects.get(custom_url=custom_url)
+                    return render(request, dirspot+'/voting/templates/newVotingForm.html', {'form': form, 'auths':auths, 'mensaje':'Esta url ya existe, elija otra', 'voting':voting})
+                except Exception:    
+                    voting.save()
 
             candidatures_db = []
             for candidature in candidatures:
@@ -185,8 +193,12 @@ def handle_uploaded_file(response):
 
 
     if len(validation_errors) > 0:
+        transaction.set_rollback(True)
+
+    html = ""
+    if len(validation_errors) > 0:
         html = '<div id="errors'
-        html = html + str(candidatureName)
+        html = html + str(candidature_name)
         html = html +'" style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;">'
         html = html + '<p style="text-align: left; width: 100%; size: 24px !important; font-weight: bold !important;"> La candidatura ' + candidatesGroupName + ' tiene los siguientes errores: </p><ul>'
         for error in validation_errors:
@@ -389,6 +401,7 @@ class VotingUpdate(generics.RetrieveUpdateDestroyAPIView):
             st = status.HTTP_400_BAD_REQUEST
         return Response(msg, status=st)
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def getVoting(request):
     id_voting = request.GET['id']
     voting = get_object_or_404(Voting, pk=id_voting)
@@ -397,6 +410,7 @@ def getVoting(request):
     data = JSONRenderer().render(voting_json.data)
     return HttpResponse(data)
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 @csrf_exempt
 def create_auth(request):
     name = request.POST["auth_name"]
@@ -413,9 +427,13 @@ def create_auth(request):
 
     auths = Auth.objects.all()
 
-    return HttpResponse({'auths':auths})
+    if Auth.objects.get(url=baseurl):
+        st = status.HTTP_200_OK
+    else:
+        st = status.HTTP_500_INTERNAL_SERVER_ERROR
 
-@user_passes_test(lambda user: user.is_superuser, login_url="/")
+    return HttpResponse({'auths':auths}, status=st)
+
 def copy_voting(request, voting_id):
     voting = get_object_or_404(Voting, pk=voting_id)
     votingName = voting.name

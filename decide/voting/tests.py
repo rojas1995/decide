@@ -15,10 +15,11 @@ from census.models import Census
 from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
-from voting.models import Voting, Question, QuestionOption, Candidate
-from voting.views import handle_uploaded_file
+from voting.models import Voting, Candidate, CandidatesGroup
+from voting.views import handle_uploaded_file, copy_voting
 import unittest
 from selenium import webdriver
+from django.urls import reverse
 
 class VotingTestCase(BaseTestCase):
 
@@ -225,6 +226,25 @@ class VotingTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 'Voting already tallied')
 
+    def create_candidateGroup(self):
+        v = CandidatesGroup(name='test candidatesGroup')
+        v.save()
+        return v
+
+    def create_candidate(self):
+        c = Candidate(name='candidate', type='PRESIDENCIA', born_area='SE', current_area='SE', primaries=False, sex='HOMBRE', candidatesGroup=self.create_candidateGroup())
+        c.save()
+        return c
+
+    def test_create_candidateGroup(self):
+        self.login()
+        v = self.create_candidateGroup()
+        self.assertIsNotNone(v, 'Creating CandidatesGroup')
+
+    def test_create_candidate(self):
+        self.login()
+        c = self.create_candidate()
+        self.assertIsNotNone(c, 'Creating Candidate')
     def csv_validation_primaries_test(self):
         num_candidatos_inicial = len(Candidate.objects.all())
 
@@ -288,8 +308,195 @@ class VotingTestCase(BaseTestCase):
         count_errors = http_content.count('La candidatura prueba tiene más de un candidato a presidente')
         num_candidatos_final = len(Candidate.objects.all())
         self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
+
+    def csv_correct_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/podemos.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('La candidatura prueba tiene los siguientes errores:')
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 0 and (num_candidatos_inicial + 105) == num_candidatos_final)
     
+    def voting_correct_copy_test(self):
+        inicial_voting = Voting(name="votacion creada", desc="nueva votacion")
+        candidature = CandidatesGroup(name="candidatura1")
+        auth = Auth(name="auth1", url="http://auth1.com")
+        candidature.save()
+        auth.save()
+        candidatures = []
+        auths = []
+        candidatures.append(candidature)
+        auths.append(auth)
+        inicial_voting.save()
+        inicial_voting.candidatures.set(candidatures)
+        inicial_voting.auths.set(auths)
+        inicial_voting.save()
+        num_voting_inicial = len(Voting.objects.all())
+        voting_id = Voting.objects.get(name="votacion creada").id
+        c = Client()
+        response = c.get(reverse('copy_voting', kwargs={'voting_id':voting_id}), {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response.user = self.login()
+        num_voting_final = len(Voting.objects.all())
+        create_votings = Voting.objects.filter(name="votacion creada", desc="nueva votacion", candidatures__in=candidatures, auths__in=auths)
+        self.assertTrue(num_voting_inicial + 1 == num_voting_final and len(create_votings) == 2)   
+
+    def voting_incorrect_copy_test(self):
+        num_voting_inicial = len(Voting.objects.all())
+        voting_id = 5
+        c = Client()
+        response = c.get(reverse('copy_voting', kwargs={'voting_id':voting_id}), {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response.user = self.login()
+        num_voting_final = len(Voting.objects.all())
+        print(response.status_code)
+        self.assertTrue(num_voting_inicial == num_voting_final)
+        self.assertEqual(response.status_code, 404)     
+
 #FIN TEST DAVID
+
+
+##TEST MANU
+    def create_voting_gobern_test(self):
+        print("Creando Votación Congreso - pass")
+        v = Voting(name="Votación Gobierno 2020", desc="Votación básica")
+        v.save()
+
+        self.assertEqual(v.pk != 0, True)
+
+    def create_voting_gobern(self):
+        print("Creando Votación Congreso - pass")
+        v = Voting(name="Votación Gobierno 2020", desc="Votación básica")
+        v.save()
+
+        return v
+    
+    def create_voting_gobern_API_test(self):
+        print("Creando Votacion Congreso - API - pass")
+        self.login()
+        data = {'name': 'voting pass',
+                'description': 'Votacion básica API'
+                }
+        response = self.client.post('/voting/edit/', data, format='json')
+
+        self.assertEqual(response.status_code, 302)
+
+    def create_voting_FULL_gobern_API_test(self):
+        print("Creando Votacion Completa - API - pass")
+        self.login()
+        auths = Auth.objects.all()
+        candidatures = CandidatesGroup.objects.all()
+        data = {'name': 'voting pass',
+                'description': 'Votacion básica API',
+                'start_date_selected': '',
+                'end_date_selected': '',
+                'custom_url': '',
+                'candidatures': candidatures,
+                'auths': auths,
+                }
+        response = self.client.post('/voting/edit/', data, format='json')
+        
+        self.assertEqual(response.status_code, 302)
+
+    def create_auths_API_test(self):
+        print("Creando Auth para Votacion - pass")
+        self.login()
+        data = {
+            'auth_name': 'Auths prueba',
+            'base_url': 'https://urlPrueba.co/token',
+            'auth_me': True
+        }
+        response = self.client.post('/voting/create_auth/', data, format='json')
+        
+        self.assertEqual(response.status_code, 302)
+
+    def create_auths_API_fail_test(self):
+        print("Creando Auth para Votacion - fail")
+        self.login()
+        data = {
+            'auth_name': '',
+            'base_url': '',
+            'auth_me': ''
+        }
+        response = self.client.post('/voting/create_auth/', data, format='json')
+        
+        self.assertEqual(response.status_code, 302)
+
+    def get_voting_json_API_test(self):
+        print("Seleccionando Votacion - API")
+        v = self.create_voting_gobern()
+        print(v)
+        id_voting = v.pk
+
+        response = self.client.get('/voting/view?id='+str(id_voting))
+        self.assertEqual(response.status_code, 302)
+
+###FIN TEST MANU
+
+
+         #TEST ANTONI0
+        def test_update_voting_start(self):        
+            voting = self.create_voting() 
+
+            #Votacion empezada correctamente
+            data = {'action': 'start', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json')   
+            self.assertEqual(response.status_code, 302)
+
+
+        def test_update_voting_stop(self):        
+            voting = self.create_voting() 
+
+            #Votacion parada correctamente
+            data = {'action': 'start', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json') 
+            data = {'action': 'stop', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json') 
+            self.assertEqual(response.status_code, 302) 
+
+
+        def test_update_voting_delete(self):        
+            voting = self.create_voting()  
+
+            #Votacion eliminada correctamente
+            data = {'action': 'delete', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update/', data, format='json')
+            self.assertEqual(response.status_code, 302)
+
+
+        def test_update_multiple_voting_start(self):        
+            voting = self.create_voting() 
+
+            #Votacion empezada correctamente
+            data = {'action_multiple': 'start', 'array_voting_id[]': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json')   
+            self.assertEqual(response.status_code, 302)
+
+
+        def test_update_multiple_voting_stop(self):        
+            voting = self.create_voting() 
+
+            #Votacion parada correctamente
+            data = {'action_multiple': 'start', 'array_voting_id[]': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json') 
+            data = {'action_multiple': 'stop', 'voting_id': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json') 
+            self.assertEqual(response.status_code, 302) 
+
+
+
+        def test_update_multiple_voting_delete(self):        
+            voting = self.create_voting()  
+
+            #Votacion eliminada correctamente
+            data = {'action': 'delete', 'array_voting_id[]': voting.pk}        
+            response = self.client.post('/voting/votings/update_selection/', data, format='json')
+            self.assertEqual(response.status_code, 302)
+
+        #################################################
 
 class TestSignup(unittest.TestCase):
 
