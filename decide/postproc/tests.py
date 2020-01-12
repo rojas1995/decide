@@ -2309,34 +2309,34 @@ class PostProcTestCase(APITestCase):
         self.assertEqual(values, expected_result)
 
 
-        def test_simple10(self):
-            data = {
-                'type': 'SIMPLE',
-                'seats': 43, #23.255
-                'options': [
-                    { 'option': 'Option 1', 'number': 1, 'votes': 200 }, #8,60 +1
-                    { 'option': 'Option 2', 'number': 2, 'votes': 50 }, #2.15
-                    { 'option': 'Option 3', 'number': 3, 'votes': 500 }, #21,5
-                    { 'option': 'Option 4', 'number': 4, 'votes': 100 }, #4,3
-                    { 'option': 'Option 5', 'number': 5, 'votes': 60 }, # 2,58 +1
-                    { 'option': 'Option 6', 'number': 6, 'votes': 90 }, # 3,87 +1
-                ]
-            }
-
-            expected_result = [
-                { 'option': 'Option 3', 'number': 3, 'votes': 500, 'postproc': 21 },
-                { 'option': 'Option 1', 'number': 1, 'votes': 200, 'postproc': 9 },
-                { 'option': 'Option 4', 'number': 4, 'votes': 100, 'postproc': 4 },
-                { 'option': 'Option 6', 'number': 6, 'votes': 90, 'postproc': 4 },
-                { 'option': 'Option 5', 'number': 5, 'votes': 60, 'postproc': 3 },
-                { 'option': 'Option 2', 'number': 2, 'votes': 50, 'postproc': 2 },
+    def test_simple10(self):
+        data = {
+            'type': 'SIMPLE',
+            'seats': 43, #23.255
+            'options': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 200 }, #8,60 +1
+                { 'option': 'Option 2', 'number': 2, 'votes': 50 }, #2.15
+                { 'option': 'Option 3', 'number': 3, 'votes': 500 }, #21,5
+                { 'option': 'Option 4', 'number': 4, 'votes': 100 }, #4,3
+                { 'option': 'Option 5', 'number': 5, 'votes': 60 }, # 2,58 +1
+                { 'option': 'Option 6', 'number': 6, 'votes': 90 }, # 3,87 +1
             ]
+        }
 
-            response = self.client.post('/postproc/', data, format='json')
-            self.assertEqual(response.status_code, 200)
+        expected_result = [
+            { 'option': 'Option 3', 'number': 3, 'votes': 500, 'postproc': 21 },
+            { 'option': 'Option 1', 'number': 1, 'votes': 200, 'postproc': 9 },
+            { 'option': 'Option 4', 'number': 4, 'votes': 100, 'postproc': 4 },
+            { 'option': 'Option 6', 'number': 6, 'votes': 90, 'postproc': 4 },
+            { 'option': 'Option 5', 'number': 5, 'votes': 60, 'postproc': 3 },
+            { 'option': 'Option 2', 'number': 2, 'votes': 50, 'postproc': 2 },
+        ]
 
-            values = response.json()
-            self.assertEqual(values, expected_result)
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
 
     def test_simple11(self):
         data = {
@@ -2367,6 +2367,273 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
+
+    def test_dhondt_sin_paridad2(self):
+        data = {
+            'type': 'DHONDTSP',
+            'seats': 2,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 50 , 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ] },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 6', 'number': 6, 'votes': 170, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+            ]
+        }
+        expected_result = [{ 'option': 'Partido 6', 'number': 6, 'votes': 170, 'postproc': 2, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 
+                'paridad': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ]
+                },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 56, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]},
+                { 'option': 'Partido 1', 'number': 1, 'votes': 50, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]},
+                { 'option': 'Partido 3', 'number': 3, 'votes': 34, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]},
+                { 'option': 'Partido 4', 'number': 4, 'votes': 25, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]},
+                { 'option': 'Partido 2', 'number': 2, 'votes': 10, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]}
+            ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+
+    def test_dhondt_sin_paridad3(self):
+        data = {
+            'type': 'DHONDTSP',
+            'seats': 21,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 8000 , 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 2', 'number': 2, 'votes': 4000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 3', 'number': 3, 'votes': 6000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 4', 'number': 4, 'votes': 4800, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ] },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 12000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 6', 'number': 6, 'votes': 24000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ,{'sexo':'hombre','id':'7'}
+                ,{'sexo':'mujer','id':'8'}
+                ,{'sexo':'hombre','id':'9'}
+                ,{'sexo':'mujer','id':'10'}
+                ]},
+            ]
+        }
+        expected_result = [{ 'option': 'Partido 6', 'number': 6, 'votes': 24000, 'postproc': 10, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ,{'sexo':'hombre','id':'7'}
+                ,{'sexo':'mujer','id':'8'}
+                ,{'sexo':'hombre','id':'9'}
+                ,{'sexo':'mujer','id':'10'}
+                ], 
+                'paridad': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ,{'sexo':'hombre','id':'7'}
+                ,{'sexo':'mujer','id':'8'}
+                ,{'sexo':'hombre','id':'9'}
+                ,{'sexo':'mujer','id':'10'}
+                ]
+                },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 12000, 'postproc': 4, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}    
+                ]},
+                { 'option': 'Partido 1', 'number': 1, 'votes': 8000, 'postproc': 3, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}    
+                ]},
+                { 'option': 'Partido 3', 'number': 3, 'votes': 6000, 'postproc': 2, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}    
+                ]},
+                { 'option': 'Partido 4', 'number': 4, 'votes': 4800, 'postproc': 1, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ]},
+                { 'option': 'Partido 2', 'number': 2, 'votes': 4000, 'postproc': 1, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ]}
+            ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+
     def test_simple12(self):
         data = {
             'type': 'SIMPLE',
@@ -2395,4 +2662,140 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
-        
+
+
+    def test_dhondt_sin_paridad4(self):
+        data = {
+            'type': 'DHONDTSP',
+            'seats': 12,
+            'options': [
+                { 'option': 'Partido 1', 'number': 1, 'votes': 3000 , 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 2', 'number': 2, 'votes': 500, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 3', 'number': 3, 'votes': 1000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 4', 'number': 4, 'votes': 500, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ] },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 6000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]},
+                { 'option': 'Partido 6', 'number': 6, 'votes': 10000, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ,{'sexo':'hombre','id':'7'}
+                ,{'sexo':'mujer','id':'8'}
+                ,{'sexo':'hombre','id':'9'}
+                ,{'sexo':'mujer','id':'10'}
+                ]},
+            ]
+        }
+        expected_result = [{ 'option': 'Partido 6', 'number': 6, 'votes': 10000, 'postproc': 6, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ,{'sexo':'hombre','id':'7'}
+                ,{'sexo':'mujer','id':'8'}
+                ,{'sexo':'hombre','id':'9'}
+                ,{'sexo':'mujer','id':'10'}
+                ], 
+                'paridad': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ]
+                },
+                { 'option': 'Partido 5', 'number': 5, 'votes': 6000, 'postproc': 4, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}    
+                ]},
+                { 'option': 'Partido 1', 'number': 1, 'votes': 3000, 'postproc': 2, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}   
+                ]},
+                { 'option': 'Partido 3', 'number': 3, 'votes': 1000, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]},
+                { 'option': 'Partido 2', 'number': 2, 'votes': 500, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]},
+                { 'option': 'Partido 4', 'number': 4, 'votes': 500, 'postproc': 0, 'candidatos': [
+                {'sexo':'hombre','id':'1'}
+                ,{'sexo':'mujer','id':'2'}
+                ,{'sexo':'hombre','id':'3'}
+                ,{'sexo':'mujer','id':'4'}
+                ,{'sexo':'hombre','id':'5'}
+                ,{'sexo':'mujer','id':'6'}
+                ], 'paridad':[]}
+            ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
