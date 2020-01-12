@@ -12,5 +12,5 @@ urlpatterns = [
     path('list/', votinglist),
     path('profile/', PageView.profile),
     path('getvoting/', GetVoting.as_view()),
-    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^i18n/', include('django.conf.urls.i18n'))
 ]

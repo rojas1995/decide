@@ -189,10 +189,16 @@ class PageView(TemplateView):
         first_name = request.user.first_name
         last_name = request.user.last_name
         email = request.user.email
-        provincia = profile.objects.get(user=user).provincia
-        edad = profile.objects.get(user=user).edad
-        municipio = profile.objects.get(user=user).municipio
-        sexo = profile.objects.get(user=user).sexo
+        if profile.objects.filter(user=user).exists():
+            provincia = profile.objects.get(user=user).provincia
+            edad = profile.objects.get(user=user).edad
+            municipio = profile.objects.get(user=user).municipio
+            sexo = profile.objects.get(user=user).sexo
+        else:
+            provincia = ''
+            edad = ''
+            municipio = ''
+            sexo = ''
 
         errors = []
         form = None
@@ -228,6 +234,7 @@ class PageView(TemplateView):
                     edad = request.POST.get('edad')
                     municipio = request.POST.get('municipio')
                     sexo = request.POST.get('sexo')
+                    provincia = request.POST.get('provincia')
 
                     if not profilee.exists():
                         profile.objects.create(user=request.user, edad=request.POST.get('edad'), provincia=request.POST.get('provincia'), municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo'))
