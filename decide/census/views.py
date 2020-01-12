@@ -187,9 +187,10 @@ def export_to_xlsx(data):
     return template
 
 
-def addCensus(request, votacionID):
+def addCensus(request):
     id = request.POST.get("id")
-    votacion = get_object_or_404(Voting, pk=votacionID)
+    votacion_id = request.POST.get("votacion_id")
+    votacion = get_object_or_404(Voting, pk=votacion_id)
     tipo = request.POST.get("tipo")
     if tipo == "usuario":
         usuario = get_object_or_404(User, pk=id)
@@ -215,7 +216,8 @@ def addCensus(request, votacionID):
         datos.append(tupla)
 
     return render(request, 'add.html',
-                  {'datos': datos, 'usuarios': usuarios, 'votaciones': votaciones, 'STATIC_URL': settings.STATIC_URL})
+                  {'datos': datos, 'usuarios': usuarios, 'votaciones': votaciones, 'vot_id': votacion_id,
+                   'STATIC_URL': settings.STATIC_URL})
 
 
 def exportToPdf(request):
