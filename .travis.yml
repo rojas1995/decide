@@ -1,6 +1,5 @@
 dist: xenial
 
-# safelist
 branches:
   only:
   - postproc-feature/paridad
