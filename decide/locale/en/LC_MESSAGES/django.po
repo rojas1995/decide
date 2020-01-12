@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-10 14:08+0100\n"
+"POT-Creation-Date: 2020-01-11 18:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,61 +18,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: booth/templates/booth/block.html:25
+#: booth/templates/booth/block.html:24
 msgid "Inicio"
 msgstr "Index"
 
-#: booth/templates/booth/block.html:27
+#: booth/templates/booth/block.html:26
 msgid "Votaciones"
 msgstr "Votings"
 
-#: booth/templates/booth/block.html:28
+#: booth/templates/booth/block.html:27
 msgid "Perfil"
 msgstr "Profile"
 
-#: booth/templates/booth/block.html:29
+#: booth/templates/booth/block.html:28
 msgid "Salir"
 msgstr "Logout"
 
-#: booth/templates/booth/block.html:32
+#: booth/templates/booth/block.html:31 booth/templates/booth/register.html:111
 msgid "Registrarse"
 msgstr "Register"
 
-#: booth/templates/booth/block.html:33
+#: booth/templates/booth/block.html:32
 msgid "Entrar"
 msgstr "Sign in"
 
-#: booth/templates/booth/booth(old).html:26
-msgid "Username"
-msgstr ""
+#: booth/templates/booth/booth.html:15
+msgid "Presidente"
+msgstr "President"
 
-#: booth/templates/booth/booth(old).html:34
-msgid "Password"
-msgstr ""
+#: booth/templates/booth/booth.html:16 booth/templates/booth/booth.html:29
+msgid "Candidatos"
+msgstr "Candidates"
 
-#: booth/templates/booth/booth(old).html:42
-msgid "Login"
-msgstr ""
+#: booth/templates/booth/booth.html:28
+msgid "Diputados"
+msgstr "Deputies"
 
-#: booth/templates/booth/booth(old).html:57
-msgid "Vote"
-msgstr ""
-
-#: booth/templates/booth/booth(old).html:153
-#: booth/templates/booth/booth(old).html:163
-#: booth/templates/booth/booth(old).html:194
-msgid "Error: "
-msgstr ""
-
-#: booth/templates/booth/booth(old).html:191
-msgid "Conglatulations. Your vote has been sent"
-msgstr ""
-
-#: booth/templates/booth/booth.html:11
-msgid "Opciones"
-msgstr "Options"
-
-#: booth/templates/booth/booth.html:17
+#: booth/templates/booth/booth.html:40
 msgid "Enviar"
 msgstr "Submit"
 
@@ -88,54 +70,180 @@ msgstr "your electronic voting platform where you can"
 msgid "realizar votaciones y consultar los resultados"
 msgstr "vote and check the results"
 
-#: booth/templates/booth/index.html:9
+#: booth/templates/booth/index.html:9 booth/templates/booth/votinglist.html:29
 msgid "Votar"
 msgstr "Vote"
+
+#: booth/templates/booth/login.html:8
+msgid "Usuario y/o contraseña erróneos"
+msgstr "User and/or password wrong"
+
+#: booth/templates/booth/login.html:15
+msgid "¡Inicia sesion!"
+msgstr "Sign in!"
+
+#: booth/templates/booth/login.html:19 booth/templates/booth/register.html:59
+msgid "Nombre de usuario"
+msgstr "Username"
+
+#: booth/templates/booth/login.html:25 booth/templates/booth/register.html:98
+msgid "Contraseña"
+msgstr "Password"
+
+#: booth/templates/booth/login.html:29
+msgid "Iniciar sesion"
+msgstr "Sign in"
+
+#: booth/templates/booth/login.html:32
+msgid "¿No tienes ninguna cuenta?"
+msgstr "Don't have an account yet?"
+
+#: booth/templates/booth/login.html:32
+msgid "Registrate"
+msgstr "Register"
 
 #: booth/templates/booth/profile.html:10
 msgid "Información personal"
 msgstr "Personal information"
 
-#: booth/templates/booth/profile.html:23
-msgid "Las contraseñas deben coincidir"
-msgstr "Passwords must match"
+#: booth/templates/booth/profile.html:24 booth/templates/booth/register.html:18
+msgid "El nombre no puede estar vacío"
+msgstr "Name cannot be empty"
 
-#: booth/templates/booth/profile.html:30
+#: booth/templates/booth/profile.html:28 booth/templates/booth/register.html:22
+msgid "El apellido no puede estar vacío"
+msgstr "Surname cannot be empty"
+
+#: booth/templates/booth/profile.html:32 booth/templates/booth/register.html:30
+msgid "El email no puede estar vacío"
+msgstr "Email cannot be empty"
+
+#: booth/templates/booth/profile.html:36
+msgid "El municipio no debe estar vacío"
+msgstr "Municipality cannot be empty"
+
+#: booth/templates/booth/profile.html:40
+msgid "La provincia no debe estar vacía"
+msgstr "Province cannot be empty"
+
+#: booth/templates/booth/profile.html:44
+msgid "La edad debe ser un número/ no debe estar vacía"
+msgstr "Age must be a number/ cannot be empty"
+
+#: booth/templates/booth/profile.html:52
+msgid "Actualizado correctamente"
+msgstr "Correctly updated"
+
+#: booth/templates/booth/profile.html:58 booth/templates/booth/register.html:47
+#: booth/templates/booth/votinglist.html:26
 msgid "Nombre"
 msgstr "Name"
 
-#: booth/templates/booth/profile.html:36
+#: booth/templates/booth/profile.html:64 booth/templates/booth/register.html:53
 msgid "Apellido"
 msgstr "Surname"
 
-#: booth/templates/booth/profile.html:42
+#: booth/templates/booth/profile.html:70 booth/templates/booth/register.html:65
 msgid "Email"
 msgstr "Email"
 
-#: booth/templates/booth/profile.html:48
-msgid "Nombre de usuario"
-msgstr "Username"
+#: booth/templates/booth/profile.html:76 booth/templates/booth/register.html:92
+msgid "Municipio"
+msgstr "Municipality"
 
-#: booth/templates/booth/profile.html:54
-msgid "Contraseña"
-msgstr "Password"
+#: booth/templates/booth/profile.html:82 booth/templates/booth/register.html:86
+msgid "Provincia"
+msgstr "Province"
 
-#: booth/templates/booth/profile.html:60
-msgid "Confirmar contraseña"
-msgstr "Confirm password"
+#: booth/templates/booth/profile.html:88 booth/templates/booth/register.html:71
+msgid "Edad"
+msgstr "Age"
 
-#: booth/templates/booth/profile.html:68
+#: booth/templates/booth/profile.html:94
+msgid "Sexo"
+msgstr "Sex"
+
+#: booth/templates/booth/profile.html:98 booth/templates/booth/profile.html:100
+#: booth/templates/booth/register.html:78
+msgid "Mujer"
+msgstr "Woman"
+
+#: booth/templates/booth/profile.html:104
+#: booth/templates/booth/profile.html:106
+#: booth/templates/booth/register.html:79
+msgid "Hombre"
+msgstr "Man"
+
+#: booth/templates/booth/profile.html:114
 msgid "Guardar cambios"
-msgstr "Save"
+msgstr "Save changes"
 
-#: booth/templates/booth/profile.html:71
+#: booth/templates/booth/profile.html:115
 msgid "Cancelar"
 msgstr "Cancel"
 
-#: decide/settings.py:149
+#: booth/templates/booth/register.html:26
+msgid "Las contraseñas deben coincidir"
+msgstr "Passwords must match"
+
+
+
+#: booth/templates/booth/register.html:43
+msgid "Crear Cuenta"
+msgstr "Create an account"
+
+#: booth/templates/booth/register.html:107
+msgid "Confirmar contraseña"
+msgstr "Confirm password"
+
+#: booth/templates/booth/register.html:114
+msgid "¿Ya tienes una cuenta?"
+msgstr "You already have an account?"
+
+#: booth/templates/booth/register.html:114
+msgid "Inicia sesion"
+msgstr "Sign in"
+
+#: booth/templates/booth/success.html:5
+msgid "su voto ha sido correctamente recibido"
+msgstr "Your vote has been correctly received"
+
+#: booth/templates/booth/success.html:6
+msgid "Los resultados serán publicados en la"
+msgstr "the results will be published in the"
+
+#: booth/templates/booth/success.html:6
+msgid "esta página"
+msgstr "this page"
+
+#: booth/templates/booth/success.html:7
+msgid "Si quiere volver a votar o cambiar su voto, puede hacerlo haciendo click"
+msgstr "If you want to vote again or change you vote, you can do it by clicking"
+
+#: booth/templates/booth/success.html:9
+msgid "Volver"
+msgstr "Return"
+
+#: booth/templates/booth/votinglist.html:28
+msgid "Fecha inicio"
+msgstr "Start date"
+
+#: booth/templates/booth/votinglist.html:29
+msgid "Fecha finalizacion"
+msgstr "End date"
+
+#: booth/templates/booth/votinglist.html:46
+msgid "Actualmente no hay votaciones disponibles para ti."
+msgstr "Currently, there ara no votings avaible for you."
+
+#: booth/templates/booth/votinglist.html:46
+msgid "Si crees que se trata de un error, por favor, contacte con el administrador"
+msgstr "If you think this is an error, please, contact the administrator"
+
+#: decide/settings.py:155
 msgid "Español"
 msgstr ""
 
-#: decide/settings.py:150
+#: decide/settings.py:156
 msgid "English"
 msgstr ""
