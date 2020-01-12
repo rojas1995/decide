@@ -2597,7 +2597,7 @@ class PostProcTestCase(APITestCase):
                 ,{'sexo':'hombre','id':'5'}
                 ,{'sexo':'mujer','id':'6'}
                 ]},
-                { 'option': 'Partido 3', 'number': 3, 'votes': 100, 'candidatos': [
+                { 'option': 'Partido 3', 'number': 3, 'votes': 1000, 'candidatos': [
                 {'sexo':'hombre','id':'1'}
                 ,{'sexo':'mujer','id':'2'}
                 ,{'sexo':'hombre','id':'3'}
