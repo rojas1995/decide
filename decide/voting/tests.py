@@ -16,9 +16,10 @@ from mixnet.mixcrypt import ElGamal
 from mixnet.mixcrypt import MixCrypt
 from mixnet.models import Auth
 from voting.models import Voting, Candidate, CandidatesGroup
-from voting.views import handle_uploaded_file
+from voting.views import handle_uploaded_file, copy_voting
 import unittest
 from selenium import webdriver
+from django.urls import reverse
 
 class VotingTestCase(BaseTestCase):
 
@@ -307,7 +308,54 @@ class VotingTestCase(BaseTestCase):
         count_errors = http_content.count('La candidatura prueba tiene más de un candidato a presidente')
         num_candidatos_final = len(Candidate.objects.all())
         self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
+
+    def csv_correct_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+        path = str(os.getcwd()) + "/voting/files/podemos.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('La candidatura prueba tiene los siguientes errores:')
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 0 and (num_candidatos_inicial + 105) == num_candidatos_final)
     
+    def voting_correct_copy_test(self):
+        inicial_voting = Voting(name="votacion creada", desc="nueva votacion")
+        candidature = CandidatesGroup(name="candidatura1")
+        auth = Auth(name="auth1", url="http://auth1.com")
+        candidature.save()
+        auth.save()
+        candidatures = []
+        auths = []
+        candidatures.append(candidature)
+        auths.append(auth)
+        inicial_voting.save()
+        inicial_voting.candidatures.set(candidatures)
+        inicial_voting.auths.set(auths)
+        inicial_voting.save()
+        num_voting_inicial = len(Voting.objects.all())
+        voting_id = Voting.objects.get(name="votacion creada").id
+        c = Client()
+        response = c.get(reverse('copy_voting', kwargs={'voting_id':voting_id}), {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response.user = self.login()
+        num_voting_final = len(Voting.objects.all())
+        create_votings = Voting.objects.filter(name="votacion creada", desc="nueva votacion", candidatures__in=candidatures, auths__in=auths)
+        self.assertTrue(num_voting_inicial + 1 == num_voting_final and len(create_votings) == 2)   
+
+    def voting_incorrect_copy_test(self):
+        num_voting_inicial = len(Voting.objects.all())
+        voting_id = 5
+        c = Client()
+        response = c.get(reverse('copy_voting', kwargs={'voting_id':voting_id}), {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response.user = self.login()
+        num_voting_final = len(Voting.objects.all())
+        print(response.status_code)
+        self.assertTrue(num_voting_inicial == num_voting_final)
+        self.assertEqual(response.status_code, 404)     
+
 #FIN TEST DAVID
 
 

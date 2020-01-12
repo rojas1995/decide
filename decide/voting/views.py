@@ -434,7 +434,6 @@ def create_auth(request):
 
     return HttpResponse({'auths':auths}, status=st)
 
-@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def copy_voting(request, voting_id):
     voting = get_object_or_404(Voting, pk=voting_id)
     votingName = voting.name
