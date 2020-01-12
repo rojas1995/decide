@@ -401,6 +401,7 @@ class VotingUpdate(generics.RetrieveUpdateDestroyAPIView):
             st = status.HTTP_400_BAD_REQUEST
         return Response(msg, status=st)
 
+@user_passes_test(lambda user: user.is_superuser, login_url="/")
 def getVoting(request):
     id_voting = request.GET['id']
     voting = get_object_or_404(Voting, pk=id_voting)
@@ -426,7 +427,12 @@ def create_auth(request):
 
     auths = Auth.objects.all()
 
-    return HttpResponse({'auths':auths})
+    if Auth.objects.get(url=baseurl):
+        st = status.HTTP_200_OK
+    else:
+        st = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    return HttpResponse({'auths':auths}, status=st)
 
 @user_passes_test(lambda user: user.is_superuser, login_url="/")
 def copy_voting(request, voting_id):

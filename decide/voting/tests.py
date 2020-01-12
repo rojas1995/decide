@@ -317,7 +317,7 @@ class VotingTestCase(BaseTestCase):
         v = Voting(name="Votación Gobierno 2020", desc="Votación básica")
         v.save()
 
-        self.assertEqual(v.name != "", True)
+        self.assertEqual(v.pk != 0, True)
 
     def create_voting_gobern(self):
         print("Creando Votación Congreso - pass")
@@ -328,17 +328,20 @@ class VotingTestCase(BaseTestCase):
     
     def create_voting_gobern_API_test(self):
         print("Creando Votacion Congreso - API - pass")
-        data = {'name': 'Votación Congreso 2020',
+        self.login()
+        data = {'name': 'voting pass',
                 'description': 'Votacion básica API'
                 }
         response = self.client.post('/voting/edit/', data, format='json')
+
         self.assertEqual(response.status_code, 302)
 
     def create_voting_FULL_gobern_API_test(self):
         print("Creando Votacion Completa - API - pass")
+        self.login()
         auths = Auth.objects.all()
         candidatures = CandidatesGroup.objects.all()
-        data = {'name': 'Votación Congreso 2020',
+        data = {'name': 'voting pass',
                 'description': 'Votacion básica API',
                 'start_date_selected': '',
                 'end_date_selected': '',
@@ -347,26 +350,31 @@ class VotingTestCase(BaseTestCase):
                 'auths': auths,
                 }
         response = self.client.post('/voting/edit/', data, format='json')
+        
         self.assertEqual(response.status_code, 302)
 
     def create_auths_API_test(self):
         print("Creando Auth para Votacion - pass")
+        self.login()
         data = {
             'auth_name': 'Auths prueba',
             'base_url': 'https://urlPrueba.co/token',
             'auth_me': True
         }
         response = self.client.post('/voting/create_auth/', data, format='json')
+        
         self.assertEqual(response.status_code, 302)
 
     def create_auths_API_fail_test(self):
         print("Creando Auth para Votacion - fail")
+        self.login()
         data = {
             'auth_name': '',
             'base_url': '',
             'auth_me': ''
         }
         response = self.client.post('/voting/create_auth/', data, format='json')
+        
         self.assertEqual(response.status_code, 302)
 
     def get_voting_json_API_test(self):
@@ -378,6 +386,7 @@ class VotingTestCase(BaseTestCase):
         response = self.client.get('/voting/view?id='+str(id_voting))
         self.assertEqual(response.status_code, 302)
 
+###FIN TEST MANU
 
 
          #TEST ANTONI0
