@@ -185,8 +185,12 @@ def handle_uploaded_file(response):
 
 
     if len(validation_errors) > 0:
+        transaction.set_rollback(True)
+
+    html = ""
+    if len(validation_errors) > 0:
         html = '<div id="errors'
-        html = html + str(candidatureName)
+        html = html + str(candidature_name)
         html = html +'" style="color: #D63301;background-color: #FFCCBA;border-radius: 1em;padding: 1em;border-style: solid;border-width: 1px;border-color: #D63301;">'
         html = html + '<p style="text-align: left; width: 100%; size: 24px !important; font-weight: bold !important;"> La candidatura ' + candidatesGroupName + ' tiene los siguientes errores: </p><ul>'
         for error in validation_errors:
