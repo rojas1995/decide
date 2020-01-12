@@ -194,7 +194,10 @@ def addCensus(request):
     tipo = request.POST.get("tipo")
     if tipo == "usuario":
         usuario = get_object_or_404(User, pk=id)
-        Census.objects.create(voter_id=usuario.pk, voting_id=votacion.pk)
+        try:
+            Census.objects.create(voter_id=usuario.pk, voting_id=votacion.pk)
+        except:
+            pass
 
     elif tipo == "votacion":
         votacion2 = get_object_or_404(Voting, pk=id)
