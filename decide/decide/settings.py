@@ -70,7 +70,7 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'https://decide-palkia-postprocesado.herokuapp.com'
+BASEURL = 'https://postproc-palkia.herokuapp.com'
 
 APIS = {}
 
