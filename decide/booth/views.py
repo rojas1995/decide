@@ -10,6 +10,8 @@ from django.contrib.auth import logout as do_logout
 from django.contrib.auth import login as do_login
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
+from authentication.models import Perfil
 from base import mods
 from booth.form import registerForm, profileForm
 from django.contrib import auth
@@ -28,20 +30,20 @@ def booth(request, **kwargs):
         try:
             voting_id = kwargs.get('voting_id')
             if voting_checks(voting_id):
-                voting = Voting.objects.get(pk = voting_id)
+                voting = Voting.objects.get(pk=voting_id)
                 candidatures = voting.candidatures.all()
 
                 list_candidatures = []
 
                 for candidature in candidatures:
                     res = {
-                        'presidentes' : candidature.candidates.filter(type = 'PRESIDENCIA'),
-                        'candidatos' : candidature.candidates.filter(type = 'CANDIDATO'),
-                        'candidatura' : candidature.name
+                        'presidentes': candidature.candidates.filter(type='PRESIDENCIA'),
+                        'candidatos': candidature.candidates.filter(type='CANDIDATO'),
+                        'candidatura': candidature.name
 
                     }
                     list_candidatures.append(res)
-                return render(request, 'booth/booth.html', {'list' : list_candidatures, 'voting' : voting})
+                return render(request, 'booth/booth.html', {'list': list_candidatures, 'voting': voting})
             else:
                 raise Http404
         except:
@@ -50,25 +52,25 @@ def booth(request, **kwargs):
         try:
             voting_id = kwargs.get('voting_id')
             if voting_checks(voting_id):
-                voting = Voting.objects.get(pk = voting_id)
+                voting = Voting.objects.get(pk=voting_id)
                 # Presidente is required
                 pres = str(request.POST['presidente'])
                 cand = request.POST.getlist('candidatos')
                 # Get new option. Format: <id_presidente>000<id_candidato1>000<id_candidato2000>
                 option = get_option(pres, cand)
                 user_id = request.user.id
-                token = str(Token.objects.get(user = request.user))
+                token = str(Token.objects.get(user=request.user))
 
                 bigpk = {
-                        'p': str(voting.pub_key.p),
-                        'g': str(voting.pub_key.g),
-                        'y': str(voting.pub_key.y),
-                    }
-                
+                    'p': str(voting.pub_key.p),
+                    'g': str(voting.pub_key.g),
+                    'y': str(voting.pub_key.y),
+                }
+
                 vote = encrypt(bigpk, option)
 
                 send_data(request, user_id, token, voting_id, vote)
-                
+
                 return render(request, 'booth/success.html', {'user': request.user})
             else:
                 raise Http404
@@ -78,26 +80,27 @@ def booth(request, **kwargs):
 
 def send_data(request, user, token, voting, vote):
     data = json.dumps({
-            'voter': user,
-            'token': token,
-            'voting': voting,
-            'vote': {'a': str(vote[0]), 'b': str(vote[1])}
-        })
+        'voter': user,
+        'token': token,
+        'voting': voting,
+        'vote': {'a': str(vote[0]), 'b': str(vote[1])}
+    })
 
     headers = {
         'Content-type': 'application/json',
         'Authorization': 'Token ' + token
     }
 
-    r = requests.post(url = 'http://' + request.META['HTTP_HOST']+ '/gateway/store/', data = data, headers = headers)
+    r = requests.post(url='http://' + request.META['HTTP_HOST'] + '/gateway/store/', data=data, headers=headers)
     return r
-    
+
 
 def encrypt(pk, M):
     k = random.StrongRandom().randint(1, int(pk["p"]) - 1)
     a = pow(int(pk["g"]), k, int(pk["p"]))
     b = (pow(int(pk["y"]), k, int(pk["p"])) * M) % int(pk["p"])
     return a, b
+
 
 def votinglist(request):
     user_id = request.user.id
@@ -111,16 +114,16 @@ def votinglist(request):
             # Only for list view
             try:
                 if voting_id is not None and voting_checks(voting_id):
-                    voting = Voting.objects.get(pk = voting_id)
+                    voting = Voting.objects.get(pk=voting_id)
                     res.append(voting)
             except Voting.DoesNotExist:
                 pass
 
-        return render(request, 'booth/votinglist.html', {'res':res})
+        return render(request, 'booth/votinglist.html', {'res': res})
     else:
-        #If user is not log in, redirect to log in page.
+        # If user is not log in, redirect to log in page.
         return PageView.login(request)
-        
+
 
 class PageView(TemplateView):
 
@@ -151,7 +154,15 @@ class PageView(TemplateView):
                     user = form.save()
                     user.set_password(form.cleaned_data['password'])
                     user.save()
-                    profile.objects.create(user=user,edad=request.POST.get('edad'), provincia=request.POST.get('provincia'), municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo')).save()
+                    profile.objects.create(user=user, edad=request.POST.get('edad'),
+                                           provincia=request.POST.get('provincia'),
+                                           municipio=request.POST.get('municipio'),
+                                           sexo=request.POST.get('sexo')).save()
+                    Perfil.objects.create(user=user, sexo=request.POST.get('sexo'),
+                                          edad=request.POST.get('edad'),
+                                          municipio=request.POST.get('municipio'),
+                                          ).save()
+
                     return redirect('/login')
 
         return render(request, "booth/register.html", {'form': form, 'errors': errors, 'lenErrors': len(errors)})
@@ -183,7 +194,7 @@ class PageView(TemplateView):
 
     def index(request):
         return render(request, 'booth/index.html')
-    
+
     def profile(request):
         user = request.user
         first_name = request.user.first_name
@@ -202,7 +213,7 @@ class PageView(TemplateView):
                 errors.append(-1)
             else:
                 profilee = profile.objects.filter(user=user)
-            
+                perfil = Perfil.objects.filter(user=user)
                 if request.POST.get('first_name') == "":
                     errors.append(0)
                 if request.POST.get('last_name') == "":
@@ -230,18 +241,34 @@ class PageView(TemplateView):
                     sexo = request.POST.get('sexo')
 
                     if not profilee.exists():
-                        profile.objects.create(user=request.user, edad=request.POST.get('edad'), provincia=request.POST.get('provincia'), municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo'))
+                        profile.objects.create(user=request.user, edad=request.POST.get('edad'),
+                                               provincia=request.POST.get('provincia'),
+                                               municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo'))
+                        Perfil.objects.create(user=request.user, edad=request.POST.get('edad'),
+                                              municipio=request.POST.get('municipio'), sexo=request.POST.get('sexo'))
                     else:
                         profilee = profile.objects.get(user=user)
-                        profilee.edad=request.POST.get('edad')
-                        profilee.provincia=request.POST.get('provincia')
-                        profilee.municipio=request.POST.get('municipio')
-                        profilee.sexo=request.POST.get('sexo')
+                        profilee.edad = request.POST.get('edad')
+                        profilee.provincia = request.POST.get('provincia')
+                        profilee.municipio = request.POST.get('municipio')
+                        profilee.sexo = request.POST.get('sexo')
                         profilee.save()
-                    
-            return render(request, 'booth/profile.html', {'provincia': provincia, 'municipio': municipio, 'edad': edad, 'sexo': sexo, 'is_submit':1, 'form': form, 'first_name': first_name, 'last_name': last_name, 'email': email, 'errors': errors, 'lenErrors': len(errors)})
 
-        return render(request, 'booth/profile.html', {'provincia': provincia, 'municipio': municipio, 'edad': edad, 'sexo': sexo, 'is_submit':0, 'form': form, 'first_name': first_name, 'last_name': last_name, 'email': email, 'errors': errors, 'lenErrors': len(errors)})
+                        perfil = Perfil.objects.get(user=user)
+                        perfil.edad = request.POST.get('edad')
+                        perfil.municipio = request.POST.get('municipio')
+                        perfil.sexo = request.POST.get('sexo')
+                        perfil.save()
+
+            return render(request, 'booth/profile.html',
+                          {'provincia': provincia, 'municipio': municipio, 'edad': edad, 'sexo': sexo, 'is_submit': 1,
+                           'form': form, 'first_name': first_name, 'last_name': last_name, 'email': email,
+                           'errors': errors, 'lenErrors': len(errors)})
+
+        return render(request, 'booth/profile.html',
+                      {'provincia': provincia, 'municipio': municipio, 'edad': edad, 'sexo': sexo, 'is_submit': 0,
+                       'form': form, 'first_name': first_name, 'last_name': last_name, 'email': email, 'errors': errors,
+                       'lenErrors': len(errors)})
 
 
 class GetVoting(APIView):
@@ -264,17 +291,20 @@ def check_date(date):
     else:
         return False
 
+
 def voting_checks(voting_id):
     aux = False
-    voting = Voting.objects.get(pk = voting_id)
+    voting = Voting.objects.get(pk=voting_id)
     # Check dates. Voting must be between stablished dates
-    if (voting.end_date is None or check_date(voting.end_date)) and (voting.start_date is None or not check_date(voting.start_date)):
+    if (voting.end_date is None or check_date(voting.end_date)) and (
+            voting.start_date is None or not check_date(voting.start_date)):
         # Check that voter doesn't send other vote to this voting
         try:
-            Vote.objects.get(voting_id = voting_id)
+            Vote.objects.get(voting_id=voting_id)
         except Vote.DoesNotExist:
             aux = True
     return aux
+
 
 def get_option(presidente, candidatos):
     option = presidente + '000'

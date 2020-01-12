@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Perfil(models.Model):
     SEXOS = (
         ('M', 'Masculino'),
@@ -9,7 +10,7 @@ class Perfil(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    sexo =  models.CharField(max_length=1, choices=SEXOS)
+    sexo = models.CharField(max_length=1, choices=SEXOS)
     edad = models.PositiveIntegerField()
     municipio = models.CharField(max_length=50)
 
